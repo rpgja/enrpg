@@ -10,8 +10,10 @@ export default function App(): ReactNode {
 
   return (
     <Box padding={1}>
-      <Button variant="outlined" onClick={() => setGreeting(prev => !prev)}>Hello</Button>
-      {greeting && <Typography>Hello, world!</Typography>}
+      <Button variant="outlined" onClick={() => setGreeting((prev) => !prev)}>
+        Hello
+      </Button>
+      {greeting && <Typography>Hello, inyume world! 114514</Typography>}
     </Box>
   );
 }
