@@ -1,10 +1,7 @@
-import App from "@/components/app";
-import type { ReactNode } from "react";
+import Editor from "@/components/editor";
 
-export default function Page(): ReactNode {
+export default function Page() {
   return (
-    <>
-      <App />
-    </>
+    <Editor />
   );
 }

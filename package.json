@@ -3,6 +3,29 @@
   "bugs": {
     "url": "https://github.com/rpgja/enrpg/issues"
   },
+  "description": "This is a web application of the map editor dedicated to RPGEN.",
+  "homepage": "https://github.com/rpgja/enrpg#readme",
+  "keywords": [
+    "rpgen",
+    "rpgja",
+    "enrpg"
+  ],
+  "license": "MIT",
+  "name": "enrpg",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpgja/enrpg.git"
+  },
+  "scripts": {
+    "dev": "next dev"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "typescript": "^5.4.5"
+  },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
@@ -12,29 +35,5 @@
     "@mui/material-nextjs": "^5.15.11",
     "next": "^14.2.3",
     "react": "^18.3.1"
-  },
-  "description": "This is a web application of the map editor dedicated to RPGEN.",
-  "devDependencies": {
-    "@types/node": "^20.12.12",
-    "@types/react": "^18.3.2",
-    "typescript": "^5.4.5"
-  },
-  "homepage": "https://github.com/rpgja/enrpg#readme",
-  "keywords": [
-    "rpgen",
-    "enrpg"
-  ],
-  "license": "MIT",
-  "name": "enrpg",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rpgja/enrpg.git"
-  },
-  "scripts": {
-    "build": "next build",
-    "dev": "next dev"
-  },
-  "type": "module",
-  "version": "1.0.0"
+  }
 }
