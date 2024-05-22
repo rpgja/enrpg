@@ -22,8 +22,13 @@ export class TileMap {
     this.#tiles[TileMap.#positionToIndex(x, y)] = rawTile;
   }
 
-  get(x: number, y: number): Tile {
-    let rawTile = this.#tiles[TileMap.#positionToIndex(x, y)]!;
+  get(x: number, y: number): Tile | undefined {
+    let rawTile = this.#tiles[TileMap.#positionToIndex(x, y)];
+
+    if (!rawTile) {
+      return;
+    }
+
     const collision = rawTile.endsWith("C");
 
     // TODO: DQSprite

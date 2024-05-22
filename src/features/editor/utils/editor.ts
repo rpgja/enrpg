@@ -15,6 +15,9 @@ export class Editor {
 
   static readonly #BASE_TILE_SIZE = 64;
 
+  #parentNode?: HTMLElement;
+  #scale = 1;
+
   render(): void {
     if (!this.#mounted) {
       // TODO: brush up error message
@@ -22,20 +25,31 @@ export class Editor {
     }
 
     const dqStillSprites = getImage("https://rpgen.site/dq/img/dq/map.png")!;
-
+    const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
-    const cols = canvas.width / Editor.#BASE_TILE_SIZE;
-    const rows = canvas.height / Editor.#BASE_TILE_SIZE;
+    const tileSize = Editor.#BASE_TILE_SIZE * this.#scale | 0;
+    const cols = canvas.width / tileSize;
+    const rows = canvas.height / tileSize;
     const rpgMap = this.#rpgMap;
 
-    context.imageSmoothingEnabled = false;
+    if (canvas.width !== parentNode.offsetWidth) {
+      canvas.width = parentNode.offsetWidth;
+    }
 
-    console.log("DQ", dqStillSprites)
+    if (canvas.height !== parentNode.offsetHeight) {
+      canvas.height = parentNode.offsetHeight;
+    }
+
+    context.imageSmoothingEnabled = false;
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const tile = rpgMap.floor.get(x, y);
+
+        if (!tile) {
+          continue;
+        }
 
         switch (tile.sprite.type) {
           case SpriteType.DQStillSprite: {
@@ -43,8 +57,8 @@ export class Editor {
               dqStillSprites,
               tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
               16, 16,
-              Editor.#BASE_TILE_SIZE * x, Editor.#BASE_TILE_SIZE * y,
-              Editor.#BASE_TILE_SIZE, Editor.#BASE_TILE_SIZE
+              tileSize * x, tileSize * y,
+              tileSize, tileSize
             );
 
             break;
@@ -68,58 +82,24 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
-    const dqStillSprites = await loadImage("https://rpgen.site/dq/img/dq/map.png")!;
-    const context = this.#context;
+    canvas.addEventListener("wheel", event => {
+      if (event.deltaY > 0) {
+        this.#scale = Math.max(0.2, this.#scale - 0.2)
+      } else {
+        this.#scale += 0.2;
+      }
+
+      render();
+    })
 
     const render = () => {
-      const cols = canvas.width / Editor.#BASE_TILE_SIZE;
-      const rows = canvas.height / Editor.#BASE_TILE_SIZE;
-      const rpgMap = this.#rpgMap;
-
-      context.imageSmoothingEnabled = false;
-
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const tile = rpgMap.floor.get(x, y);
-
-          switch (tile.sprite.type) {
-            case SpriteType.DQStillSprite: {
-              context.drawImage(
-                dqStillSprites,
-                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
-                16, 16,
-                Editor.#BASE_TILE_SIZE * x, Editor.#BASE_TILE_SIZE * y,
-                Editor.#BASE_TILE_SIZE, Editor.#BASE_TILE_SIZE
-              );
-
-              break;
-            }
-          }
-        }
-      }
+      this.render();
     };
 
-    const resizeObserver = new ResizeObserver(([record]) => {
-      if (!record) {
-        return;
-      }
-
-      // canvas.width = record.contentRect.width;
-      // canvas.height = record.contentRect.height;
-    });
-
-    window.onresize = () => {
-      canvas.width = parentNode.offsetWidth;
-      canvas.height = parentNode.offsetHeight;
-      requestAnimationFrame(render);
-    }
-
-    this.#resizeObserver = resizeObserver;
+    this.#parentNode = parentNode;
     parentNode.append(canvas);
     this.#mounted = true;
     await loadImage("https://rpgen.site/dq/img/dq/map.png");
-    resizeObserver.observe(parentNode);
-
     requestAnimationFrame(render);
   }
 
