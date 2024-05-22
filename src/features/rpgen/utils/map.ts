@@ -71,7 +71,7 @@ export class RPGMap {
 
       const values = mapGetOrInit(chunks, chunkName, []);
 
-      values.push(value.trim());
+      values.push(value);
     }
 
     return chunks;
@@ -79,7 +79,7 @@ export class RPGMap {
 
   static #parseLookPoints(chunks: RPGMapChunks): LookPoint[] | undefined {
     return chunks.get("SPOINT")?.map(v => {
-      const [x, y, once, message = ""] = v.split(",");
+      const [x, y, once, message = ""] = v.trim().split(",");
 
       return {
         position: {
@@ -94,14 +94,14 @@ export class RPGMap {
 
   static #parseHumans(chunks: RPGMapChunks): Human[] | undefined {
     return chunks.get("HUMAN")?.map(v => {
-      const [rawSprite, x, y, direction, behavior, speed, message = ""] = v.split(",");
+      const [rawSprite, x, y, direction, behavior, speed, message = ""] = v.trim().split(",");
       let sprite: Sprite;
 
       switch (rawSprite?.[0]) {
         case "A": {
           sprite = {
             type: SpriteType.CustomAnimationSprite,
-            id: Number(rawSprite)
+            id: Number(rawSprite.slice(1))
           }
 
           break;
@@ -110,7 +110,7 @@ export class RPGMap {
         case "-": {
           sprite = {
             type: SpriteType.CustomStillSprite,
-            id: Number(rawSprite)
+            id: Number(rawSprite.slice(1))
           }
 
           break;
@@ -142,7 +142,7 @@ export class RPGMap {
 
   static #parseTreasureBoxPoints(chunks: RPGMapChunks): TreasureBoxPoint[] | undefined {
     return chunks.get("TBOX")?.map(v => {
-      const [x, y, message = ""] = v.split(",");
+      const [x, y, message = ""] = v.trim().split(",");
 
       return {
         position: {
@@ -155,7 +155,7 @@ export class RPGMap {
   }
 
   static #parseTileMap(chunks: RPGMapChunks, chunkName: string): TileMap {
-    const lines = chunks.get(chunkName)?.[0]?.split(/\r?\n/);
+    const lines = chunks.get(chunkName)?.[0]?.replace(/^\r?\n/, "")?.split(/\r?\n/);
     const tileMap = new TileMap();
 
     if (lines) {
