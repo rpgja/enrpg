@@ -1,6 +1,6 @@
 import { SpriteType } from "@/features/rpgen/types/sprite";
 import { RPGMap } from "@/features/rpgen/utils/map";
-import { loadImage } from "@/utils/image";
+import { getImage, loadImage } from "@/utils/image";
 
 export class Editor {
   readonly #rpgMap: RPGMap;
@@ -15,11 +15,13 @@ export class Editor {
 
   static readonly #BASE_TILE_SIZE = 64;
 
-  async render(): Promise<void> {
+  render(): void {
     if (!this.#mounted) {
       // TODO: brush up error message
       throw new Error("");
     }
+
+    const dqStillSprites = getImage("https://rpgen.site/dq/img/dq/map.png")!;
 
     const canvas = this.#canvas;
     const context = this.#context;
@@ -28,7 +30,8 @@ export class Editor {
     const rpgMap = this.#rpgMap;
 
     context.imageSmoothingEnabled = false;
-    //context.clearRect(0, 0, canvas.width, canvas.height);
+
+    console.log("DQ", dqStillSprites)
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
@@ -36,8 +39,6 @@ export class Editor {
 
         switch (tile.sprite.type) {
           case SpriteType.DQStillSprite: {
-            const dqStillSprites = await loadImage("https://rpgen.site/dq/img/dq/map.png");
-
             context.drawImage(
               dqStillSprites,
               tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
@@ -58,7 +59,7 @@ export class Editor {
   #mounted = false;
   #resizeObserver?: ResizeObserver;
 
-  mount(parentNode: HTMLElement): void {
+  async mount(parentNode: HTMLElement): Promise<void> {
     if (this.#mounted) {
       // TODO: brush up error message
       throw new Error("Already mounted");
@@ -69,6 +70,8 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
+    const render = () => this.render();
+
     const resizeObserver = new ResizeObserver(([record]) => {
       if (!record) {
         return;
@@ -76,15 +79,15 @@ export class Editor {
 
       canvas.width = record.contentRect.width;
       canvas.height = record.contentRect.height;
-      requestAnimationFrame(() => this.render());
+      requestAnimationFrame(render);
     });
 
     this.#resizeObserver = resizeObserver;
-
-    resizeObserver.observe(parentNode);
     parentNode.append(canvas);
     this.#mounted = true;
-    requestAnimationFrame(() => this.render());
+    await loadImage("https://rpgen.site/dq/img/dq/map.png");
+    resizeObserver.observe(parentNode);
+    requestAnimationFrame(render);
   }
 
   unmount(): void {
