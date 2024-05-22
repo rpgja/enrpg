@@ -1,7 +1,7 @@
-import Editor from "@/components/editor";
+import App from "@/components/app";
 
 export default function Page() {
   return (
-    <Editor />
+    <App />
   );
 }
