@@ -1,6 +1,7 @@
-import { SpriteType } from "@/features/rpgen/types/sprite";
+import { DQAnimationSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { TileMap } from "@/features/rpgen/utils/tile";
+import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
 import { getImage, loadImage } from "@/utils/image";
 
 export class Editor {
@@ -15,6 +16,8 @@ export class Editor {
   }
 
   static readonly #BASE_TILE_SIZE = 64;
+  static #currentTime = 0;
+  static #currentFrameFlip = 0;
 
   #parentNode?: HTMLElement;
   #scale = 1;
@@ -29,7 +32,7 @@ export class Editor {
     const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
-    const tileSize = Editor.#BASE_TILE_SIZE * this.#scale | 0;
+    const tileSize = (Editor.#BASE_TILE_SIZE * this.#scale) | 0;
     const cols = canvas.width / tileSize;
     const rows = canvas.height / tileSize;
     const rpgMap = this.#rpgMap;
@@ -62,10 +65,14 @@ export class Editor {
             case SpriteType.DQStillSprite: {
               context.drawImage(
                 dqStillSprites,
-                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
-                16, 16,
-                tileSize * x, tileSize * y,
-                tileSize, tileSize
+                tile.sprite.surface.x * 16,
+                tile.sprite.surface.y * 16,
+                16,
+                16,
+                tileSize * x,
+                tileSize * y,
+                tileSize,
+                tileSize
               );
 
               break;
@@ -77,6 +84,31 @@ export class Editor {
 
     render(rpgMap.floor);
     render(rpgMap.objects);
+
+    const dqAnimationSprites = getImage(
+      "https://rpgen.site/dq/img/dq/char.png"
+    )!;
+
+    for (const human of rpgMap.humans) {
+      if (human.sprite.type === SpriteType.DQAnimationSprite) {
+        const surface = getDQAnimationSpritePosition(
+          human.sprite.surface,
+          human.direction,
+          Editor.#currentFrameFlip
+        );
+        context.drawImage(
+          dqStillSprites,
+          surface.x * 16,
+          surface.y * 16,
+          16,
+          16,
+          tileSize * human.position.x,
+          tileSize * human.position.y,
+          tileSize,
+          tileSize
+        );
+      }
+    }
   }
 
   #mounted = false;
@@ -95,10 +127,11 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
-    canvas.addEventListener("wheel", event => {
-      const newScale = event.deltaY > 0
-        ? Math.max(Editor.#SCALE_UNIT, this.#scale - Editor.#SCALE_UNIT)
-        : this.#scale + Editor.#SCALE_UNIT;
+    canvas.addEventListener("wheel", (event) => {
+      const newScale =
+        event.deltaY > 0
+          ? Math.max(Editor.#SCALE_UNIT, this.#scale - Editor.#SCALE_UNIT)
+          : this.#scale + Editor.#SCALE_UNIT;
 
       if (Editor.#BASE_TILE_SIZE * newScale < 10) {
         return;
@@ -107,9 +140,11 @@ export class Editor {
       this.#scale = newScale;
 
       render();
-    })
+    });
 
     const render = () => {
+      Editor.#currentTime = performance.now();
+      Editor.#currentFrameFlip = ((Editor.#currentTime / 500) | 0) % 2;
       this.render();
     };
 
@@ -117,6 +152,7 @@ export class Editor {
     parentNode.append(canvas);
     this.#mounted = true;
     await loadImage("https://rpgen.site/dq/img/dq/map.png");
+    await loadImage("https://rpgen.site/dq/img/dq/char.png");
     requestAnimationFrame(render);
   }
 
