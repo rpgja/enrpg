@@ -19,6 +19,16 @@ export const useLoadMapDialogStore = create<LoadMapDialogStore>(set => ({
   setOpen: open => set({ open })
 }));
 
+const COMPRESSED_PLACEHOLDER = "MQCQogSg8gUAzAGgOzDAOQCIxsAQgcQFkYALAFzIAcBnALgHp6B3FgOg..."
+
+const PLACEHOLDER = `\
+#HERO
+3,7#END
+
+#BGM
+...
+`
+
 export default function LoadMapDialog(): ReactNode {
   const { open, setOpen } = useLoadMapDialogStore();
   const { setRPGMap } = useRPGMapStore();
@@ -40,6 +50,7 @@ export default function LoadMapDialog(): ReactNode {
           }}
           multiline
           rows={5}
+          placeholder={PLACEHOLDER}
           value={mapData}
           onChange={event => setMapData(event.currentTarget.value)}
         />

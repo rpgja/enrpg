@@ -34,6 +34,8 @@ export class Editor {
     const rows = canvas.height / tileSize;
     const rpgMap = this.#rpgMap;
 
+    console.log(rpgMap);
+
     if (canvas.width !== parentNode.offsetWidth) {
       canvas.width = parentNode.offsetWidth;
     }
