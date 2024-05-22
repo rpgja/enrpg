@@ -1,5 +1,6 @@
 import { SpriteType } from "@/features/rpgen/types/sprite";
 import { RPGMap } from "@/features/rpgen/utils/map";
+import { TileMap } from "@/features/rpgen/utils/tile";
 import { getImage, loadImage } from "@/utils/image";
 
 export class Editor {
@@ -43,33 +44,43 @@ export class Editor {
 
     context.imageSmoothingEnabled = false;
 
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const tile = rpgMap.floor.get(x, y);
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (!tile) {
-          continue;
-        }
+    const render = (tileMap: TileMap): void => {
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const tile = tileMap.get(x, y);
 
-        switch (tile.sprite.type) {
-          case SpriteType.DQStillSprite: {
-            context.drawImage(
-              dqStillSprites,
-              tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
-              16, 16,
-              tileSize * x, tileSize * y,
-              tileSize, tileSize
-            );
+          if (!tile) {
+            continue;
+          }
 
-            break;
+          switch (tile.sprite.type) {
+            case SpriteType.DQStillSprite: {
+              context.drawImage(
+                dqStillSprites,
+                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
+                16, 16,
+                tileSize * x, tileSize * y,
+                tileSize, tileSize
+              );
+
+              break;
+            }
           }
         }
       }
-    }
+    };
+
+    render(rpgMap.floor);
+    render(rpgMap.objects);
   }
 
   #mounted = false;
   #resizeObserver?: ResizeObserver;
+
+  static readonly #SCALE_UNIT = 0.07;
 
   async mount(parentNode: HTMLElement): Promise<void> {
     if (this.#mounted) {
@@ -83,11 +94,15 @@ export class Editor {
     canvas.height = parentNode.offsetHeight;
 
     canvas.addEventListener("wheel", event => {
-      if (event.deltaY > 0) {
-        this.#scale = Math.max(0.2, this.#scale - 0.2)
-      } else {
-        this.#scale += 0.2;
+      const newScale = event.deltaY > 0
+        ? Math.max(Editor.#SCALE_UNIT, this.#scale - Editor.#SCALE_UNIT)
+        : this.#scale + Editor.#SCALE_UNIT;
+
+      if (Editor.#BASE_TILE_SIZE * newScale < 10) {
+        return;
       }
+
+      this.#scale = newScale;
 
       render();
     })
