@@ -52,8 +52,6 @@ export class Editor {
         }
       }
     }
-
-    console.log(canvas.width / Editor.#BASE_TILE_SIZE);
   }
 
   #mounted = false;
@@ -70,23 +68,58 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
-    const render = () => this.render();
+    const dqStillSprites = await loadImage("https://rpgen.site/dq/img/dq/map.png")!;
+    const context = this.#context;
+
+    const render = () => {
+      const cols = canvas.width / Editor.#BASE_TILE_SIZE;
+      const rows = canvas.height / Editor.#BASE_TILE_SIZE;
+      const rpgMap = this.#rpgMap;
+
+      context.imageSmoothingEnabled = false;
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const tile = rpgMap.floor.get(x, y);
+
+          switch (tile.sprite.type) {
+            case SpriteType.DQStillSprite: {
+              context.drawImage(
+                dqStillSprites,
+                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
+                16, 16,
+                Editor.#BASE_TILE_SIZE * x, Editor.#BASE_TILE_SIZE * y,
+                Editor.#BASE_TILE_SIZE, Editor.#BASE_TILE_SIZE
+              );
+
+              break;
+            }
+          }
+        }
+      }
+    };
 
     const resizeObserver = new ResizeObserver(([record]) => {
       if (!record) {
         return;
       }
 
-      canvas.width = record.contentRect.width;
-      canvas.height = record.contentRect.height;
-      requestAnimationFrame(render);
+      // canvas.width = record.contentRect.width;
+      // canvas.height = record.contentRect.height;
     });
+
+    window.onresize = () => {
+      canvas.width = parentNode.offsetWidth;
+      canvas.height = parentNode.offsetHeight;
+      requestAnimationFrame(render);
+    }
 
     this.#resizeObserver = resizeObserver;
     parentNode.append(canvas);
     this.#mounted = true;
     await loadImage("https://rpgen.site/dq/img/dq/map.png");
     resizeObserver.observe(parentNode);
+
     requestAnimationFrame(render);
   }
 
