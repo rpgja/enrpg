@@ -3,6 +3,7 @@
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { useEffect, useState, type ReactNode } from "react";
 import Stack from "@mui/material/Stack";
+import CheckIcon from "@mui/icons-material/Check";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import TimerProvider from "./timer-provider";
@@ -13,7 +14,7 @@ import { NestedDropdown } from "mui-nested-menu";
 import { create } from "zustand";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { Editor } from "@/features/editor/utils/editor";
+import { Editor, RPGENGrid } from "@/features/editor/utils/editor";
 
 export type EditorStore = {
   editor?: Editor,
@@ -123,7 +124,24 @@ export default function App(): ReactNode {
                           }
                         }
                       ]
-                    }
+                    },
+                    {
+                      disabled: !editorStore.editor,
+                      label: "RPGENグリッド",
+                      items: ([
+                        ["なし", undefined],
+                        ["通常", RPGENGrid.Medium],
+                        ["大きい", RPGENGrid.Large],
+                        ["最大", RPGENGrid.Largest]
+                      ] as const).map(([label, value]) => ({
+                        label,
+                        rightIcon: editorStore.editor?.rpgenGrid === value ? <CheckIcon /> : undefined,
+                        callback: () => {
+                          editorStore.editor?.setRPGENGrid(value);
+                          setUpdater(prev => prev + 1n);
+                        }
+                      }))
+                    },
                   ]
                 }}
               />
