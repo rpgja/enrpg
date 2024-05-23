@@ -6,12 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
-import { useRPGMapStore } from "./app";
+import { useEditorStore } from "./app";
 import Button from "@mui/material/Button";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { decompressFromEncodedURIComponent } from "lz-string";
+import { Editor } from "@/features/editor/utils/editor";
 
 export type LoadMapDialogStore = {
   open: boolean,
@@ -36,7 +37,7 @@ const PLACEHOLDER = `\
 export default function LoadMapDialog(): ReactNode {
   const { open, setOpen } = useLoadMapDialogStore();
   const [loadCompressed, setLoadCompressed] = useState(false);
-  const { setRPGMap } = useRPGMapStore();
+  const setEditor = useEditorStore(store => store.setEditor);
   const [disabled, setDisabled] = useState(false);
   const [mapData, setMapData] = useState("");
 
@@ -75,9 +76,9 @@ export default function LoadMapDialog(): ReactNode {
               ? decompressFromEncodedURIComponent(mapData.replace(/^L1/, ""))
               : mapData;
 
-            console.log(actualMapData);
+            const rpgMap = RPGMap.parse(actualMapData);
 
-            setRPGMap(RPGMap.parse(actualMapData));
+            setEditor(new Editor(rpgMap));
             setDisabled(false);
             setOpen(false);
           }}

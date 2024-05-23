@@ -1,13 +1,26 @@
-import { DQAnimationSprite, SpriteType } from "@/features/rpgen/types/sprite";
+import { SpriteType } from "@/features/rpgen/types/sprite";
+import { Position } from "@/features/rpgen/types/types";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { TileMap } from "@/features/rpgen/utils/tile";
 import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 
+export type Camera = Position & {
+  scale: number,
+  scaleUnit: number
+};
+
 export class Editor {
   readonly #rpgMap: RPGMap;
   readonly #canvas = document.createElement("canvas");
   readonly #context = this.#canvas.getContext("2d")!;
+  readonly #eventController = new AbortController();
+  readonly camera: Camera = {
+    scale: 1,
+    scaleUnit: 0.07,
+    x: 0,
+    y: 0
+  };
 
   constructor(rpgMap: RPGMap) {
     this.#rpgMap = rpgMap;
@@ -18,7 +31,6 @@ export class Editor {
   static readonly #BASE_TILE_SIZE = 64;
 
   #parentNode?: HTMLElement;
-  #scale = 1;
   #currentTime = 0;
   #currentFrameFlip = 0;
 
@@ -31,7 +43,7 @@ export class Editor {
     const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
-    const tileSize = (Editor.#BASE_TILE_SIZE * this.#scale) | 0;
+    const tileSize = Editor.#BASE_TILE_SIZE * this.camera.scale | 0;
     const cols = canvas.width / tileSize;
     const rows = canvas.height / tileSize;
     const rpgMap = this.#rpgMap;
@@ -49,9 +61,12 @@ export class Editor {
     context.fillStyle = "#000";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    const tileOffsetX = this.camera.x / tileSize;
+    const tileOffsetY = this.camera.y / tileSize;
+
     const render = (tileMap: TileMap): void => {
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
+      for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
+        for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
           const tile = tileMap.get(x, y);
 
           if (!tile) {
@@ -69,14 +84,10 @@ export class Editor {
 
               context.drawImage(
                 dqStillSprites,
-                tile.sprite.surface.x * 16,
-                tile.sprite.surface.y * 16,
-                16,
-                16,
-                tileSize * x,
-                tileSize * y,
-                tileSize,
-                tileSize
+                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
+                16, 16,
+                tileSize * x - this.camera.x, tileSize * y - this.camera.y,
+                tileSize, tileSize
               );
 
               break;
@@ -109,8 +120,8 @@ export class Editor {
             surface.y,
             16,
             16,
-            tileSize * human.position.x,
-            tileSize * human.position.y,
+            tileSize * human.position.x - this.camera.x,
+            tileSize * human.position.y - this.camera.y,
             tileSize,
             tileSize
           );
@@ -130,8 +141,8 @@ export class Editor {
             16 * human.direction,
             16,
             16,
-            tileSize * human.position.x,
-            tileSize * human.position.y,
+            tileSize * human.position.x - this.camera.x,
+            tileSize * human.position.y - this.camera.y,
             tileSize,
             tileSize
           );
@@ -144,8 +155,6 @@ export class Editor {
   #mounted = false;
   #resizeObserver?: ResizeObserver;
 
-  static readonly #SCALE_UNIT = 0.07;
-
   async mount(parentNode: HTMLElement): Promise<void> {
     if (this.#mounted) {
       // TODO: brush up error message
@@ -157,17 +166,58 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
-    canvas.addEventListener("wheel", (event) => {
-      const newScale =
-        event.deltaY > 0
-          ? Math.max(Editor.#SCALE_UNIT, this.#scale - Editor.#SCALE_UNIT)
-          : this.#scale + Editor.#SCALE_UNIT;
+    canvas.addEventListener("wheel", event => {
+      const newScale = event.deltaY > 0
+        ? Math.max(this.camera.scaleUnit, this.camera.scale - this.camera.scaleUnit)
+        : this.camera.scale + this.camera.scaleUnit;
 
       if (Editor.#BASE_TILE_SIZE * newScale < 10) {
         return;
       }
 
-      this.#scale = newScale;
+      this.camera.scale = newScale;
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    let movingCamera = false;
+
+    canvas.addEventListener("pointerdown", event => {
+      if (event.button !== 2) {
+        return;
+      }
+
+      movingCamera = true;
+      canvas.setPointerCapture(event.pointerId);
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      if (!movingCamera) {
+        return;
+      }
+
+      this.camera.x -= event.movementX
+      this.camera.y -= event.movementY
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("pointerup", () => {
+      if (!movingCamera) {
+        return
+      }
+
+      movingCamera = false;
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("contextmenu", event => {
+      event.preventDefault();
+    }, {
+      signal: this.#eventController.signal
     });
 
     const render = () => {
@@ -189,6 +239,7 @@ export class Editor {
       throw new Error("");
     }
 
+    this.#eventController.abort();
     this.#canvas.remove();
     this.#resizeObserver?.disconnect();
     this.#resizeObserver = undefined;
