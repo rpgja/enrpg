@@ -1,12 +1,12 @@
 import { loadImage } from "@/utils/image";
 import { useEffect, useState } from "react";
 
-export const useImage = (...args: Parameters<typeof loadImage>): HTMLImageElement | undefined => {
+export const useImage = (src:string): HTMLImageElement | undefined => {
   const [image, setImage] = useState<HTMLImageElement>();
 
   useEffect(() => {
-    loadImage(...args).then(setImage)
-  }, []);
+    loadImage(src).then(setImage)
+  }, [src]);
 
   return image;
 };

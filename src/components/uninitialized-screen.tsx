@@ -6,7 +6,6 @@ import arrayShuffle from "array-shuffle";
 import { DQAnimationSpriteSurface } from "@/features/rpgen/types/sprite";
 import { Direction } from "@/features/rpgen/types/types";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import { useCreateMapDialogStore } from "./create-map-dialog";
 import { useLoadMapDialogStore } from "./load-map-dialog";
@@ -32,7 +31,7 @@ export default function UninitializedScreen(): ReactNode {
         arrayFrom
       )}
     </Stack>
-  ), []);
+  ), [surfaces]);
 
   return (
     <Stack

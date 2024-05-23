@@ -1,7 +1,7 @@
-import { Position } from "./types";
+import type { Position } from "./types";
 
 export type LookPoint = {
-  position: Position,
-  once: boolean,
-  message: string
+	position: Position;
+	once: boolean;
+	message: string;
 };
