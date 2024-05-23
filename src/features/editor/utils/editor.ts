@@ -1,7 +1,8 @@
-import { SpriteType } from "@/features/rpgen/types/sprite";
+import { DQAnimationSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import { Position } from "@/features/rpgen/types/types";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { TileMap } from "@/features/rpgen/utils/tile";
+import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 
 export type Camera = Position & {
@@ -30,6 +31,8 @@ export class Editor {
   static readonly #BASE_TILE_SIZE = 64;
 
   #parentNode?: HTMLElement;
+  #currentTime = 0;
+  #currentFrameFlip = 0;
 
   render(): void {
     if (!this.#mounted) {
@@ -94,6 +97,34 @@ export class Editor {
 
     render(rpgMap.floor);
     render(rpgMap.objects);
+
+    const dqAnimationSprites = requestImage(
+      "https://rpgen.site/dq/img/dq/char.png"
+    );
+    for (const human of rpgMap.humans) {
+      if (
+        !dqAnimationSprites ||
+        human.sprite.type !== SpriteType.DQAnimationSprite
+      ) {
+        continue;
+      }
+      const surface = getDQAnimationSpritePosition(
+        human.sprite.surface,
+        human.direction,
+        this.#currentFrameFlip
+      );
+      context.drawImage(
+        dqAnimationSprites,
+        surface.x,
+        surface.y,
+        16,
+        16,
+        tileSize * human.position.x,
+        tileSize * human.position.y,
+        tileSize,
+        tileSize
+      );
+    }
   }
 
   #mounted = false;
@@ -165,6 +196,8 @@ export class Editor {
     });
 
     const render = () => {
+      this.#currentTime = performance.now();
+      this.#currentFrameFlip = ((this.#currentTime / 500) | 0) % 2;
       this.render();
       requestAnimationFrame(render);
     };
