@@ -11,6 +11,7 @@
     "@mui/material": "^5.15.18",
     "@mui/material-nextjs": "^5.15.11",
     "array-shuffle": "^3.0.0",
+    "enrpg": ".",
     "iter-tools": "^7.5.3",
     "lz-string": "^1.5.0",
     "mui-nested-menu": "^3.4.0",
