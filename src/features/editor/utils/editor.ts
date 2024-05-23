@@ -1,3 +1,6 @@
+import { TeleportPoint } from "@/features/rpgen/types/teleport-point";
+import { LookPoint } from "@/features/rpgen/types/look-point";
+import { EventPoint } from "@/features/rpgen/types/event-point";
 import { SpriteType } from "@/features/rpgen/types/sprite";
 import { Position } from "@/features/rpgen/types/types";
 import { RPGMap } from "@/features/rpgen/utils/map";
@@ -93,7 +96,7 @@ export class Editor {
     const tileOffsetX = this.camera.x / tileSize;
     const tileOffsetY = this.camera.y / tileSize;
 
-    const render = (tileMap: TileMap): void => {
+    const renderTile = (tileMap: TileMap): void => {
       for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
         for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
           const tile = tileMap.get(x, y);
@@ -150,8 +153,8 @@ export class Editor {
       }
     };
 
-    render(rpgMap.floor);
-    render(rpgMap.objects);
+    renderTile(rpgMap.floor);
+    renderTile(rpgMap.objects);
 
     for (const human of rpgMap.humans) {
       switch (human.sprite.type) {
@@ -223,6 +226,35 @@ export class Editor {
         }
       }
     }
+
+    const renderPoint = (
+      points: TeleportPoint[] | LookPoint[] | EventPoint[],
+      surface: Position
+    ): void => {
+      const dqStillSprites = requestImage(
+        "https://rpgen.site/dq/img/dq/map.png"
+      );
+      if (!dqStillSprites) {
+        return;
+      }
+      for (const point of points) {
+        context.drawImage(
+          dqStillSprites,
+          surface.x * 16,
+          surface.y * 16,
+          16,
+          16,
+          tileSize * point.position.x - this.camera.x,
+          tileSize * point.position.y - this.camera.y,
+          tileSize,
+          tileSize
+        );
+      }
+    };
+
+    renderPoint(rpgMap.teleportPoints, { x: 23, y: 7 });
+    renderPoint(rpgMap.lookPoints, { x: 22, y: 8 });
+    renderPoint(rpgMap.eventPoints, { x: 7, y: 8 });
 
     if (this.rpgenGrid !== undefined) {
       const [cols, rows] = rpgenGridToSize(this.rpgenGrid);
