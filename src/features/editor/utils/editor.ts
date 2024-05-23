@@ -91,17 +91,17 @@ export class Editor {
       "https://rpgen.site/dq/img/dq/char.png"
     );
     for (const human of rpgMap.humans) {
-      if (human.sprite.type !== SpriteType.DQAnimationSprite) {
-        return;
+      if (
+        !dqAnimationSprites ||
+        human.sprite.type !== SpriteType.DQAnimationSprite
+      ) {
+        continue;
       }
       const surface = getDQAnimationSpritePosition(
         human.sprite.surface,
         human.direction,
         this.#currentFrameFlip
       );
-      if (!dqAnimationSprites) {
-        continue;
-      }
       context.drawImage(
         dqAnimationSprites,
         surface.x,
