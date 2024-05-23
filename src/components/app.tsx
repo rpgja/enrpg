@@ -11,6 +11,8 @@ import UninitializedScreen from "./uninitialized-screen";
 import CreateMapDialog from "./create-map-dialog";
 import LoadMapDialog from "./load-map-dialog";
 import { create } from "zustand";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
 import { Editor } from "@/features/editor/utils/editor";
 
 export type RPGMapStore = {
@@ -57,9 +59,17 @@ export default function App(): ReactNode {
       <CreateMapDialog />
       <LoadMapDialog />
       <Stack height="100svh">
-        <Stack ref={setAppBar} direction="row">
-          <Button>click</Button>
-        </Stack>
+        <AppBar position="static">
+          <Toolbar
+            disableGutters
+            variant="dense"
+            sx={{ minHeight: 0 }}
+          >
+            <Stack ref={setAppBar} direction="row">
+              <Button>click</Button>
+            </Stack>
+          </Toolbar>
+        </AppBar>
         <noscript>
           <Alert severity="error">
             JavaScriptを有効にしてください
