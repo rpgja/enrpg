@@ -6,8 +6,8 @@ import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 
 export type Camera = Position & {
-  scale: number,
-  scaleUnit: number
+  scale: number;
+  scaleUnit: number;
 };
 
 export class Editor {
@@ -19,7 +19,7 @@ export class Editor {
     scale: 1,
     scaleUnit: 0.07,
     x: 0,
-    y: 0
+    y: 0,
   };
 
   constructor(rpgMap: RPGMap) {
@@ -43,7 +43,7 @@ export class Editor {
     const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
-    const tileSize = Editor.#BASE_TILE_SIZE * this.camera.scale | 0;
+    const tileSize = (Editor.#BASE_TILE_SIZE * this.camera.scale) | 0;
     const cols = canvas.width / tileSize;
     const rows = canvas.height / tileSize;
     const rpgMap = this.#rpgMap;
@@ -84,12 +84,36 @@ export class Editor {
 
               context.drawImage(
                 dqStillSprites,
-                tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
-                16, 16,
-                tileSize * x - this.camera.x, tileSize * y - this.camera.y,
-                tileSize, tileSize
+                tile.sprite.surface.x * 16,
+                tile.sprite.surface.y * 16,
+                16,
+                16,
+                tileSize * x - this.camera.x,
+                tileSize * y - this.camera.y,
+                tileSize,
+                tileSize
               );
 
+              break;
+            }
+            case SpriteType.CustomStillSprite: {
+              const customStillSprite = requestImage(
+                `https://rpgen.site/dq/sprites/${tile.sprite.id}/sprite.png`
+              );
+              if (!customStillSprite) {
+                continue;
+              }
+              context.drawImage(
+                customStillSprite,
+                0,
+                0,
+                16,
+                16,
+                tileSize * x - this.camera.x,
+                tileSize * y - this.camera.y,
+                tileSize,
+                tileSize
+              );
               break;
             }
           }
@@ -148,6 +172,26 @@ export class Editor {
           );
           break;
         }
+        case SpriteType.CustomStillSprite: {
+          const customStillSprite = requestImage(
+            `https://rpgen.site/dq/sprites/${human.sprite.id}/sprite.png`
+          );
+          if (!customStillSprite) {
+            continue;
+          }
+          context.drawImage(
+            customStillSprite,
+            0,
+            0,
+            16,
+            16,
+            tileSize * human.position.x - this.camera.x,
+            tileSize * human.position.y - this.camera.y,
+            tileSize,
+            tileSize
+          );
+          break;
+        }
       }
     }
   }
@@ -166,59 +210,83 @@ export class Editor {
     canvas.width = parentNode.offsetWidth;
     canvas.height = parentNode.offsetHeight;
 
-    canvas.addEventListener("wheel", event => {
-      const newScale = event.deltaY > 0
-        ? Math.max(this.camera.scaleUnit, this.camera.scale - this.camera.scaleUnit)
-        : this.camera.scale + this.camera.scaleUnit;
+    canvas.addEventListener(
+      "wheel",
+      (event) => {
+        const newScale =
+          event.deltaY > 0
+            ? Math.max(
+                this.camera.scaleUnit,
+                this.camera.scale - this.camera.scaleUnit
+              )
+            : this.camera.scale + this.camera.scaleUnit;
 
-      if (Editor.#BASE_TILE_SIZE * newScale < 10) {
-        return;
+        if (Editor.#BASE_TILE_SIZE * newScale < 10) {
+          return;
+        }
+
+        this.camera.scale = newScale;
+      },
+      {
+        signal: this.#eventController.signal,
       }
-
-      this.camera.scale = newScale;
-    }, {
-      signal: this.#eventController.signal
-    });
+    );
 
     let movingCamera = false;
 
-    canvas.addEventListener("pointerdown", event => {
-      if (event.button !== 2) {
-        return;
+    canvas.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (event.button !== 2) {
+          return;
+        }
+
+        movingCamera = true;
+        canvas.setPointerCapture(event.pointerId);
+      },
+      {
+        signal: this.#eventController.signal,
       }
+    );
 
-      movingCamera = true;
-      canvas.setPointerCapture(event.pointerId);
-    }, {
-      signal: this.#eventController.signal
-    });
+    canvas.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!movingCamera) {
+          return;
+        }
 
-    canvas.addEventListener("pointermove", event => {
-      if (!movingCamera) {
-        return;
+        this.camera.x -= event.movementX;
+        this.camera.y -= event.movementY;
+      },
+      {
+        signal: this.#eventController.signal,
       }
+    );
 
-      this.camera.x -= event.movementX
-      this.camera.y -= event.movementY
-    }, {
-      signal: this.#eventController.signal
-    });
+    canvas.addEventListener(
+      "pointerup",
+      () => {
+        if (!movingCamera) {
+          return;
+        }
 
-    canvas.addEventListener("pointerup", () => {
-      if (!movingCamera) {
-        return
+        movingCamera = false;
+      },
+      {
+        signal: this.#eventController.signal,
       }
+    );
 
-      movingCamera = false;
-    }, {
-      signal: this.#eventController.signal
-    });
-
-    canvas.addEventListener("contextmenu", event => {
-      event.preventDefault();
-    }, {
-      signal: this.#eventController.signal
-    });
+    canvas.addEventListener(
+      "contextmenu",
+      (event) => {
+        event.preventDefault();
+      },
+      {
+        signal: this.#eventController.signal,
+      }
+    );
 
     const render = () => {
       this.#currentTime = performance.now();
