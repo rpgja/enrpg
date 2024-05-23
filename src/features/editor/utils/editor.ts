@@ -1,7 +1,7 @@
 import { SpriteType } from "@/features/rpgen/types/sprite";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { TileMap } from "@/features/rpgen/utils/tile";
-import { getImage, loadImage } from "@/utils/image";
+import { requestImage } from "@/utils/image";
 
 export class Editor {
   readonly #rpgMap: RPGMap;
@@ -25,7 +25,7 @@ export class Editor {
       throw new Error("");
     }
 
-    const dqStillSprites = getImage("https://rpgen.site/dq/img/dq/map.png")!;
+    const dqStillSprites = requestImage("https://rpgen.site/dq/img/dq/map.png");
     const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
@@ -58,6 +58,10 @@ export class Editor {
 
           switch (tile.sprite.type) {
             case SpriteType.DQStillSprite: {
+              if (!dqStillSprites) {
+                continue;
+              }
+
               context.drawImage(
                 dqStillSprites,
                 tile.sprite.surface.x * 16, tile.sprite.surface.y * 16,
@@ -103,18 +107,16 @@ export class Editor {
       }
 
       this.#scale = newScale;
-
-      render();
     })
 
     const render = () => {
       this.render();
+      requestAnimationFrame(render);
     };
 
     this.#parentNode = parentNode;
     parentNode.append(canvas);
     this.#mounted = true;
-    await loadImage("https://rpgen.site/dq/img/dq/map.png");
     requestAnimationFrame(render);
   }
 
