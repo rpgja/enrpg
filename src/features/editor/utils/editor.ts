@@ -40,7 +40,6 @@ export class Editor {
       throw new Error("");
     }
 
-    const dqStillSprites = requestImage("https://rpgen.site/dq/img/dq/map.png");
     const parentNode = this.#parentNode!;
     const canvas = this.#canvas;
     const context = this.#context;
@@ -76,6 +75,9 @@ export class Editor {
 
           switch (tile.sprite.type) {
             case SpriteType.DQStillSprite: {
+              const dqStillSprites = requestImage(
+                "https://rpgen.site/dq/img/dq/map.png"
+              );
               if (!dqStillSprites) {
                 continue;
               }
@@ -98,32 +100,55 @@ export class Editor {
     render(rpgMap.floor);
     render(rpgMap.objects);
 
-    const dqAnimationSprites = requestImage(
-      "https://rpgen.site/dq/img/dq/char.png"
-    );
     for (const human of rpgMap.humans) {
-      if (
-        !dqAnimationSprites ||
-        human.sprite.type !== SpriteType.DQAnimationSprite
-      ) {
-        continue;
+      switch (human.sprite.type) {
+        case SpriteType.DQAnimationSprite: {
+          const dqAnimationSprites = requestImage(
+            "https://rpgen.site/dq/img/dq/char.png"
+          );
+          if (!dqAnimationSprites) {
+            continue;
+          }
+          const surface = getDQAnimationSpritePosition(
+            human.sprite.surface,
+            human.direction,
+            this.#currentFrameFlip
+          );
+          context.drawImage(
+            dqAnimationSprites,
+            surface.x,
+            surface.y,
+            16,
+            16,
+            tileSize * human.position.x,
+            tileSize * human.position.y,
+            tileSize,
+            tileSize
+          );
+
+          break;
+        }
+        case SpriteType.CustomAnimationSprite: {
+          const customAnimationSprite = requestImage(
+            `https://rpgen.pw/dq/sAnims/res/${human.sprite.id}.png`
+          );
+          if (!customAnimationSprite) {
+            continue;
+          }
+          context.drawImage(
+            customAnimationSprite,
+            16 * this.#currentFrameFlip,
+            16 * human.direction,
+            16,
+            16,
+            tileSize * human.position.x,
+            tileSize * human.position.y,
+            tileSize,
+            tileSize
+          );
+          break;
+        }
       }
-      const surface = getDQAnimationSpritePosition(
-        human.sprite.surface,
-        human.direction,
-        this.#currentFrameFlip
-      );
-      context.drawImage(
-        dqAnimationSprites,
-        surface.x,
-        surface.y,
-        16,
-        16,
-        tileSize * human.position.x - this.camera.x,
-        tileSize * human.position.y - this.camera.y,
-        tileSize,
-        tileSize
-      );
     }
   }
 
