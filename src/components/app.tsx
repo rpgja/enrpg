@@ -3,13 +3,13 @@
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { useEffect, useState, type ReactNode } from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button"
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import TimerProvider from "./timer-provider";
 import UninitializedScreen from "./uninitialized-screen";
-import CreateMapDialog from "./create-map-dialog";
-import LoadMapDialog from "./load-map-dialog";
+import CreateMapDialog, { useCreateMapDialogStore } from "./create-map-dialog";
+import LoadMapDialog, { useLoadMapDialogStore } from "./load-map-dialog";
+import { NestedDropdown } from "mui-nested-menu";
 import { create } from "zustand";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -28,6 +28,8 @@ export default function App(): ReactNode {
   const { rpgMap, setRPGMap } = useRPGMapStore();
   const [appBar, setAppBar] = useState<HTMLDivElement | null>(null);
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
+  const loadMapDialogStore = useLoadMapDialogStore();
+  const createMapDialogStore = useCreateMapDialogStore();
 
   // HACK
   useEffect(() => {
@@ -66,7 +68,26 @@ export default function App(): ReactNode {
             sx={{ minHeight: 0 }}
           >
             <Stack ref={setAppBar} direction="row">
-              <Button>click</Button>
+              <NestedDropdown
+                menuItemsData={{
+                  label: "ファイル",
+                  items: [
+                    {
+                      label: "新規作成",
+                      callback: () => createMapDialogStore.setOpen(true)
+                    },
+                    {
+                      label: "マップを読み込み",
+                      callback: () => loadMapDialogStore.setOpen(true)
+                    },
+                    {
+                      disabled: !rpgMap,
+                      label: "閉じる",
+                      callback: () => setRPGMap(undefined)
+                    }
+                  ]
+                }}
+              />
             </Stack>
           </Toolbar>
         </AppBar>
