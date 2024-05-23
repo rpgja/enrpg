@@ -13,6 +13,7 @@ export class Editor {
   readonly #rpgMap: RPGMap;
   readonly #canvas = document.createElement("canvas");
   readonly #context = this.#canvas.getContext("2d")!;
+  readonly #eventController = new AbortController();
   readonly camera: Camera = {
     scale: 1,
     scaleUnit: 0.07,
@@ -119,7 +120,49 @@ export class Editor {
       }
 
       this.camera.scale = newScale;
-    })
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    let movingCamera = false;
+
+    canvas.addEventListener("pointerdown", event => {
+      if (event.button !== 2) {
+        return;
+      }
+
+      movingCamera = true;
+      canvas.setPointerCapture(event.pointerId);
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      if (!movingCamera) {
+        return;
+      }
+
+      this.camera.x -= event.movementX
+      this.camera.y -= event.movementY
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("pointerup", () => {
+      if (!movingCamera) {
+        return
+      }
+
+      movingCamera = false;
+    }, {
+      signal: this.#eventController.signal
+    });
+
+    canvas.addEventListener("contextmenu", event => {
+      event.preventDefault();
+    }, {
+      signal: this.#eventController.signal
+    });
 
     const render = () => {
       this.render();
@@ -138,6 +181,7 @@ export class Editor {
       throw new Error("");
     }
 
+    this.#eventController.abort();
     this.#canvas.remove();
     this.#resizeObserver?.disconnect();
     this.#resizeObserver = undefined;
