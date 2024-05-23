@@ -15,17 +15,17 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { Editor } from "@/features/editor/utils/editor";
 
-export type RPGMapStore = {
-  rpgMap?: RPGMap,
-  setRPGMap: (rpgMap: RPGMap | undefined) => void
+export type EditorStore = {
+  editor?: Editor,
+  setEditor: (editor: Editor | undefined) => void
 };
 
-export const useRPGMapStore = create<RPGMapStore>(set => ({
-  setRPGMap: rpgMap => set({ rpgMap })
+export const useEditorStore = create<EditorStore>(set => ({
+  setEditor: editor => set({ editor })
 }));
 
 export default function App(): ReactNode {
-  const { rpgMap, setRPGMap } = useRPGMapStore();
+  const editorStore = useEditorStore();
   const [appBar, setAppBar] = useState<HTMLDivElement | null>(null);
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const loadMapDialogStore = useLoadMapDialogStore();
@@ -33,28 +33,28 @@ export default function App(): ReactNode {
 
   // HACK
   useEffect(() => {
-    if (rpgMap) {
+    if (editorStore.editor) {
       return;
     }
 
     (async () => {
-      setRPGMap(RPGMap.parse(await (await fetch("/examples/sample.dev.txt")).text()));
+      const rpgMap = RPGMap.parse(await (await fetch("/examples/sample.dev.txt")).text());
+
+      editorStore.setEditor(new Editor(rpgMap));
     })();
   }, []);
 
   useEffect(() => {
-    if (!editorContainer || !rpgMap) {
+    if (!editorContainer || !editorStore.editor) {
       return;
     }
 
-    const editor = new Editor(rpgMap);
-
-    editor.mount(editorContainer);
+    editorStore.editor.mount(editorContainer);
 
     return () => {
-      editor.unmount();
+      editorStore.editor?.unmount();
     };
-  }, [editorContainer, rpgMap]);
+  }, [editorContainer, editorStore.editor]);
 
   return (
     <TimerProvider interval={600}>
@@ -81,9 +81,9 @@ export default function App(): ReactNode {
                       callback: () => loadMapDialogStore.setOpen(true)
                     },
                     {
-                      disabled: !rpgMap,
+                      disabled: !editorStore.editor,
                       label: "閉じる",
-                      callback: () => setRPGMap(undefined)
+                      callback: () => editorStore.setEditor(undefined)
                     }
                   ]
                 }}
@@ -97,8 +97,8 @@ export default function App(): ReactNode {
           </Alert>
         </noscript>
         <Box flex={1}>
-          {!rpgMap && <UninitializedScreen />}
-          {!!rpgMap && (
+          {!editorStore.editor && <UninitializedScreen />}
+          {!!editorStore.editor && (
             <Box
               ref={setEditorContainer}
               width="100%"

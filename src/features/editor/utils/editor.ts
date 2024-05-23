@@ -1,4 +1,4 @@
-import { DQAnimationSprite, SpriteType } from "@/features/rpgen/types/sprite";
+import { SpriteType } from "@/features/rpgen/types/sprite";
 import { Position } from "@/features/rpgen/types/types";
 import { RPGMap } from "@/features/rpgen/utils/map";
 import { TileMap } from "@/features/rpgen/utils/tile";
@@ -119,8 +119,8 @@ export class Editor {
         surface.y,
         16,
         16,
-        tileSize * human.position.x,
-        tileSize * human.position.y,
+        tileSize * human.position.x - this.camera.x,
+        tileSize * human.position.y - this.camera.y,
         tileSize,
         tileSize
       );
