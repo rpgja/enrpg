@@ -95,20 +95,17 @@ export class Editor {
         return;
       }
       const surface = getDQAnimationSpritePosition(
-        1,
-        1,
-        1
-        // human.sprite.surface,
-        // human.direction,
-        // this.#currentFrameFlip
+        human.sprite.surface,
+        human.direction,
+        this.#currentFrameFlip
       );
       if (!dqAnimationSprites) {
         continue;
       }
       context.drawImage(
         dqAnimationSprites,
-        surface.x * 16,
-        surface.y * 16,
+        surface.x,
+        surface.y,
         16,
         16,
         tileSize * human.position.x,
