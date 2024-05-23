@@ -1,3 +1,4 @@
+import { DQAnimationSprite, HumanSprite, StillSprite } from "./sprite.js";
 import { Position } from "./types.js";
 
 export enum CommandType {
@@ -56,17 +57,27 @@ export type DisplayMessageCommand = {
   message: string
 };
 
-// TODO
-export type DisplayConfirmCommand = {};
+export type DisplayConfirmCommand = {
+  choices: [
+    string, // yes
+    string, // no
+    ...string[] // additional choice
+  ],
+  displayPosition: Position,
+  /**
+   * 直前のメッセージを消さない
+   */
+  keepPreviousMessage: boolean
+};
 
 // TODO
 export type DisplaySelectCommand = {
   type: CommandType.DisplaySelect
 };
 
-// TODO
 export type ChangeMessageFontCommand = {
-  type: CommandType.ChangeMessageFont
+  type: CommandType.ChangeMessageFont,
+  fontFamily: string
 };
 
 export type DisplayGoldCommand = {
@@ -78,9 +89,10 @@ export type HideGoldCommand = {
 };
 
 // Screen control
-// TODO
+
 export type WaitCommand = {
-  type: CommandType.Wait
+  type: CommandType.Wait,
+  delay: number
 };
 
 // TODO
@@ -93,16 +105,18 @@ export type ChangeWeatherCommand = {
   type: CommandType.ChangeWeather
 };
 
-
 // Graphics
-// TODO
+
 export type ChangeObjectSpriteCommand = {
-  type: CommandType.ChangeObjectSprite
+  type: CommandType.ChangeObjectSprite,
+  targetPosition: Position,
+  sprite: StillSprite
 };
 
-// TODO
 export type ChangeHumanSpriteCommand = {
-  type: CommandType.ChangeHumanSprite
+  type: CommandType.ChangeHumanSprite,
+  targetPosition?: Position,
+  sprite: HumanSprite
 };
 
 // TODO
@@ -222,9 +236,23 @@ export type ManipulateGoldCommand = {
 
 
 // Events
-// TODO
+
+export type SaveAndLoadCommandCondition = {
+  switch: boolean,
+  gold: boolean,
+  party: boolean,
+  npc: boolean
+};
+
+export enum SaveAndLoadCommandOperation {
+  Save,
+  Load
+};
+
 export type SaveAndLoadCommand = {
-  type: CommandType.SaveAndLoad
+  type: CommandType.SaveAndLoad,
+  operation: SaveAndLoadCommandOperation,
+  condition: SaveAndLoadCommandCondition
 };
 
 export type EndEventCommand = {
@@ -241,9 +269,9 @@ export type GotoCommand = {
   eventPosition?: Position
 };
 
-// TODO
 export type CommentCommand = {
-  type: CommandType.Comment
+  type: CommandType.Comment,
+  message: string
 };
 
 export type Command =

@@ -1,4 +1,4 @@
-import { Sprite } from "./sprite";
+import { HumanSprite, Sprite } from "./sprite";
 import { Direction, Position } from "./types";
 
 export enum HumanBehavior {
@@ -12,7 +12,7 @@ export enum HumanBehavior {
 }
 
 export type Human = {
-  sprite: Sprite,
+  sprite: HumanSprite,
   position: Position,
   direction: Direction,
   behavior: HumanBehavior,

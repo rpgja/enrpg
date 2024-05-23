@@ -138,3 +138,5 @@ export type AnimationSprite = DQAnimationSprite | CustomAnimationSprite;
 export type StillSprite = DQStillSprite | CustomStillSprite;
 
 export type Sprite = AnimationSprite | StillSprite;
+
+export type HumanSprite = DQAnimationSprite | CustomSprite;
