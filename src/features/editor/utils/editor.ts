@@ -120,8 +120,8 @@ export class Editor {
             surface.y,
             16,
             16,
-            tileSize * human.position.x,
-            tileSize * human.position.y,
+            tileSize * human.position.x - this.camera.x,
+            tileSize * human.position.y - this.camera.y,
             tileSize,
             tileSize
           );
@@ -141,8 +141,8 @@ export class Editor {
             16 * human.direction,
             16,
             16,
-            tileSize * human.position.x,
-            tileSize * human.position.y,
+            tileSize * human.position.x - this.camera.x,
+            tileSize * human.position.y - this.camera.y,
             tileSize,
             tileSize
           );
