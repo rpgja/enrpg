@@ -5,6 +5,27 @@ import { TileMap } from "@/features/rpgen/utils/tile";
 import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 
+export enum RPGENGrid {
+  Medium,
+  Large,
+  Largest
+}
+
+/**
+ * ```js
+ * [dq.CANVAS_WIDTH / (dq.CHIP_SIZE_X * (clip_s / dq.scaleMultiplier)), dq.CANVAS_HEIGHT / (dq.CHIP_SIZE_Y * (clip_s / dq.scaleMultiplier))]
+ * ```
+ */
+export type RPGENGridSize = [cols: number, rows: number];
+
+export const rpgenGridToSize = (rpgenGrid: RPGENGrid): RPGENGridSize => {
+  switch (rpgenGrid) {
+    case RPGENGrid.Medium: return [15, 11.25];
+    case RPGENGrid.Large: return [30, 22.5];
+    case RPGENGrid.Largest: return [60, 45];
+  }
+};
+
 export type Camera = Position & {
   scale: number;
   scaleUnit: number;
@@ -33,6 +54,14 @@ export class Editor {
   #parentNode?: HTMLElement;
   #currentTime = 0;
   #currentFrameFlip = 0;
+
+  rpgenGrid?: RPGENGrid
+
+  setRPGENGrid(rpgenGrid: RPGENGrid | undefined): void {
+    this.rpgenGrid = rpgenGrid;
+  }
+
+  #frames = 0n;
 
   render(): void {
     if (!this.#mounted) {
@@ -194,6 +223,22 @@ export class Editor {
         }
       }
     }
+
+    if (this.rpgenGrid !== undefined) {
+      const [cols, rows] = rpgenGridToSize(this.rpgenGrid);
+      const camera = this.camera;
+
+      context.imageSmoothingEnabled = false;
+      context.strokeStyle = `hsl(${this.#frames % 360n} 100% 50%)`;
+      context.lineWidth = 2 * camera.scale;
+      context.strokeRect(
+        camera.x > 0 ? tileSize - camera.x % tileSize : Math.abs(camera.x % tileSize),
+        camera.y > 0 ? tileSize - camera.y % tileSize : Math.abs(camera.y % tileSize),
+        cols * tileSize, rows * tileSize
+      );
+    }
+
+    this.#frames++;
   }
 
   #mounted = false;
@@ -216,9 +261,9 @@ export class Editor {
         const newScale =
           event.deltaY > 0
             ? Math.max(
-                this.camera.scaleUnit,
-                this.camera.scale - this.camera.scaleUnit
-              )
+              this.camera.scaleUnit,
+              this.camera.scale - this.camera.scaleUnit
+            )
             : this.camera.scale + this.camera.scaleUnit;
 
         if (Editor.#BASE_TILE_SIZE * newScale < 10) {
