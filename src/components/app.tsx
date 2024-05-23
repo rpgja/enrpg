@@ -25,6 +25,7 @@ export const useEditorStore = create<EditorStore>(set => ({
 }));
 
 export default function App(): ReactNode {
+  const [_updater, setUpdater] = useState(0n);
   const editorStore = useEditorStore();
   const [appBar, setAppBar] = useState<HTMLDivElement | null>(null);
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
@@ -84,6 +85,44 @@ export default function App(): ReactNode {
                       disabled: !editorStore.editor,
                       label: "閉じる",
                       callback: () => editorStore.setEditor(undefined)
+                    }
+                  ]
+                }}
+              />
+              <NestedDropdown
+                menuItemsData={{
+                  label: "表示",
+                  items: [
+                    {
+                      disabled: !editorStore.editor?.camera,
+                      label: "カメラ",
+                      items: [
+                        {
+                          label: "位置をリセット",
+                          callback: () => {
+                            const camera = editorStore.editor?.camera;
+
+                            if (!camera) {
+                              return;
+                            }
+
+                            camera.x = 0;
+                            camera.y = 0;
+                          }
+                        },
+                        {
+                          label: "拡大率をリセット",
+                          callback: () => {
+                            const camera = editorStore.editor?.camera;
+
+                            if (!camera) {
+                              return;
+                            }
+
+                            camera.scale = 1;
+                          }
+                        }
+                      ]
                     }
                   ]
                 }}
