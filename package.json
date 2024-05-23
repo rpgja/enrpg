@@ -21,6 +21,7 @@
   },
   "description": "This is a web application of the map editor dedicated to RPGEN.",
   "devDependencies": {
+    "@biomejs/biome": "^1.7.3",
     "@types/node": "^20.12.12",
     "@types/react": "^18.3.2",
     "typescript": "^5.4.5"
@@ -42,5 +43,8 @@
     "dev": "next dev"
   },
   "type": "module",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
 }

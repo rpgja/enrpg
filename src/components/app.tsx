@@ -1,7 +1,7 @@
 "use client";
 
 import { RPGMap } from "@/features/rpgen/utils/map";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Stack from "@mui/material/Stack";
 import CheckIcon from "@mui/icons-material/Check";
 import Box from "@mui/material/Box";
@@ -32,19 +32,22 @@ export default function App(): ReactNode {
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const loadMapDialogStore = useLoadMapDialogStore();
   const createMapDialogStore = useCreateMapDialogStore();
+  const loadedExample=useRef(false);
 
   // HACK
   useEffect(() => {
-    if (editorStore.editor) {
+    if (editorStore.editor || loadedExample.current) {
       return;
     }
+
+    loadedExample.current=true;
 
     (async () => {
       const rpgMap = RPGMap.parse(await (await fetch("/examples/sample.dev.txt")).text());
 
       editorStore.setEditor(new Editor(rpgMap));
     })();
-  }, []);
+  }, [editorStore.editor,editorStore.setEditor]);
 
   useEffect(() => {
     if (!editorContainer || !editorStore.editor) {

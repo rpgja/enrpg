@@ -1,5 +1,5 @@
-import { StillSprite } from "./sprite";
-import { Position } from "./types";
+import type { StillSprite } from "./sprite";
+import type { Position } from "./types";
 
 /**
  * e.g. "123", "123C"
@@ -7,7 +7,7 @@ import { Position } from "./types";
 export type RawTile = string;
 
 export type Tile = {
-  sprite: StillSprite,
-  position: Position,
-  collision: boolean
+	sprite: StillSprite;
+	position: Position;
+	collision: boolean;
 };
