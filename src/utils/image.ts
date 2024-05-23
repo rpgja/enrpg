@@ -29,7 +29,8 @@ export const loadImage = (src: string): Promise<HTMLImageElement> => {
     return cached.then();
   }
 
-  const { resolve, reject, promise } = Promise.withResolvers<HTMLImageElement>();
+  const { resolve, reject, promise } =
+    Promise.withResolvers<HTMLImageElement>();
 
   cache.set(src, promise);
 
@@ -41,9 +42,9 @@ export const loadImage = (src: string): Promise<HTMLImageElement> => {
   img.onload = () => {
     cleanUp();
     cache.set(src, img);
-    resolve(img)
+    resolve(img);
   };
-  img.onerror = event => {
+  img.onerror = (event) => {
     cleanUp();
     cache.delete(src);
     reject(event);
