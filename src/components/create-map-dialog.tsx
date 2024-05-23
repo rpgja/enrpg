@@ -15,8 +15,6 @@ export const useCreateMapDialogStore = create<CreateMapDialogStore>(set => ({
 export default function CreateMapDialog(): ReactNode {
   const { open, setOpen } = useCreateMapDialogStore();
 
-  console.log(open)
-
   return (
     <Dialog
       onClose={() => setOpen(false)}

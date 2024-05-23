@@ -35,8 +35,6 @@ export default function LoadMapDialog(): ReactNode {
   const [disabled, setDisabled] = useState(false);
   const [mapData, setMapData] = useState("");
 
-  console.log(open)
-
   return (
     <Dialog
       onClose={() => setOpen(false)}
