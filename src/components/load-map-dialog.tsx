@@ -54,9 +54,8 @@ export default function LoadMapDialog(): ReactNode {
             onChange={(_event, checked) => setLoadCompressed(checked)}
           />
           <TextField
-            sx={{
-              width: "500px",
-            }}
+            sx={{ width: "500px" }}
+            helperText={error}
             error={!!error}
             onFocus={() => setError("")}
             multiline
