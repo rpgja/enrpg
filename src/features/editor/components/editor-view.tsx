@@ -39,6 +39,7 @@ export default function EditorView(): ReactNode {
 
     return () => {
       editor.renderer.stopTicking();
+      editor.renderer.camera.detachElement();
     };
   }, [editor, canvasContainer]);
 
@@ -46,7 +47,7 @@ export default function EditorView(): ReactNode {
     <>
       <CreateMapDialog />
       <LoadMapDialog />
-      <Stack height="100svh">
+      <Stack height="100svh" overflow="hidden">
         <MenuBar />
         <Box flex={1} height="100%">
           {!editor && <UninitializedScreen />}
