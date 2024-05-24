@@ -82,13 +82,13 @@ export default function LoadMapDialog(): ReactNode {
               const rpgMap = RPGMap.parse(actualMapData);
 
               setEditor(new Editor(rpgMap));
-              setDisabled(false);
+              setOpen(false);
             } catch (error) {
               setError("マップデータの読み込みに問題が発生しました");
               console.error(error);
             }
 
-            setOpen(false);
+            setDisabled(false);
           }}
         >
           読み込む
