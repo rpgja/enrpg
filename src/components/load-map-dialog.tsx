@@ -1,18 +1,18 @@
-import { type ReactNode, useState } from "react";
-import { create } from "zustand";
+import { Editor } from "@/features/editor/utils/editor";
+import { RPGMap } from "@/features/rpgen/utils/map";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
-import Stack from "@mui/material/Stack";
+import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import DialogActions from "@mui/material/DialogActions";
-import TextField from "@mui/material/TextField";
-import { useEditorStore } from "./app";
-import Button from "@mui/material/Button";
-import { RPGMap } from "@/features/rpgen/utils/map";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import { decompressFromEncodedURIComponent } from "lz-string";
-import { Editor } from "@/features/editor/utils/editor";
+import { type ReactNode, useState } from "react";
+import { create } from "zustand";
+import { useEditorStore } from "./app";
 
 export type LoadMapDialogStore = {
   open: boolean;
@@ -41,6 +41,7 @@ export default function LoadMapDialog(): ReactNode {
   const setEditor = useEditorStore((store) => store.setEditor);
   const [disabled, setDisabled] = useState(false);
   const [mapData, setMapData] = useState("");
+  const [error, setError] = useState("");
 
   return (
     <Dialog onClose={() => setOpen(false)} open={open}>
@@ -56,6 +57,8 @@ export default function LoadMapDialog(): ReactNode {
             sx={{
               width: "500px",
             }}
+            error={!!error}
+            onFocus={() => setError("")}
             multiline
             rows={5}
             placeholder={loadCompressed ? COMPRESSED_PLACEHOLDER : PLACEHOLDER}
@@ -69,15 +72,22 @@ export default function LoadMapDialog(): ReactNode {
           disabled={disabled}
           onClick={() => {
             setDisabled(true);
+            setError("");
 
-            const actualMapData = loadCompressed
-              ? decompressFromEncodedURIComponent(mapData.replace(/^L1/, ""))
-              : mapData;
+            try {
+              const actualMapData = loadCompressed
+                ? decompressFromEncodedURIComponent(mapData.replace(/^L1/, ""))
+                : mapData;
 
-            const rpgMap = RPGMap.parse(actualMapData);
+              const rpgMap = RPGMap.parse(actualMapData);
 
-            setEditor(new Editor(rpgMap));
-            setDisabled(false);
+              setEditor(new Editor(rpgMap));
+              setDisabled(false);
+            } catch (error) {
+              setError("マップデータの読み込みに問題が発生しました");
+              console.error(error);
+            }
+
             setOpen(false);
           }}
         >
