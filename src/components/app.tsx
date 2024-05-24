@@ -1,20 +1,25 @@
 "use client";
 
+import {
+  Editor,
+  RPGENGrid,
+  RPGENGridColor,
+} from "@/features/editor/utils/editor";
 import { RPGMap } from "@/features/rpgen/utils/map";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import Stack from "@mui/material/Stack";
 import CheckIcon from "@mui/icons-material/Check";
-import Box from "@mui/material/Box";
+import StarIcon from "@mui/icons-material/Star";
 import Alert from "@mui/material/Alert";
-import TimerProvider from "./timer-provider";
-import UninitializedScreen from "./uninitialized-screen";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Toolbar from "@mui/material/Toolbar";
+import { NestedDropdown } from "mui-nested-menu";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { create } from "zustand";
 import CreateMapDialog, { useCreateMapDialogStore } from "./create-map-dialog";
 import LoadMapDialog, { useLoadMapDialogStore } from "./load-map-dialog";
-import { NestedDropdown } from "mui-nested-menu";
-import { create } from "zustand";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import { Editor, RPGENGrid } from "@/features/editor/utils/editor";
+import TimerProvider from "./timer-provider";
+import UninitializedScreen from "./uninitialized-screen";
 
 export type EditorStore = {
   editor?: Editor;
@@ -131,24 +136,52 @@ export default function App(): ReactNode {
                     {
                       disabled: !editorStore.editor,
                       label: "RPGENグリッド",
-                      items: (
-                        [
-                          ["なし", undefined],
-                          ["通常", RPGENGrid.Medium],
-                          ["大きい", RPGENGrid.Large],
-                          ["最大", RPGENGrid.Largest],
-                        ] as const
-                      ).map(([label, value]) => ({
-                        label,
-                        rightIcon:
-                          editorStore.editor?.rpgenGrid === value ? (
-                            <CheckIcon />
-                          ) : undefined,
-                        callback: () => {
-                          editorStore.editor?.setRPGENGrid(value);
-                          setUpdater((prev) => prev + 1n);
+                      items: [
+                        {
+                          label: "サイズ",
+                          items: (
+                            [
+                              ["なし", undefined],
+                              ["通常", RPGENGrid.Medium],
+                              ["大きい", RPGENGrid.Large],
+                              ["最大", RPGENGrid.Largest],
+                            ] as const
+                          ).map(([label, value]) => ({
+                            label,
+                            rightIcon:
+                              editorStore.editor?.rpgenGrid === value ? (
+                                <CheckIcon />
+                              ) : undefined,
+                            callback: () => {
+                              editorStore.editor?.setRPGENGrid(value);
+                              setUpdater((prev) => prev + 1n);
+                            },
+                          })),
                         },
-                      })),
+                        {
+                          label: "色",
+                          items: (
+                            [
+                              ["ゲーミング", RPGENGridColor.Gaming],
+                              ["反転", RPGENGridColor.Invert],
+                            ] as const
+                          ).map(([label, value]) => ({
+                            label,
+                            rightIcon:
+                              editorStore.editor?.rpgenGridColor === value ? (
+                                value === RPGENGridColor.Gaming ? (
+                                  <StarIcon />
+                                ) : (
+                                  <CheckIcon />
+                                )
+                              ) : undefined,
+                            callback: () => {
+                              editorStore.editor?.setRPGENGridColor(value);
+                              setUpdater((prev) => prev + 1n);
+                            },
+                          })),
+                        },
+                      ],
                     },
                   ],
                 }}

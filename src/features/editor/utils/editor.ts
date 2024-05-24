@@ -1,12 +1,17 @@
-import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
-import type { LookPoint } from "@/features/rpgen/types/look-point";
 import type { EventPoint } from "@/features/rpgen/types/event-point";
+import type { LookPoint } from "@/features/rpgen/types/look-point";
 import { SpriteType } from "@/features/rpgen/types/sprite";
+import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
 import type { Position } from "@/features/rpgen/types/types";
 import type { RPGMap } from "@/features/rpgen/utils/map";
-import type { TileMap } from "@/features/rpgen/utils/tile";
 import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
+import type { TileMap } from "@/features/rpgen/utils/tile";
 import { requestImage } from "@/utils/image";
+
+export enum RPGENGridColor {
+  Gaming = 0,
+  Invert = 1,
+}
 
 export enum RPGENGrid {
   Medium = 0,
@@ -62,6 +67,12 @@ export class Editor {
   #parentNode?: HTMLElement;
   #currentTime = 0;
   #currentFrameFlip = 0;
+
+  rpgenGridColor: RPGENGridColor = RPGENGridColor.Gaming;
+
+  setRPGENGridColor(color: RPGENGridColor): void {
+    this.rpgenGridColor = color;
+  }
 
   rpgenGrid?: RPGENGrid;
 
@@ -265,8 +276,17 @@ export class Editor {
       const [cols, rows] = rpgenGridToSize(this.rpgenGrid);
       const camera = this.camera;
 
+      context.save();
+
       context.imageSmoothingEnabled = false;
-      context.strokeStyle = `hsl(${this.#frames % 360n} 100% 50%)`;
+
+      if (this.rpgenGridColor === RPGENGridColor.Gaming) {
+        context.strokeStyle = `hsl(${this.#frames % 360n} 100% 50%)`;
+      } else {
+        context.strokeStyle = "#fff";
+        context.globalCompositeOperation = "difference";
+      }
+
       context.lineWidth = 2 * camera.scale;
       context.strokeRect(
         camera.x > 0
@@ -278,6 +298,8 @@ export class Editor {
         cols * tileSize,
         rows * tileSize,
       );
+
+      context.restore();
     }
 
     this.#frames++;
