@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import { decompressFromEncodedURIComponent } from "lz-string";
 import { type ReactNode, useState } from "react";
 import { create } from "zustand";
-import { useEditorStore } from "./app";
+import { useEditorStore } from "./editor-view";
 
 export type LoadMapDialogStore = {
   open: boolean;
@@ -38,7 +38,7 @@ const PLACEHOLDER = `\
 export default function LoadMapDialog(): ReactNode {
   const { open, setOpen } = useLoadMapDialogStore();
   const [loadCompressed, setLoadCompressed] = useState(false);
-  const setEditor = useEditorStore((store) => store.setEditor);
+  const loadMapText = useEditorStore((store) => store.loadMapText);
   const [disabled, setDisabled] = useState(false);
   const [mapData, setMapData] = useState("");
   const [error, setError] = useState("");
@@ -78,9 +78,7 @@ export default function LoadMapDialog(): ReactNode {
                 ? decompressFromEncodedURIComponent(mapData.replace(/^L1/, ""))
                 : mapData;
 
-              const rpgMap = RPGMap.parse(actualMapData);
-
-              setEditor(new Editor(rpgMap));
+              loadMapText(actualMapData);
               setOpen(false);
             } catch (error) {
               setError("マップデータの読み込みに問題が発生しました");

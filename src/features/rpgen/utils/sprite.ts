@@ -1,6 +1,8 @@
 import type { DQAnimationSpriteSurface } from "../types/sprite";
 import type { Direction, Position } from "../types/types";
 
+export const ANIMATION_SPRITE_FLIP_INTERVAL = 600;
+
 export const getDQAnimationSpritePosition = (
   surface: DQAnimationSpriteSurface,
   direction: Direction,

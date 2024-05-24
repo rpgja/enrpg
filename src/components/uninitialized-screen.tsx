@@ -1,14 +1,15 @@
-import { useMemo, type ReactNode } from "react";
 import DQAnimationSpriteImage from "@/features/rpgen/components/dq-animaton-sprite-image";
-import Typography from "@mui/material/Typography";
-import { take, arrayFrom, execPipe, map } from "iter-tools";
-import arrayShuffle from "array-shuffle";
 import { DQAnimationSpriteSurface } from "@/features/rpgen/types/sprite";
 import { Direction } from "@/features/rpgen/types/types";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { useCreateMapDialogStore } from "./create-map-dialog";
-import { useLoadMapDialogStore } from "./load-map-dialog";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import arrayShuffle from "array-shuffle";
+import { arrayFrom, execPipe, map, take } from "iter-tools";
+import { type ReactNode, useMemo } from "react";
+import { useCreateMapDialogStore } from "../features/editor/components/create-map-dialog";
+import { useLoadMapDialogStore } from "../features/editor/components/load-map-dialog";
+import TimerProvider from "./timer-provider";
 
 export default function UninitializedScreen(): ReactNode {
   const createMapDialogStore = useCreateMapDialogStore();
@@ -43,34 +44,36 @@ export default function UninitializedScreen(): ReactNode {
   );
 
   return (
-    <Stack
-      justifyContent="center"
-      alignItems="center"
-      height="100%"
-      spacing={3}
-    >
-      {party}
-      <Typography variant="h6" component="span">
-        RPGENマップエディタ「ENRPG」にようこそ！
-      </Typography>
-      <Stack justifyContent="center" alignItems="center">
-        <Typography>……まだここにはなにもないようです</Typography>
-        <Typography>作成するか、マップを読み込んでみましょう！</Typography>
+    <TimerProvider interval={600}>
+      <Stack
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+        spacing={3}
+      >
+        {party}
+        <Typography variant="h6" component="span">
+          RPGENマップエディタ「ENRPG」にようこそ！
+        </Typography>
+        <Stack justifyContent="center" alignItems="center">
+          <Typography>……まだここにはなにもないようです</Typography>
+          <Typography>作成するか、マップを読み込んでみましょう！</Typography>
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          <Button
+            onClick={() => createMapDialogStore.setOpen(true)}
+            variant="outlined"
+          >
+            新規作成
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => loadMapDialogStore.setOpen(true)}
+          >
+            マップを読み込む
+          </Button>
+        </Stack>
       </Stack>
-      <Stack direction="row" spacing={1}>
-        <Button
-          onClick={() => createMapDialogStore.setOpen(true)}
-          variant="outlined"
-        >
-          新規作成
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => loadMapDialogStore.setOpen(true)}
-        >
-          マップを読み込む
-        </Button>
-      </Stack>
-    </Stack>
+    </TimerProvider>
   );
 }
