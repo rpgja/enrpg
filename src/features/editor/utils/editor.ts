@@ -6,6 +6,32 @@ export class Editor {
 
   constructor(rpgMap: RPGMap) {
     this.renderer = new Renderer(rpgMap);
-    this.renderer.startTicking();
+  }
+
+  mounted = false;
+
+  mount(parentElement: HTMLElement): void {
+    if (this.mounted) {
+      this.unmount();
+    }
+
+    const renderer = this.renderer;
+
+    parentElement.append(renderer.canvas);
+    renderer.startTicking();
+    this.mounted = true;
+  }
+
+  unmount(): void {
+    if (!this.mounted) {
+      return;
+    }
+
+    const renderer = this.renderer;
+
+    renderer.stopTicking();
+    renderer.camera.detachElement();
+    renderer.canvas.remove();
+    this.mounted = false;
   }
 }

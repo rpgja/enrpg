@@ -34,12 +34,10 @@ export default function EditorView(): ReactNode {
       return;
     }
 
-    canvasContainer.append(editor.renderer.canvas);
-    editor.renderer.startTicking();
+    editor.mount(canvasContainer);
 
     return () => {
-      editor.renderer.stopTicking();
-      editor.renderer.camera.detachElement();
+      editor.unmount();
     };
   }, [editor, canvasContainer]);
 

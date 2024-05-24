@@ -16,8 +16,8 @@ export class Camera {
   }
 
   setPosition(x: number, y: number): void {
-    this.x = x;
-    this.y = y;
+    this.setX(x);
+    this.setY(y);
   }
 
   setScale(scale: number): void {
@@ -61,8 +61,7 @@ export class Camera {
           return;
         }
 
-        this.x -= event.movementX;
-        this.y -= event.movementY;
+        this.setPosition(this.x - event.movementX, this.y - event.movementY);
       },
       {
         signal: eventController.signal,
@@ -102,31 +101,33 @@ export class Camera {
           }
         }
 
+        const actualSpeed = (cameraSpeed * cameraSpeedScale) | 0;
+
         switch (event.code) {
           case "KeyW":
           case "ArrowUp": {
-            this.y -= (cameraSpeed * cameraSpeedScale) | 0;
+            this.setY(this.y - actualSpeed);
 
             break;
           }
 
           case "KeyS":
           case "ArrowDown": {
-            this.y += (cameraSpeed * cameraSpeedScale) | 0;
+            this.setY(this.y + actualSpeed);
 
             break;
           }
 
           case "KeyA":
           case "ArrowLeft": {
-            this.x -= (cameraSpeed * cameraSpeedScale) | 0;
+            this.setX(this.x - actualSpeed);
 
             break;
           }
 
           case "KeyD":
           case "ArrowRight": {
-            this.x += (cameraSpeed * cameraSpeedScale) | 0;
+            this.setX(this.x + actualSpeed);
 
             break;
           }

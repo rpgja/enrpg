@@ -29,11 +29,11 @@ export class TileMap {
       return;
     }
 
-    const collision = rawTile.endsWith("C");
+    const collision = rawTile.endsWith("C") || rawTile.startsWith("C");
 
     // TODO: DQSprite
     if (collision) {
-      rawTile = rawTile.replace(/C$/, "");
+      rawTile = rawTile.replace(/^C|C$/g, "");
     }
 
     const surface = rawTile.split("_");

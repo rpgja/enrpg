@@ -104,7 +104,15 @@ export class Renderer {
     const tileOffsetY = camera.y / tileSize;
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
+      if (y < 0 || y >= 300) {
+        continue;
+      }
+
       for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
+        if (x < 0 || x >= 300) {
+          continue;
+        }
+
         const tile = tileMap.get(x, y);
 
         if (!tile) {
@@ -318,6 +326,19 @@ export class Renderer {
     context.restore();
   }
 
+  renderOutline(): void {
+    const { context, camera } = this;
+    const tileSize = this.#tileSize;
+
+    context.strokeStyle = "#f00";
+    context.strokeRect(
+      0 - camera.x,
+      0 - camera.y,
+      tileSize * 300,
+      tileSize * 300,
+    );
+  }
+
   clear(): void {
     const canvas = this.canvas;
 
@@ -342,6 +363,8 @@ export class Renderer {
     this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
 
     this.renderRPGENGrid();
+
+    this.renderOutline();
   }
 
   ticking = false;

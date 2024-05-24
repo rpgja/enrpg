@@ -1,15 +1,15 @@
-import type { LookPoint } from "../types/look-point";
+import type { EventPoint } from "../types/event-point";
 import type { Human, HumanBehavior } from "../types/human";
-import type { Direction, Position } from "../types/types";
+import type { LookPoint } from "../types/look-point";
 import {
   type DQAnimationSpriteSurface,
   type Sprite,
   SpriteType,
 } from "../types/sprite";
-import type { TreasureBoxPoint } from "../types/treasure-box-point";
-import { TileMap } from "./tile";
 import type { TeleportPoint } from "../types/teleport-point";
-import type { EventPoint } from "../types/event-point";
+import type { TreasureBoxPoint } from "../types/treasure-box-point";
+import type { Direction, Position } from "../types/types";
+import { TileMap } from "./tile";
 
 export type RPGMapInit = {
   initialHeroPosition?: Position;
