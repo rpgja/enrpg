@@ -1,4 +1,14 @@
-import type { EventPoint } from "../types/event-point";
+import { logger } from "@/utils/logger";
+import {
+  type Command,
+  CommandType,
+  ManipulateGoldCommandOperation,
+} from "../types/command";
+import {
+  type EventPoint,
+  EventTiming,
+  type SecondaryEventPhase,
+} from "../types/event-point";
 import type { Human, HumanBehavior } from "../types/human";
 import type { LookPoint } from "../types/look-point";
 import {
@@ -97,6 +107,61 @@ export class RPGMap {
 
       yield [name, value];
     }
+  }
+
+  static #parseCommaSeparatedParams(input: string): Record<string, string> {
+    const params: Partial<Record<string, string>> = {};
+
+    for (const [name, value = ""] of input
+      .split(",")
+      .map((v) => v.split(":"))) {
+      if (!name) {
+        continue;
+      }
+
+      params[name] = value;
+    }
+
+    return params as Record<string, string>;
+  }
+
+  static #parseCommands(input: string): Command[] {
+    const commands: Command[] = [];
+
+    for (const [name, value] of RPGMap.#parseChunks(input, "#ED")) {
+      const params = RPGMap.#parseCommaSeparatedParams(value.trimStart());
+
+      // TODO
+      switch (name) {
+        case "MSG": {
+          commands.push({
+            type: CommandType.DisplayMessage,
+            message: params.m ?? "",
+          });
+
+          break;
+        }
+
+        case "PL_GALD": {
+          commands.push({
+            type: CommandType.ManipulateGold,
+            operation: ManipulateGoldCommandOperation.Addition,
+            value: Number(params.v),
+          });
+
+          break;
+        }
+
+        default: {
+          // TODO: error message
+          logger.warn(`No command parser\n---${name}---\n${value}`);
+
+          break;
+        }
+      }
+    }
+
+    return commands;
   }
 
   static parse(input: string): RPGMap {
@@ -234,9 +299,72 @@ export class RPGMap {
           break;
         }
 
+        // TODO
         case "EPOINT": {
-          // TODO
-          // console.log(RPGMap.#parseChunks.bind(this));
+          const [, pos = "", body = ""] =
+            value.trimStart().match(/^(tx:\d+,ty:\d+),\r?\n(.+)$/s) ?? [];
+          const { tx, ty } = RPGMap.#parseCommaSeparatedParams(pos);
+          const eventPoint: EventPoint = {
+            position: {
+              x: Number(tx),
+              y: Number(ty),
+            },
+            phases: [
+              {
+                timing: EventTiming.Look,
+                sequence: [],
+              },
+              {
+                timing: EventTiming.Look,
+                condition: {},
+                sequence: [],
+              },
+              {
+                timing: EventTiming.Look,
+                condition: {},
+                sequence: [],
+              },
+              {
+                timing: EventTiming.Look,
+                condition: {},
+                sequence: [],
+              },
+            ],
+          };
+
+          for (const [name, value] of RPGMap.#parseChunks(
+            body,
+            (name) => `#PHEND${name.at(-1)}`,
+          )) {
+            const phase = eventPoint.phases[Number(name.at(-1))];
+
+            if (!phase) {
+              continue;
+            }
+
+            const [, cond = "", body = ""] =
+              value.trimStart().match(/(.+?),\r?\n(.+)/s) ?? [];
+            const { tm, sw, g } = RPGMap.#parseCommaSeparatedParams(cond);
+
+            if (tm) {
+              phase.timing = Number(tm);
+            }
+
+            // Non primary phase and has phase condition
+            if (name !== "PH0") {
+              if (sw) {
+                (phase as SecondaryEventPhase).condition.switch = Number(sw);
+              }
+
+              if (g) {
+                (phase as SecondaryEventPhase).condition.gold = Number(g);
+              }
+            }
+
+            phase.sequence = RPGMap.#parseCommands(body);
+          }
+
+          eventPoints.push(eventPoint);
 
           break;
         }
@@ -256,11 +384,8 @@ export class RPGMap {
         }
 
         default: {
-          console.group("No Parser");
           // TODO: error message
-          console.warn(`No parser for ${name}`);
-          console.warn(value);
-          console.groupEnd();
+          logger.warn(`No parser\n---${name}---\n${value}`);
 
           break;
         }

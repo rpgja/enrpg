@@ -12,10 +12,11 @@ export type EventPoint = {
 };
 
 export type PrimaryEventPhase = {
+  timing: EventTiming;
   sequence: Command[];
 };
 
-export enum UserAction {
+export enum EventTiming {
   Look = 0,
   Touch = 1,
 }
@@ -23,10 +24,10 @@ export enum UserAction {
 export type SecondaryEventPhaseCondition = {
   gold?: number;
   switch?: number;
-  userAction: UserAction;
 };
 
 export type SecondaryEventPhase = {
+  timing: EventTiming;
   condition: SecondaryEventPhaseCondition;
   sequence: Command[];
 };

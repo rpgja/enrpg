@@ -229,7 +229,7 @@ export enum ManipulateGoldCommandOperation {
 
 export type ManipulateGoldCommand = {
   type: CommandType.ManipulateGold;
-  value: string;
+  value: number;
   operation: ManipulateGoldCommandOperation;
 };
 
