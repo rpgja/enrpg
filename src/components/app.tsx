@@ -17,22 +17,24 @@ import Toolbar from "@mui/material/Toolbar";
 import { Editor, RPGENGrid } from "@/features/editor/utils/editor";
 
 export type EditorStore = {
-  editor?: Editor,
-  setEditor: (editor: Editor | undefined) => void
+  editor?: Editor;
+  setEditor: (editor: Editor | undefined) => void;
 };
 
-export const useEditorStore = create<EditorStore>(set => ({
-  setEditor: editor => set({ editor })
+export const useEditorStore = create<EditorStore>((set) => ({
+  setEditor: (editor) => set({ editor }),
 }));
 
 export default function App(): ReactNode {
   const [_updater, setUpdater] = useState(0n);
   const editorStore = useEditorStore();
   const [appBar, setAppBar] = useState<HTMLDivElement | null>(null);
-  const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
+  const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
   const loadMapDialogStore = useLoadMapDialogStore();
   const createMapDialogStore = useCreateMapDialogStore();
-  const loadedExample=useRef(false);
+  const loadedExample = useRef(false);
 
   // HACK
   useEffect(() => {
@@ -40,14 +42,16 @@ export default function App(): ReactNode {
       return;
     }
 
-    loadedExample.current=true;
+    loadedExample.current = true;
 
     (async () => {
-      const rpgMap = RPGMap.parse(await (await fetch("/examples/sample.dev.txt")).text());
+      const rpgMap = RPGMap.parse(
+        await (await fetch("/examples/sample.dev.txt")).text(),
+      );
 
       editorStore.setEditor(new Editor(rpgMap));
     })();
-  }, [editorStore.editor,editorStore.setEditor]);
+  }, [editorStore.editor, editorStore.setEditor]);
 
   useEffect(() => {
     if (!editorContainer || !editorStore.editor) {
@@ -67,11 +71,7 @@ export default function App(): ReactNode {
       <LoadMapDialog />
       <Stack height="100svh">
         <AppBar position="static">
-          <Toolbar
-            disableGutters
-            variant="dense"
-            sx={{ minHeight: 0 }}
-          >
+          <Toolbar disableGutters variant="dense" sx={{ minHeight: 0 }}>
             <Stack ref={setAppBar} direction="row">
               <NestedDropdown
                 menuItemsData={{
@@ -79,18 +79,18 @@ export default function App(): ReactNode {
                   items: [
                     {
                       label: "新規作成",
-                      callback: () => createMapDialogStore.setOpen(true)
+                      callback: () => createMapDialogStore.setOpen(true),
                     },
                     {
                       label: "マップを読み込み",
-                      callback: () => loadMapDialogStore.setOpen(true)
+                      callback: () => loadMapDialogStore.setOpen(true),
                     },
                     {
                       disabled: !editorStore.editor,
                       label: "閉じる",
-                      callback: () => editorStore.setEditor(undefined)
-                    }
-                  ]
+                      callback: () => editorStore.setEditor(undefined),
+                    },
+                  ],
                 }}
               />
               <NestedDropdown
@@ -112,7 +112,7 @@ export default function App(): ReactNode {
 
                             camera.x = 0;
                             camera.y = 0;
-                          }
+                          },
                         },
                         {
                           label: "拡大率をリセット",
@@ -124,37 +124,40 @@ export default function App(): ReactNode {
                             }
 
                             camera.scale = 1;
-                          }
-                        }
-                      ]
+                          },
+                        },
+                      ],
                     },
                     {
                       disabled: !editorStore.editor,
                       label: "RPGENグリッド",
-                      items: ([
-                        ["なし", undefined],
-                        ["通常", RPGENGrid.Medium],
-                        ["大きい", RPGENGrid.Large],
-                        ["最大", RPGENGrid.Largest]
-                      ] as const).map(([label, value]) => ({
+                      items: (
+                        [
+                          ["なし", undefined],
+                          ["通常", RPGENGrid.Medium],
+                          ["大きい", RPGENGrid.Large],
+                          ["最大", RPGENGrid.Largest],
+                        ] as const
+                      ).map(([label, value]) => ({
                         label,
-                        rightIcon: editorStore.editor?.rpgenGrid === value ? <CheckIcon /> : undefined,
+                        rightIcon:
+                          editorStore.editor?.rpgenGrid === value ? (
+                            <CheckIcon />
+                          ) : undefined,
                         callback: () => {
                           editorStore.editor?.setRPGENGrid(value);
-                          setUpdater(prev => prev + 1n);
-                        }
-                      }))
+                          setUpdater((prev) => prev + 1n);
+                        },
+                      })),
                     },
-                  ]
+                  ],
                 }}
               />
             </Stack>
           </Toolbar>
         </AppBar>
         <noscript>
-          <Alert severity="error">
-            JavaScriptを有効にしてください
-          </Alert>
+          <Alert severity="error">JavaScriptを有効にしてください</Alert>
         </noscript>
         <Box flex={1}>
           {!editorStore.editor && <UninitializedScreen />}
@@ -162,7 +165,9 @@ export default function App(): ReactNode {
             <Box
               ref={setEditorContainer}
               width="100%"
-              height={appBar ? `calc(100svh - ${appBar.offsetHeight}px)` : "100%"}
+              height={
+                appBar ? `calc(100svh - ${appBar.offsetHeight}px)` : "100%"
+              }
             />
           )}
         </Box>

@@ -7,7 +7,7 @@ import type { Position } from "./types";
 export type RawTile = string;
 
 export type Tile = {
-	sprite: StillSprite;
-	position: Position;
-	collision: boolean;
+  sprite: StillSprite;
+  position: Position;
+  collision: boolean;
 };

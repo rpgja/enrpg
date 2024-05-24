@@ -2,321 +2,321 @@ import type { HumanSprite, StillSprite } from "./sprite.js";
 import type { Position } from "./types.js";
 
 export enum CommandType {
-	// Message
-	DisplayMessage = 0,
-	DisplayConfirm = 1,
-	DisplaySelect = 2,
-	ChangeMessageFont = 3,
-	DisplayGold = 4,
-	HideGold = 5,
+  // Message
+  DisplayMessage = 0,
+  DisplayConfirm = 1,
+  DisplaySelect = 2,
+  ChangeMessageFont = 3,
+  DisplayGold = 4,
+  HideGold = 5,
 
-	// Screen control
-	Wait = 6,
-	ScreenEffect = 7,
-	ChangeWeather = 8,
+  // Screen control
+  Wait = 6,
+  ScreenEffect = 7,
+  ChangeWeather = 8,
 
-	// Graphics
-	ChangeObjectSprite = 9,
-	ChangeHumanSprite = 10,
-	ChangeSpriteColor = 11,
-	DisplayImage = 12,
-	DisplayAnimation = 13,
+  // Graphics
+  ChangeObjectSprite = 9,
+  ChangeHumanSprite = 10,
+  ChangeSpriteColor = 11,
+  DisplayImage = 12,
+  DisplayAnimation = 13,
 
-	ChangeBackgroundImage = 14,
-	ChangeDistantView = 15,
+  ChangeBackgroundImage = 14,
+  ChangeDistantView = 15,
 
-	// Movement
-	ChangeDirection = 16,
-	MoveParty = 17,
-	MoveNPC = 18,
-	ChangeNPCBehavior = 19,
-	ChangeMap = 20,
-	MoveCamera = 21,
+  // Movement
+  ChangeDirection = 16,
+  MoveParty = 17,
+  MoveNPC = 18,
+  ChangeNPCBehavior = 19,
+  ChangeMap = 20,
+  MoveCamera = 21,
 
-	// Sound
-	ChangeBGM = 22,
-	PlaySound = 23,
+  // Sound
+  ChangeBGM = 22,
+  PlaySound = 23,
 
-	// Switch
-	SwitchOn = 24,
-	SwitchOff = 25,
+  // Switch
+  SwitchOn = 24,
+  SwitchOff = 25,
 
-	// Number
-	ManipulateGold = 26,
+  // Number
+  ManipulateGold = 26,
 
-	// Events
-	SaveAndLoad = 27,
-	EndEvent = 28,
-	DeleteEvent = 29,
-	Goto = 30,
-	Comment = 31,
+  // Events
+  SaveAndLoad = 27,
+  EndEvent = 28,
+  DeleteEvent = 29,
+  Goto = 30,
+  Comment = 31,
 }
 
 export type DisplayMessageCommand = {
-	type: CommandType.DisplayMessage;
-	message: string;
+  type: CommandType.DisplayMessage;
+  message: string;
 };
 
 export type DisplayConfirmCommand = {
-	choices: [
-		string, // yes
-		string, // no
-		...string[], // additional choice
-	];
-	displayPosition: Position;
-	/**
-	 * 直前のメッセージを消さない
-	 */
-	keepPreviousMessage: boolean;
+  choices: [
+    string, // yes
+    string, // no
+    ...string[], // additional choice
+  ];
+  displayPosition: Position;
+  /**
+   * 直前のメッセージを消さない
+   */
+  keepPreviousMessage: boolean;
 };
 
 // TODO
 export type DisplaySelectCommand = {
-	type: CommandType.DisplaySelect;
+  type: CommandType.DisplaySelect;
 };
 
 export type ChangeMessageFontCommand = {
-	type: CommandType.ChangeMessageFont;
-	fontFamily: string;
+  type: CommandType.ChangeMessageFont;
+  fontFamily: string;
 };
 
 export type DisplayGoldCommand = {
-	type: CommandType.DisplayGold;
+  type: CommandType.DisplayGold;
 };
 
 export type HideGoldCommand = {
-	type: CommandType.HideGold;
+  type: CommandType.HideGold;
 };
 
 // Screen control
 
 export type WaitCommand = {
-	type: CommandType.Wait;
-	delay: number;
+  type: CommandType.Wait;
+  delay: number;
 };
 
 // TODO
 export type ScreenEffectCommand = {
-	type: CommandType.ScreenEffect;
+  type: CommandType.ScreenEffect;
 };
 
 // TODO
 export type ChangeWeatherCommand = {
-	type: CommandType.ChangeWeather;
+  type: CommandType.ChangeWeather;
 };
 
 // Graphics
 
 export type ChangeObjectSpriteCommand = {
-	type: CommandType.ChangeObjectSprite;
-	targetPosition: Position;
-	sprite: StillSprite;
+  type: CommandType.ChangeObjectSprite;
+  targetPosition: Position;
+  sprite: StillSprite;
 };
 
 export type ChangeHumanSpriteCommand = {
-	type: CommandType.ChangeHumanSprite;
-	targetPosition?: Position;
-	sprite: HumanSprite;
+  type: CommandType.ChangeHumanSprite;
+  targetPosition?: Position;
+  sprite: HumanSprite;
 };
 
 // TODO
 export type ChangeSpriteColorCommand = {
-	type: CommandType.ChangeSpriteColor;
+  type: CommandType.ChangeSpriteColor;
 };
 
 // TODO
 export type DisplayImageCommand = {
-	type: CommandType.DisplayImage;
+  type: CommandType.DisplayImage;
 };
 
 // TODO
 export type DisplayAnimationCommand = {
-	type: CommandType.DisplayAnimation;
+  type: CommandType.DisplayAnimation;
 };
 
 export type ChangeBackgroundImageCommand = {
-	type: CommandType.ChangeBackgroundImage;
-	backgroundImageUrl: string;
+  type: CommandType.ChangeBackgroundImage;
+  backgroundImageUrl: string;
 };
 
 // TODO
 export type ChangeDistantViewCommand = {
-	type: CommandType.ChangeDistantView;
+  type: CommandType.ChangeDistantView;
 };
 
 // Movement
 // TODO
 export type ChangeDirectionCommand = {
-	type: CommandType.ChangeDirection;
+  type: CommandType.ChangeDirection;
 };
 
 // TODO
 export type MovePartyCommand = {
-	type: CommandType.MoveParty;
+  type: CommandType.MoveParty;
 };
 
 // TODO
 export type MoveNPCCommand = {
-	type: CommandType.MoveNPC;
+  type: CommandType.MoveNPC;
 };
 
 // TODO
 export type ChangeNPCBehaviorCommand = {
-	type: CommandType.ChangeNPCBehavior;
+  type: CommandType.ChangeNPCBehavior;
 };
 
 // TODO
 export type ChangeMapCommand = {
-	type: CommandType.ChangeMap;
+  type: CommandType.ChangeMap;
 };
 
 // TODO
 export type MoveCameraCommand = {
-	type: CommandType.MoveCamera;
+  type: CommandType.MoveCamera;
 };
 
 // Sound
 // TODO
 export type ChangeBGMCommand = {
-	type: CommandType.ChangeBGM;
+  type: CommandType.ChangeBGM;
 };
 
 export enum PlaySoundCommandOperation {
-	Play = "PL",
-	Stop = "ST",
+  Play = "PL",
+  Stop = "ST",
 }
 
 export type PlaySoundCommandFade = {
-	progressAt: number;
-	volumeFrom: number;
-	voluteTo: number;
+  progressAt: number;
+  volumeFrom: number;
+  voluteTo: number;
 };
 
 export type PlaySoundCommand =
-	| {
-			type: CommandType.PlaySound;
-			soundEffectId: number;
-			volume: number;
-			loop: boolean;
-			fade?: PlaySoundCommandFade;
-			operation: PlaySoundCommandOperation.Play;
-	  }
-	| {
-			type: CommandType.PlaySound;
-			operation: PlaySoundCommandOperation.Stop;
-	  };
+  | {
+      type: CommandType.PlaySound;
+      soundEffectId: number;
+      volume: number;
+      loop: boolean;
+      fade?: PlaySoundCommandFade;
+      operation: PlaySoundCommandOperation.Play;
+    }
+  | {
+      type: CommandType.PlaySound;
+      operation: PlaySoundCommandOperation.Stop;
+    };
 
 // Switch
 
 export type SwitchOnCommand = {
-	type: CommandType.SwitchOn;
-	switch: number;
+  type: CommandType.SwitchOn;
+  switch: number;
 };
 
 export type SwitchOffCommand = {
-	type: CommandType.SwitchOff;
-	switch: number;
+  type: CommandType.SwitchOff;
+  switch: number;
 };
 
 // Number
 
 export enum ManipulateGoldCommandOperation {
-	Addition = 0,
-	Subtraction = 1,
-	Double = 2,
-	Set = 3,
+  Addition = 0,
+  Subtraction = 1,
+  Double = 2,
+  Set = 3,
 }
 
 export type ManipulateGoldCommand = {
-	type: CommandType.ManipulateGold;
-	value: string;
-	operation: ManipulateGoldCommandOperation;
+  type: CommandType.ManipulateGold;
+  value: string;
+  operation: ManipulateGoldCommandOperation;
 };
 
 // Events
 
 export type SaveAndLoadCommandCondition = {
-	switch: boolean;
-	gold: boolean;
-	party: boolean;
-	npc: boolean;
+  switch: boolean;
+  gold: boolean;
+  party: boolean;
+  npc: boolean;
 };
 
 export enum SaveAndLoadCommandOperation {
-	Save = 0,
-	Load = 1,
+  Save = 0,
+  Load = 1,
 }
 
 export type SaveAndLoadCommand = {
-	type: CommandType.SaveAndLoad;
-	operation: SaveAndLoadCommandOperation;
-	condition: SaveAndLoadCommandCondition;
+  type: CommandType.SaveAndLoad;
+  operation: SaveAndLoadCommandOperation;
+  condition: SaveAndLoadCommandCondition;
 };
 
 export type EndEventCommand = {
-	type: CommandType.EndEvent;
+  type: CommandType.EndEvent;
 };
 
 export type DeleteEventCommand = {
-	type: CommandType.DeleteEvent;
+  type: CommandType.DeleteEvent;
 };
 
 export type GotoCommand = {
-	type: CommandType.Goto;
-	phase: number;
-	eventPosition?: Position;
+  type: CommandType.Goto;
+  phase: number;
+  eventPosition?: Position;
 };
 
 export type CommentCommand = {
-	type: CommandType.Comment;
-	message: string;
+  type: CommandType.Comment;
+  message: string;
 };
 
 export type Command =
-	// Message
-	| DisplayMessageCommand
-	| DisplayConfirmCommand
-	| DisplaySelectCommand
-	| ChangeMessageFontCommand
-	| DisplayGoldCommand
-	| HideGoldCommand
+  // Message
+  | DisplayMessageCommand
+  | DisplayConfirmCommand
+  | DisplaySelectCommand
+  | ChangeMessageFontCommand
+  | DisplayGoldCommand
+  | HideGoldCommand
 
-	// Screen control
-	| WaitCommand
-	| ScreenEffectCommand
-	| ChangeWeatherCommand
+  // Screen control
+  | WaitCommand
+  | ScreenEffectCommand
+  | ChangeWeatherCommand
 
-	// Graphics
-	| ChangeObjectSpriteCommand
-	| ChangeHumanSpriteCommand
-	| ChangeSpriteColorCommand
-	| DisplayImageCommand
-	| DisplayAnimationCommand
-	| ChangeBackgroundImageCommand
-	| ChangeDistantViewCommand
+  // Graphics
+  | ChangeObjectSpriteCommand
+  | ChangeHumanSpriteCommand
+  | ChangeSpriteColorCommand
+  | DisplayImageCommand
+  | DisplayAnimationCommand
+  | ChangeBackgroundImageCommand
+  | ChangeDistantViewCommand
 
-	// Movement
-	| ChangeDirectionCommand
-	| MovePartyCommand
-	| MoveNPCCommand
-	| ChangeNPCBehaviorCommand
-	| ChangeMapCommand
-	| MoveCameraCommand
+  // Movement
+  | ChangeDirectionCommand
+  | MovePartyCommand
+  | MoveNPCCommand
+  | ChangeNPCBehaviorCommand
+  | ChangeMapCommand
+  | MoveCameraCommand
 
-	// Sound
-	| ChangeBGMCommand
-	| PlaySoundCommand
+  // Sound
+  | ChangeBGMCommand
+  | PlaySoundCommand
 
-	// Switch
-	| SwitchOnCommand
-	| SwitchOffCommand
+  // Switch
+  | SwitchOnCommand
+  | SwitchOffCommand
 
-	// Number
-	| ManipulateGoldCommand
+  // Number
+  | ManipulateGoldCommand
 
-	// Events
-	| SaveAndLoadCommand
-	| EndEventCommand
-	| DeleteEventCommand
-	| GotoCommand
-	| CommentCommand;
+  // Events
+  | SaveAndLoadCommand
+  | EndEventCommand
+  | DeleteEventCommand
+  | GotoCommand
+  | CommentCommand;

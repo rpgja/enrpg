@@ -9,9 +9,7 @@ export default function Layout({ children }: PropsWithChildren): ReactNode {
       <head />
       <body className={primaryFont.className}>
         <AppRouterCacheProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
