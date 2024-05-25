@@ -13,6 +13,7 @@ export type PopupWindowProps = PropsWithChildren<{
   title: string;
   width: number;
   height: number;
+  onClose: () => void;
 }>;
 
 export default function PopupWindow({
@@ -20,6 +21,7 @@ export default function PopupWindow({
   height,
   title,
   children,
+  onClose,
 }: PopupWindowProps): ReactNode {
   const [minimzed, setMinimized] = useState(false);
   const [target, setTarget] = useState<HTMLDivElement | null>(null);
@@ -66,7 +68,11 @@ export default function PopupWindow({
               </IconButton>
             </Tooltip>
             <Tooltip title="閉じる">
-              <IconButton disableTouchRipple size="small">
+              <IconButton
+                onClick={() => onClose()}
+                disableTouchRipple
+                size="small"
+              >
                 <CloseIcon />
               </IconButton>
             </Tooltip>
