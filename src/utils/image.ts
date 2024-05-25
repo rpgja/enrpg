@@ -3,16 +3,10 @@ import PQueue from "p-queue";
 // NOTE: Possible memory leak
 const cache = new Map<string, HTMLImageElement | Promise<HTMLImageElement>>();
 
-const failedSources = new Set<string>();
-
 /**
  * If the image is cached, it returns the cached image, otherwise it requests the image and returns undefined.
  */
 export const requestImage = (src: string): HTMLImageElement | undefined => {
-  if (failedSources.has(src)) {
-    return;
-  }
-
   const cached = cache.get(src);
 
   if (cached instanceof HTMLImageElement) {
@@ -64,7 +58,6 @@ export const loadImage = (src: string): Promise<HTMLImageElement> => {
         };
         img.onerror = (event) => {
           cleanUp();
-          failedSources.add(src);
           resolvers.reject(event);
           reject(event);
         };
