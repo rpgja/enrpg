@@ -39,6 +39,15 @@ export const rpgenGridSizeToSizeTuple = (
   }
 };
 
+export type RendererLayers = {
+  floor: boolean;
+  objects: boolean;
+  humans: boolean;
+  teleportPoints: boolean;
+  lookPoints: boolean;
+  eventPoints: boolean;
+};
+
 export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly context: CanvasRenderingContext2D;
@@ -70,10 +79,20 @@ export class Renderer {
     this.#tileSize = this.#calcTileSize();
   }
 
-  layerLevel = Number.POSITIVE_INFINITY;
+  layers: RendererLayers = {
+    floor: true,
+    objects: true,
+    humans: true,
+    teleportPoints: true,
+    lookPoints: true,
+    eventPoints: true,
+  };
 
-  setLayerLevel(layerLevel: number): void {
-    this.layerLevel = layerLevel;
+  setLayers(layers: Partial<RendererLayers>): void {
+    this.layers = {
+      ...this.layers,
+      ...layers,
+    };
   }
 
   #calcTileSize(): number {
@@ -416,27 +435,32 @@ export class Renderer {
 
     this.context.imageSmoothingEnabled = false;
 
-    const layers: (() => void)[] = [];
+    const layers = this.layers;
 
-    layers.push(() => this.renderTileMap(this.rpgMap.floor));
-    layers.push(() => this.renderTileMap(this.rpgMap.objects));
+    if (layers.floor) {
+      this.renderTileMap(this.rpgMap.floor);
+    }
 
-    layers.push(() => this.renderHumans());
+    if (layers.objects) {
+      this.renderTileMap(this.rpgMap.objects);
+    }
+
+    if (layers.humans) {
+      this.renderHumans();
+    }
 
     const { rpgMap } = this;
 
-    layers.push(() =>
-      this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 }),
-    );
-    layers.push(() => this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 }));
-    layers.push(() => this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 }));
+    if (layers.teleportPoints) {
+      this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 });
+    }
 
-    for (
-      let level = 0;
-      level < this.layerLevel && level < layers.length;
-      level++
-    ) {
-      layers[level]?.();
+    if (layers.lookPoints) {
+      this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 });
+    }
+
+    if (layers.eventPoints) {
+      this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
     }
 
     this.renderRPGENGrid();
