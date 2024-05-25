@@ -91,6 +91,27 @@ export class Renderer {
     }
   }
 
+  renderNotFound(x: number, y: number): void {
+    const notFound = requestImage(
+      "https://rpgen.site/dq/sprites/img/404Chip.png",
+    );
+
+    if (!notFound) {
+      return;
+    }
+
+    const { context, camera } = this;
+    const tileSize = this.#tileSize;
+
+    context.drawImage(
+      notFound,
+      tileSize * x - camera.x,
+      tileSize * y - camera.y,
+      tileSize,
+      tileSize,
+    );
+  }
+
   static readonly #BASE_TILE_SIZE = 64;
 
   renderTileMap(tileMap: TileMap): void {
@@ -125,7 +146,13 @@ export class Renderer {
               "https://rpgen.site/dq/img/dq/map.png",
             );
 
-            if (!dqStillSprites) {
+            if (dqStillSprites === null) {
+              this.renderNotFound(x, y);
+
+              break;
+            }
+
+            if (dqStillSprites === undefined) {
               break;
             }
 
@@ -135,8 +162,8 @@ export class Renderer {
               tile.sprite.surface.y * 16,
               16,
               16,
-              tileSize * x - this.camera.x,
-              tileSize * y - this.camera.y,
+              tileSize * x - camera.x,
+              tileSize * y - camera.y,
               tileSize,
               tileSize,
             );
@@ -149,7 +176,13 @@ export class Renderer {
               `https://rpgen.site/dq/sprites/${tile.sprite.id}/sprite.png`,
             );
 
-            if (!customStillSprite) {
+            if (customStillSprite === null) {
+              this.renderNotFound(x, y);
+
+              break;
+            }
+
+            if (customStillSprite === undefined) {
               break;
             }
 
@@ -175,7 +208,7 @@ export class Renderer {
   #currentFrameFlip = 0;
 
   renderHumans(): void {
-    const { context } = this;
+    const { context, camera } = this;
     const currentFrameFlip = this.#currentFrameFlip;
     const tileSize = this.#tileSize;
 
@@ -185,22 +218,31 @@ export class Renderer {
           const dqAnimationSprites = requestImage(
             "https://rpgen.site/dq/img/dq/char.png",
           );
-          if (!dqAnimationSprites) {
-            continue;
+
+          if (dqAnimationSprites === null) {
+            this.renderNotFound(human.position.x, human.position.y);
+
+            break;
           }
+
+          if (dqAnimationSprites === undefined) {
+            break;
+          }
+
           const surface = getDQAnimationSpritePosition(
             human.sprite.surface,
             human.direction,
             currentFrameFlip,
           );
+
           context.drawImage(
             dqAnimationSprites,
             surface.x,
             surface.y,
             16,
             16,
-            tileSize * human.position.x - this.camera.x,
-            tileSize * human.position.y - this.camera.y,
+            tileSize * human.position.x - camera.x,
+            tileSize * human.position.y - camera.y,
             tileSize,
             tileSize,
           );
@@ -211,37 +253,54 @@ export class Renderer {
           const customAnimationSprite = requestImage(
             `https://rpgen.pw/dq/sAnims/res/${human.sprite.id}.png`,
           );
-          if (!customAnimationSprite) {
-            continue;
+
+          if (customAnimationSprite === null) {
+            this.renderNotFound(human.position.x, human.position.y);
+
+            break;
           }
+
+          if (customAnimationSprite === undefined) {
+            break;
+          }
+
           context.drawImage(
             customAnimationSprite,
             16 * currentFrameFlip,
             16 * human.direction,
             16,
             16,
-            tileSize * human.position.x - this.camera.x,
-            tileSize * human.position.y - this.camera.y,
+            tileSize * human.position.x - camera.x,
+            tileSize * human.position.y - camera.y,
             tileSize,
             tileSize,
           );
           break;
         }
+
         case SpriteType.CustomStillSprite: {
           const customStillSprite = requestImage(
             `https://rpgen.site/dq/sprites/${human.sprite.id}/sprite.png`,
           );
-          if (!customStillSprite) {
-            continue;
+
+          if (customStillSprite === null) {
+            this.renderNotFound(human.position.x, human.position.y);
+
+            break;
           }
+
+          if (customStillSprite === undefined) {
+            break;
+          }
+
           context.drawImage(
             customStillSprite,
             0,
             0,
             16,
             16,
-            tileSize * human.position.x - this.camera.x,
-            tileSize * human.position.y - this.camera.y,
+            tileSize * human.position.x - camera.x,
+            tileSize * human.position.y - camera.y,
             tileSize,
             tileSize,
           );

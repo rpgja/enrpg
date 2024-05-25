@@ -1,5 +1,7 @@
+import { useMounted } from "@/hooks/mount";
 import CheckIcon from "@mui/icons-material/Check";
 import StarIcon from "@mui/icons-material/Star";
+import { useColorScheme } from "@mui/material/styles";
 import { NestedDropdown } from "mui-nested-menu";
 import { type ReactNode, useState } from "react";
 import { RPGENGridColor, RPGENGridSize } from "../utils/renderer";
@@ -8,6 +10,8 @@ import { useEditorStore } from "./editor-view";
 export default function DisplayMenu(): ReactNode {
   const [, setUpdater] = useState(false);
   const editor = useEditorStore((store) => store.editor);
+  const mounted = useMounted();
+  const { mode, setMode } = useColorScheme();
 
   return (
     <NestedDropdown
@@ -77,6 +81,21 @@ export default function DisplayMenu(): ReactNode {
                 })),
               },
             ],
+          },
+          {
+            disabled: !mounted,
+            label: "カラーテーマ",
+            items: (
+              [
+                ["ライト", "light"],
+                ["ダーク", "dark"],
+                ["システムと同期", "system"],
+              ] as const
+            ).map(([label, value]) => ({
+              label,
+              rightIcon: value === mode ? <CheckIcon /> : undefined,
+              callback: () => setMode(value),
+            })),
           },
         ],
       }}
