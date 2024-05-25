@@ -6,7 +6,7 @@ import FileMenu from "./file-menu";
 
 export default function MenuBar(): ReactNode {
   return (
-    <AppBar position="static">
+    <AppBar sx={{ backgroundColor: "background.paper" }} position="static">
       <Toolbar variant="dense" disableGutters sx={{ minHeight: 0 }}>
         <FileMenu />
         <DisplayMenu />

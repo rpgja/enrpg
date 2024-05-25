@@ -185,14 +185,17 @@ export class Renderer {
           const dqAnimationSprites = requestImage(
             "https://rpgen.site/dq/img/dq/char.png",
           );
+
           if (!dqAnimationSprites) {
             continue;
           }
+
           const surface = getDQAnimationSpritePosition(
             human.sprite.surface,
             human.direction,
             currentFrameFlip,
           );
+
           context.drawImage(
             dqAnimationSprites,
             surface.x,
@@ -211,9 +214,11 @@ export class Renderer {
           const customAnimationSprite = requestImage(
             `https://rpgen.pw/dq/sAnims/res/${human.sprite.id}.png`,
           );
+
           if (!customAnimationSprite) {
             continue;
           }
+
           context.drawImage(
             customAnimationSprite,
             16 * currentFrameFlip,
@@ -231,9 +236,11 @@ export class Renderer {
           const customStillSprite = requestImage(
             `https://rpgen.site/dq/sprites/${human.sprite.id}/sprite.png`,
           );
+
           if (!customStillSprite) {
             continue;
           }
+
           context.drawImage(
             customStillSprite,
             0,
