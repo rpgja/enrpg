@@ -1,5 +1,3 @@
-import { Editor } from "@/features/editor/utils/editor";
-import { RPGMap } from "@/features/rpgen/utils/map";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
@@ -8,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { compressToEncodedURIComponent } from "lz-string";
 import { type ReactNode, useState } from "react";
 import { create } from "zustand";
@@ -51,6 +49,7 @@ export default function SaveMapDialog(): ReactNode {
             label="圧縮されたマップを保存する"
             onChange={(_event, checked) => setSaveCompressed(checked)}
           />
+          <Typography color="error">{error}</Typography>
         </Stack>
       </DialogContent>
       <DialogActions>
