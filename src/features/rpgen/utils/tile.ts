@@ -23,18 +23,14 @@ export class TileMap {
   }
 
   get(x: number, y: number): Tile | undefined {
-    let rawTile = this.#tiles[TileMap.#positionToIndex(x, y)];
+    const rawTile = this.#tiles[TileMap.#positionToIndex(x, y)];
 
     if (!rawTile) {
       return;
     }
 
-    const collision = rawTile.endsWith("C") || rawTile.startsWith("C");
-
     // TODO: DQSprite
-    if (collision) {
-      rawTile = rawTile.replace(/^C|C$/g, "");
-    }
+    const collision = rawTile.includes("C");
 
     const surface = rawTile.split("_");
     let sprite: StillSprite;
@@ -50,7 +46,7 @@ export class TileMap {
     } else {
       sprite = {
         type: SpriteType.CustomStillSprite,
-        id: Number(rawTile),
+        id: Number(rawTile.match(/\d+/)?.[0]),
       };
     }
 
