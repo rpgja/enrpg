@@ -3,12 +3,14 @@ import type { ReactNode } from "react";
 import { useCreateMapDialogStore } from "./create-map-dialog";
 import { useEditorStore } from "./editor-view";
 import { useLoadMapDialogStore } from "./load-map-dialog";
+import { useSaveMapDialogStore } from "./save-map-dialog";
 
 export default function FileMenu(): ReactNode {
   const setCreateMapDialogOpen = useCreateMapDialogStore(
     (store) => store.setOpen,
   );
   const setLoadMapDialogOpen = useLoadMapDialogStore((store) => store.setOpen);
+  const setSaveMapDialogOpen = useSaveMapDialogStore((store) => store.setOpen);
   const { editor, setEditor } = useEditorStore();
 
   return (
@@ -23,6 +25,10 @@ export default function FileMenu(): ReactNode {
           {
             label: "マップの読み込み",
             callback: () => setLoadMapDialogOpen(true),
+          },
+          {
+            label: "マップの保存",
+            callback: () => setSaveMapDialogOpen(true),
           },
           {
             disabled: !editor,

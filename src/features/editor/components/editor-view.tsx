@@ -8,6 +8,7 @@ import { Editor } from "../utils/editor";
 import CreateMapDialog from "./create-map-dialog";
 import LoadMapDialog from "./load-map-dialog";
 import MenuBar from "./menu-bar";
+import SaveMapDialog from "./save-map-dialog";
 
 export type EditorStore = {
   editor?: Editor;
@@ -45,6 +46,7 @@ export default function EditorView(): ReactNode {
     <>
       <CreateMapDialog />
       <LoadMapDialog />
+      <SaveMapDialog />
       <Stack height="100svh" overflow="hidden">
         <MenuBar />
         <Box flex={1} height="100%">
