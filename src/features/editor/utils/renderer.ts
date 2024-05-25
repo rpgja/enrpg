@@ -70,6 +70,12 @@ export class Renderer {
     this.#tileSize = this.#calcTileSize();
   }
 
+  layerLevel = Number.POSITIVE_INFINITY;
+
+  setLayerLevel(layerLevel: number): void {
+    this.layerLevel = layerLevel;
+  }
+
   #calcTileSize(): number {
     return (Renderer.#BASE_TILE_SIZE * this.camera.scale) | 0;
   }
@@ -410,16 +416,28 @@ export class Renderer {
 
     this.context.imageSmoothingEnabled = false;
 
-    this.renderTileMap(this.rpgMap.floor);
-    this.renderTileMap(this.rpgMap.objects);
+    const layers: (() => void)[] = [];
 
-    this.renderHumans();
+    layers.push(() => this.renderTileMap(this.rpgMap.floor));
+    layers.push(() => this.renderTileMap(this.rpgMap.objects));
+
+    layers.push(() => this.renderHumans());
 
     const { rpgMap } = this;
 
-    this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 });
-    this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 });
-    this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
+    layers.push(() =>
+      this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 }),
+    );
+    layers.push(() => this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 }));
+    layers.push(() => this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 }));
+
+    for (
+      let level = 0;
+      level < this.layerLevel && level < layers.length;
+      level++
+    ) {
+      layers[level]?.();
+    }
 
     this.renderRPGENGrid();
 
