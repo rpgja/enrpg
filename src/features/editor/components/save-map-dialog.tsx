@@ -26,6 +26,7 @@ const saveAsTextFile = (fileText: string, fileName: string) => {
   const blob = new Blob([fileText], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
+
   a.href = url;
   a.download = fileName;
   a.click();
@@ -49,7 +50,7 @@ export default function SaveMapDialog(): ReactNode {
             label="圧縮されたマップを保存する"
             onChange={(_event, checked) => setSaveCompressed(checked)}
           />
-          <Typography color="error">{error}</Typography>
+          {!!error && <Typography color="error">{error}</Typography>}
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -60,16 +61,20 @@ export default function SaveMapDialog(): ReactNode {
             setError("");
 
             const str = editor?.renderer.rpgMap.toString();
+
             if (!str) {
               setError("虚無を保存しました");
               setDisabled(false);
+
               return;
             }
+
             try {
               const fileText = saveCompressed
                 ? compressToEncodedURIComponent(str)
                 : str;
-              saveAsTextFile(fileText, `${+new Date()}.txt`); // ToDo: ファイル名の考案
+
+              saveAsTextFile(fileText, `${Date.now()}.txt`); // ToDo: ファイル名の考案
             } catch (error) {
               setError("マップデータの保存に問題が発生しました");
               console.error(error);

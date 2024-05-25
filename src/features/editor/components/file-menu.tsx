@@ -27,6 +27,7 @@ export default function FileMenu(): ReactNode {
             callback: () => setLoadMapDialogOpen(true),
           },
           {
+            disabled: !editor,
             label: "マップの保存",
             callback: () => setSaveMapDialogOpen(true),
           },
