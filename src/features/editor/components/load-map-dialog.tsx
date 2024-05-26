@@ -1,5 +1,6 @@
 import { Editor } from "@/features/editor/utils/editor";
 import { RPGMap } from "@/features/rpgen/utils/map";
+import { logger } from "@/utils/logger";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
@@ -82,7 +83,7 @@ export default function LoadMapDialog(): ReactNode {
               setOpen(false);
             } catch (error) {
               setError("マップデータの読み込みに問題が発生しました");
-              console.error(error);
+              logger.error(String(error));
             }
 
             setDisabled(false);
