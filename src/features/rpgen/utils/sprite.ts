@@ -3,7 +3,7 @@ import type { Direction, Position } from "../types/types";
 
 export const ANIMATION_SPRITE_FLIP_INTERVAL = 600;
 
-export const RPGEN_TILE_SIZE = 16;
+export const RPGEN_CHIP_SIZE = 16;
 
 export const getDQAnimationSpritePosition = (
   surface: DQAnimationSpriteSurface,

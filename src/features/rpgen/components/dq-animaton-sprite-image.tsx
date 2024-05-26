@@ -1,7 +1,7 @@
 import type { DQAnimationSpriteSurface } from "@/features/rpgen/types/sprite";
 import type { Direction } from "@/features/rpgen/types/types";
 import {
-  RPGEN_TILE_SIZE,
+  RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
 } from "@/features/rpgen/utils/sprite";
 import Box from "@mui/material/Box";
@@ -48,9 +48,9 @@ export default function DQAnimationSpriteImage({
         src="https://rpgen.site/dq/img/dq/char.png"
         sx={{
           imageRendering: "pixelated",
-          width: RPGEN_TILE_SIZE,
-          height: RPGEN_TILE_SIZE,
-          scale: `${width / RPGEN_TILE_SIZE}`,
+          width: RPGEN_CHIP_SIZE,
+          height: RPGEN_CHIP_SIZE,
+          scale: `${width / RPGEN_CHIP_SIZE}`,
           objectFit: "none",
           objectPosition: `-${position?.[0] ?? 0}px -${position?.[1] ?? 0}px`,
         }}

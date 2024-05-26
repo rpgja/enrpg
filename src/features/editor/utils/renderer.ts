@@ -4,7 +4,7 @@ import { type DQStillSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
 import type { RPGMap } from "@/features/rpgen/utils/map";
 import {
-  RPGEN_TILE_SIZE,
+  RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
 } from "@/features/rpgen/utils/sprite";
 import { TileMap } from "@/features/rpgen/utils/tile";
@@ -55,7 +55,7 @@ export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly context: CanvasRenderingContext2D;
   readonly camera: Camera;
-  #tileSize: number;
+  #chipSize: number;
 
   constructor(readonly rpgMap: RPGMap) {
     const canvas = document.createElement("canvas");
@@ -79,7 +79,7 @@ export class Renderer {
     this.canvas = canvas;
     this.context = context;
     this.camera = camera;
-    this.#tileSize = this.#calcTileSize();
+    this.#chipSize = this.#calcChipSize();
   }
 
   layers: RendererLayers = {
@@ -98,7 +98,7 @@ export class Renderer {
     };
   }
 
-  #calcTileSize(): number {
+  #calcChipSize(): number {
     return (Renderer.#BASE_TILE_SIZE * this.camera.scale) | 0;
   }
 
@@ -129,14 +129,14 @@ export class Renderer {
     }
 
     const { context, camera } = this;
-    const tileSize = this.#tileSize;
+    const chipSize = this.#chipSize;
 
     context.drawImage(
       notFound,
-      tileSize * x - camera.x,
-      tileSize * y - camera.y,
-      tileSize,
-      tileSize,
+      chipSize * x - camera.x,
+      chipSize * y - camera.y,
+      chipSize,
+      chipSize,
     );
   }
 
@@ -145,12 +145,12 @@ export class Renderer {
   renderTileMap(tileMap: TileMap): void {
     const { canvas, context, camera } = this;
 
-    const tileSize = this.#tileSize;
-    const cols = canvas.width / tileSize;
-    const rows = canvas.height / tileSize;
+    const chipSize = this.#chipSize;
+    const cols = canvas.width / chipSize;
+    const rows = canvas.height / chipSize;
 
-    const tileOffsetX = camera.x / tileSize;
-    const tileOffsetY = camera.y / tileSize;
+    const tileOffsetX = camera.x / chipSize;
+    const tileOffsetY = camera.y / chipSize;
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
       if (y < 0 || y >= TileMap.MAX_HEIGHT) {
@@ -186,14 +186,14 @@ export class Renderer {
 
             context.drawImage(
               dqStillSprites,
-              tile.sprite.surface.x * RPGEN_TILE_SIZE,
-              tile.sprite.surface.y * RPGEN_TILE_SIZE,
-              RPGEN_TILE_SIZE,
-              RPGEN_TILE_SIZE,
-              tileSize * x - camera.x,
-              tileSize * y - camera.y,
-              tileSize,
-              tileSize,
+              tile.sprite.surface.x * RPGEN_CHIP_SIZE,
+              tile.sprite.surface.y * RPGEN_CHIP_SIZE,
+              RPGEN_CHIP_SIZE,
+              RPGEN_CHIP_SIZE,
+              chipSize * x - camera.x,
+              chipSize * y - camera.y,
+              chipSize,
+              chipSize,
             );
 
             break;
@@ -218,12 +218,12 @@ export class Renderer {
               customStillSprite,
               0,
               0,
-              RPGEN_TILE_SIZE,
-              RPGEN_TILE_SIZE,
-              tileSize * x - camera.x,
-              tileSize * y - camera.y,
-              tileSize,
-              tileSize,
+              RPGEN_CHIP_SIZE,
+              RPGEN_CHIP_SIZE,
+              chipSize * x - camera.x,
+              chipSize * y - camera.y,
+              chipSize,
+              chipSize,
             );
 
             break;
@@ -238,7 +238,7 @@ export class Renderer {
   renderHumans(): void {
     const { context, camera } = this;
     const currentFrameFlip = this.#currentFrameFlip;
-    const tileSize = this.#tileSize;
+    const chipSize = this.#chipSize;
 
     for (const human of this.rpgMap.humans) {
       switch (human.sprite.type) {
@@ -267,12 +267,12 @@ export class Renderer {
             dqAnimationSprites,
             surface.x,
             surface.y,
-            RPGEN_TILE_SIZE,
-            RPGEN_TILE_SIZE,
-            tileSize * human.position.x - camera.x,
-            tileSize * human.position.y - camera.y,
-            tileSize,
-            tileSize,
+            RPGEN_CHIP_SIZE,
+            RPGEN_CHIP_SIZE,
+            chipSize * human.position.x - camera.x,
+            chipSize * human.position.y - camera.y,
+            chipSize,
+            chipSize,
           );
 
           break;
@@ -294,14 +294,14 @@ export class Renderer {
 
           context.drawImage(
             customAnimationSprite,
-            RPGEN_TILE_SIZE * currentFrameFlip,
-            RPGEN_TILE_SIZE * human.direction,
-            RPGEN_TILE_SIZE,
-            RPGEN_TILE_SIZE,
-            tileSize * human.position.x - camera.x,
-            tileSize * human.position.y - camera.y,
-            tileSize,
-            tileSize,
+            RPGEN_CHIP_SIZE * currentFrameFlip,
+            RPGEN_CHIP_SIZE * human.direction,
+            RPGEN_CHIP_SIZE,
+            RPGEN_CHIP_SIZE,
+            chipSize * human.position.x - camera.x,
+            chipSize * human.position.y - camera.y,
+            chipSize,
+            chipSize,
           );
           break;
         }
@@ -325,12 +325,12 @@ export class Renderer {
             customStillSprite,
             0,
             0,
-            RPGEN_TILE_SIZE,
-            RPGEN_TILE_SIZE,
-            tileSize * human.position.x - camera.x,
-            tileSize * human.position.y - camera.y,
-            tileSize,
-            tileSize,
+            RPGEN_CHIP_SIZE,
+            RPGEN_CHIP_SIZE,
+            chipSize * human.position.x - camera.x,
+            chipSize * human.position.y - camera.y,
+            chipSize,
+            chipSize,
           );
           break;
         }
@@ -349,19 +349,19 @@ export class Renderer {
     }
 
     const { context, camera } = this;
-    const tileSize = this.#tileSize;
+    const chipSize = this.#chipSize;
 
     for (const point of points) {
       context.drawImage(
         dqStillSprites,
-        surface.x * RPGEN_TILE_SIZE,
-        surface.y * RPGEN_TILE_SIZE,
-        RPGEN_TILE_SIZE,
-        RPGEN_TILE_SIZE,
-        tileSize * point.position.x - camera.x,
-        tileSize * point.position.y - camera.y,
-        tileSize,
-        tileSize,
+        surface.x * RPGEN_CHIP_SIZE,
+        surface.y * RPGEN_CHIP_SIZE,
+        RPGEN_CHIP_SIZE,
+        RPGEN_CHIP_SIZE,
+        chipSize * point.position.x - camera.x,
+        chipSize * point.position.y - camera.y,
+        chipSize,
+        chipSize,
       );
     }
   }
@@ -386,7 +386,7 @@ export class Renderer {
     if (rpgenGridSize === undefined) {
       return;
     }
-    const tileSize = this.#tileSize;
+    const chipSize = this.#chipSize;
     const [cols, rows] = rpgenGridSizeToSizeTuple(rpgenGridSize);
 
     context.save();
@@ -401,13 +401,13 @@ export class Renderer {
     context.lineWidth = 2 * camera.scale;
     context.strokeRect(
       camera.x > 0
-        ? tileSize - (camera.x % tileSize)
-        : Math.abs(camera.x % tileSize),
+        ? chipSize - (camera.x % chipSize)
+        : Math.abs(camera.x % chipSize),
       camera.y > 0
-        ? tileSize - (camera.y % tileSize)
-        : Math.abs(camera.y % tileSize),
-      cols * tileSize,
-      rows * tileSize,
+        ? chipSize - (camera.y % chipSize)
+        : Math.abs(camera.y % chipSize),
+      cols * chipSize,
+      rows * chipSize,
     );
 
     context.restore();
@@ -415,14 +415,14 @@ export class Renderer {
 
   renderOutline(): void {
     const { context, camera } = this;
-    const tileSize = this.#tileSize;
+    const chipSize = this.#chipSize;
 
     context.strokeStyle = "#f00";
     context.strokeRect(
       0 - camera.x,
       0 - camera.y,
-      tileSize * TileMap.MAX_WIDTH,
-      tileSize * TileMap.MAX_HEIGHT,
+      chipSize * TileMap.MAX_WIDTH,
+      chipSize * TileMap.MAX_HEIGHT,
     );
   }
 
@@ -493,7 +493,7 @@ export class Renderer {
 
       this.#currentFrameHue++;
 
-      this.#tileSize = this.#calcTileSize();
+      this.#chipSize = this.#calcChipSize();
       this.render();
       requestAnimationFrame(tick);
     };
