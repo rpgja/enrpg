@@ -9,6 +9,7 @@ import {
 import type { TeleportPoint } from "../types/teleport-point";
 import type { TreasureBoxPoint } from "../types/treasure-box-point";
 import type { Direction, Position } from "../types/types";
+import { escapeMetaChars, unescapeMetaChars } from "./escape";
 import { TileMap } from "./tile";
 
 export type RPGMapInit = {
@@ -172,7 +173,7 @@ export class RPGMap {
 
           humans.push({
             sprite,
-            message,
+            message: unescapeMetaChars(message),
             position: {
               x: Number(x),
               y: Number(y),
@@ -193,7 +194,7 @@ export class RPGMap {
               x: Number(x),
               y: Number(y),
             },
-            message: message ?? "",
+            message: unescapeMetaChars(message ?? ""),
           });
 
           break;
@@ -208,7 +209,7 @@ export class RPGMap {
               y: Number(y),
             },
             once: once === "1",
-            message: message ?? "",
+            message: unescapeMetaChars(message ?? ""),
           });
 
           break;
@@ -317,14 +318,20 @@ export class RPGMap {
               return `-${human.sprite.id}`;
           }
         })();
-        str += `${id},${human.position.x},${human.position.y},${human.direction},${human.behavior},${human.speed},${human.message}#END\n`;
+        str += `${id},${human.position.x},${human.position.y},${
+          human.direction
+        },${human.behavior},${human.speed},${escapeMetaChars(
+          human.message,
+        )}#END\n`;
         str += "\n";
       }
     }
     if (this.treasureBoxPoints) {
       for (const p of this.treasureBoxPoints) {
         str += "#TBOX\n";
-        str += `${p.position.x},${p.position.y},${p.message}#END\n`;
+        str += `${p.position.x},${p.position.y},${escapeMetaChars(
+          p.message,
+        )}#END\n`;
         str += "\n";
       }
     }
@@ -338,9 +345,9 @@ export class RPGMap {
     if (this.lookPoints) {
       for (const p of this.lookPoints) {
         str += "#SPOINT\n";
-        str += `${p.position.x},${p.position.y},${p.once ? 1 : 0},${
-          p.message
-        }#END\n`;
+        str += `${p.position.x},${p.position.y},${
+          p.once ? 1 : 0
+        },${escapeMetaChars(p.message)}#END\n`;
         str += "\n";
       }
     }
