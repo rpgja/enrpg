@@ -143,7 +143,7 @@ export class RPGMap {
           break;
         }
 
-        case "PL_GALD": {
+        case "PL_GLD": {
           commands.push({
             type: CommandType.ManipulateGold,
             operation: ManipulateGoldCommandOperation.Addition,
