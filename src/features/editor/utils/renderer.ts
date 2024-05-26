@@ -4,6 +4,7 @@ import { type DQStillSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
 import type { RPGMap } from "@/features/rpgen/utils/map";
 import {
+  ANIMATION_SPRITE_FLIP_INTERVAL,
   RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
 } from "@/features/rpgen/utils/sprite";
@@ -485,7 +486,7 @@ export class Renderer {
         return;
       }
 
-      this.#currentFrameFlip = ((now / 500) | 0) % 2;
+      this.#currentFrameFlip = ((now / ANIMATION_SPRITE_FLIP_INTERVAL) | 0) % 2;
 
       if (this.#currentFrameHue >= 360) {
         this.#currentFrameHue = 0;
