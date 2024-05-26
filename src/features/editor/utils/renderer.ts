@@ -2,6 +2,7 @@ import type { EventPoint } from "@/features/rpgen/types/event-point";
 import type { LookPoint } from "@/features/rpgen/types/look-point";
 import { type DQStillSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
+import type { Position } from "@/features/rpgen/types/types";
 import type { RPGMap } from "@/features/rpgen/utils/map";
 import {
   ANIMATION_SPRITE_FLIP_INTERVAL,
@@ -10,7 +11,9 @@ import {
 } from "@/features/rpgen/utils/sprite";
 import { TileMap } from "@/features/rpgen/utils/tile";
 import { requestImage } from "@/utils/image";
+import { clamp } from "@/utils/math";
 import { Camera } from "./camera";
+import { Pointer, type PointerSelection } from "./pointer";
 
 export enum RPGENGridColor {
   Gaming = 0,
@@ -52,10 +55,16 @@ export type RendererLayers = {
   eventPoints: boolean;
 };
 
+export type TileSelection = {
+  start: Position;
+  end: Position;
+};
+
 export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly context: CanvasRenderingContext2D;
   readonly camera: Camera;
+  readonly pointer: Pointer;
   #chipSize: number;
 
   constructor(readonly rpgMap: RPGMap) {
@@ -74,12 +83,15 @@ export class Renderer {
     }
 
     const camera = new Camera(0.07);
+    const pointer = new Pointer();
 
     camera.attachElement(canvas);
+    pointer.attachElement(canvas);
 
     this.canvas = canvas;
     this.context = context;
     this.camera = camera;
+    this.pointer = pointer;
     this.#chipSize = this.#calcChipSize();
   }
 
@@ -427,6 +439,157 @@ export class Renderer {
     );
   }
 
+  #previousCameraX?: number;
+  #previousCameraY?: number;
+  #previousCameraScale?: number;
+
+  cameraMoved = false;
+
+  #calcCameraMoved(): void {
+    // not moved
+    if (
+      this.#previousCameraX === this.camera.x &&
+      this.#previousCameraY === this.camera.y &&
+      this.#previousCameraScale === this.camera.scale
+    ) {
+      this.cameraMoved = false;
+
+      return;
+    }
+
+    this.#previousCameraX = this.camera.x;
+    this.#previousCameraY = this.camera.y;
+    this.#previousCameraScale = this.camera.scale;
+    this.cameraMoved = true;
+  }
+
+  #tileSelection: TileSelection | undefined;
+  #previousPointerSelection: PointerSelection | undefined;
+  #selectionId: number | undefined;
+
+  #calcTileSelection(): void {
+    const { camera, pointer } = this;
+
+    if (!pointer.selection) {
+      this.#tileSelection = undefined;
+
+      return;
+    }
+
+    const previousPointerSelection = this.#previousPointerSelection;
+
+    if (!pointer.selecting) {
+      return;
+    }
+
+    if (this.#selectionId !== pointer.selection.id) {
+      this.#tileSelection = undefined;
+    }
+
+    if (
+      // this.#selectionId === pointer.selection.id &&
+      previousPointerSelection &&
+      previousPointerSelection.start.x === pointer.selection.start.x &&
+      previousPointerSelection.start.y === pointer.selection.start.y &&
+      previousPointerSelection.end.x === pointer.selection.end.x &&
+      previousPointerSelection.end.y === pointer.selection.end.y &&
+      !this.cameraMoved
+    ) {
+      return;
+    }
+
+    // TODO
+    // NOTE: requires clone
+    this.#previousPointerSelection = {
+      ...pointer.selection,
+    };
+
+    const chipSize = this.#chipSize;
+
+    this.#tileSelection = {
+      start:
+        (this.#selectionId === pointer.selection.id || pointer.selecting) &&
+        this.#tileSelection
+          ? this.#tileSelection.start
+          : {
+              x: clamp(
+                0,
+                Math.floor(
+                  pointer.selection.start.x / chipSize + camera.x / chipSize,
+                ),
+                299,
+              ),
+              y: clamp(
+                0,
+                Math.floor(
+                  pointer.selection.start.y / chipSize + camera.y / chipSize,
+                ),
+                299,
+              ),
+            },
+      end: {
+        x: clamp(
+          0,
+          Math.floor(pointer.selection.end.x / chipSize + camera.x / chipSize),
+          299,
+        ),
+        y: clamp(
+          0,
+          Math.floor(pointer.selection.end.y / chipSize + camera.y / chipSize),
+          299,
+        ),
+      },
+    };
+
+    this.#selectionId = pointer.selection.id;
+  }
+
+  renderPointer(): void {
+    const { pointer, context, camera } = this;
+    const chipSize = this.#chipSize;
+
+    context.save();
+
+    context.globalAlpha = 0.5;
+    context.fillStyle = "#fff";
+
+    if (pointer.position) {
+      const focusTileX = Math.floor(
+        pointer.position.x / chipSize + this.camera.x / chipSize,
+      );
+      const focusTileY = Math.floor(
+        pointer.position.y / chipSize + this.camera.y / chipSize,
+      );
+
+      context.fillRect(
+        chipSize * focusTileX - camera.x,
+        chipSize * focusTileY - camera.y,
+        chipSize,
+        chipSize,
+      );
+    }
+
+    const tileSelection = this.#tileSelection;
+
+    if (tileSelection) {
+      const startX = Math.min(tileSelection.start.x, tileSelection.end.x);
+      const startY = Math.min(tileSelection.start.y, tileSelection.end.y);
+      const endX = Math.max(tileSelection.start.x, tileSelection.end.x);
+      const endY = Math.max(tileSelection.start.y, tileSelection.end.y);
+
+      context.fillStyle = "red";
+
+      context.fillRect(
+        chipSize * startX - camera.x,
+        chipSize * startY - camera.y,
+        chipSize * (endX - startX + 1),
+        chipSize * (endY - startY + 1),
+      );
+    }
+
+    context.restore();
+  }
+
   clear(): void {
     const canvas = this.canvas;
 
@@ -470,6 +633,8 @@ export class Renderer {
     this.renderRPGENGrid();
 
     this.renderOutline();
+
+    this.renderPointer();
   }
 
   ticking = false;
@@ -495,6 +660,8 @@ export class Renderer {
       this.#currentFrameHue++;
 
       this.#chipSize = this.#calcChipSize();
+      this.#calcCameraMoved();
+      this.#calcTileSelection();
       this.render();
       requestAnimationFrame(tick);
     };

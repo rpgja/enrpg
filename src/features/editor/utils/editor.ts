@@ -31,6 +31,7 @@ export class Editor {
 
     renderer.stopTicking();
     renderer.camera.detachElement();
+    renderer.pointer.detachElement();
     renderer.canvas.remove();
     this.mounted = false;
   }
