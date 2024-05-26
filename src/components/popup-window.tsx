@@ -1,4 +1,4 @@
-import { MouseButton, isMouseDown } from "@/features/rpgen/utils/mouse";
+import { MouseButton, isMouseDown } from "@/utils/mouse";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import Box from "@mui/material/Box";
