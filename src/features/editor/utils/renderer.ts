@@ -11,7 +11,6 @@ import {
 } from "@/features/rpgen/utils/sprite";
 import { TileMap } from "@/features/rpgen/utils/tile";
 import { requestImage } from "@/utils/image";
-import { clamp } from "@/utils/math";
 import { Camera } from "./camera";
 import { Pointer, type PointerSelection } from "./pointer";
 
@@ -512,32 +511,16 @@ export class Renderer {
         this.#tileSelection
           ? this.#tileSelection.start
           : {
-              x: clamp(
-                0,
-                Math.floor(
-                  pointer.selection.start.x / chipSize + camera.x / chipSize,
-                ),
-                299,
+              x: Math.floor(
+                pointer.selection.start.x / chipSize + camera.x / chipSize,
               ),
-              y: clamp(
-                0,
-                Math.floor(
-                  pointer.selection.start.y / chipSize + camera.y / chipSize,
-                ),
-                299,
+              y: Math.floor(
+                pointer.selection.start.y / chipSize + camera.y / chipSize,
               ),
             },
       end: {
-        x: clamp(
-          0,
-          Math.floor(pointer.selection.end.x / chipSize + camera.x / chipSize),
-          299,
-        ),
-        y: clamp(
-          0,
-          Math.floor(pointer.selection.end.y / chipSize + camera.y / chipSize),
-          299,
-        ),
+        x: Math.floor(pointer.selection.end.x / chipSize + camera.x / chipSize),
+        y: Math.floor(pointer.selection.end.y / chipSize + camera.y / chipSize),
       },
     };
 
