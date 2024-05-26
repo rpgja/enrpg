@@ -1,3 +1,4 @@
+import { MouseButton, isMouseDown } from "@/utils/mouse";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import Box from "@mui/material/Box";
@@ -44,19 +45,27 @@ export default function PopupWindow({
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          onPointerDown={(event) =>
-            event.currentTarget.setPointerCapture(event.pointerId)
-          }
-          onPointerMove={(event) => {
-            if (!target || !event.buttons) {
-              return;
+          sx={{
+            cursor: "grab",
+            ":active": {
+              cursor: "grabbing",
+            },
+          }}
+          onPointerDown={(event) => {
+            if (isMouseDown(event, MouseButton.Primary)) {
+              event.currentTarget.setPointerCapture(event.pointerId);
             }
-
-            target.style.left = `${target.offsetLeft + event.movementX}px`;
-            target.style.top = `${target.offsetTop + event.movementY}px`;
+          }}
+          onPointerMove={(event) => {
+            if (target && isMouseDown(event, MouseButton.Primary)) {
+              target.style.left = `${target.offsetLeft + event.movementX}px`;
+              target.style.top = `${target.offsetTop + event.movementY}px`;
+            }
           }}
         >
-          <Typography color="text.primary">{title}</Typography>
+          <Typography color="text.primary" sx={{ userSelect: "none" }}>
+            {title}
+          </Typography>
           <Stack spacing={1} direction="row" alignItems="center">
             <Tooltip title={minimzed ? "戻す" : "最小化する"}>
               <IconButton
