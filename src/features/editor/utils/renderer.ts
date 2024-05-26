@@ -3,8 +3,11 @@ import type { LookPoint } from "@/features/rpgen/types/look-point";
 import { type DQStillSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
 import type { RPGMap } from "@/features/rpgen/utils/map";
-import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
-import type { TileMap } from "@/features/rpgen/utils/tile";
+import {
+  RPGEN_TILE_SIZE,
+  getDQAnimationSpritePosition,
+} from "@/features/rpgen/utils/sprite";
+import { TileMap } from "@/features/rpgen/utils/tile";
 import { requestImage } from "@/utils/image";
 import { Camera } from "./camera";
 
@@ -150,12 +153,12 @@ export class Renderer {
     const tileOffsetY = camera.y / tileSize;
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
-      if (y < 0 || y >= 300) {
+      if (y < 0 || y >= TileMap.MAX_HEIGHT) {
         continue;
       }
 
       for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
-        if (x < 0 || x >= 300) {
+        if (x < 0 || x >= TileMap.MAX_WIDTH) {
           continue;
         }
 
@@ -183,10 +186,10 @@ export class Renderer {
 
             context.drawImage(
               dqStillSprites,
-              tile.sprite.surface.x * 16,
-              tile.sprite.surface.y * 16,
-              16,
-              16,
+              tile.sprite.surface.x * RPGEN_TILE_SIZE,
+              tile.sprite.surface.y * RPGEN_TILE_SIZE,
+              RPGEN_TILE_SIZE,
+              RPGEN_TILE_SIZE,
               tileSize * x - camera.x,
               tileSize * y - camera.y,
               tileSize,
@@ -215,8 +218,8 @@ export class Renderer {
               customStillSprite,
               0,
               0,
-              16,
-              16,
+              RPGEN_TILE_SIZE,
+              RPGEN_TILE_SIZE,
               tileSize * x - camera.x,
               tileSize * y - camera.y,
               tileSize,
@@ -264,8 +267,8 @@ export class Renderer {
             dqAnimationSprites,
             surface.x,
             surface.y,
-            16,
-            16,
+            RPGEN_TILE_SIZE,
+            RPGEN_TILE_SIZE,
             tileSize * human.position.x - camera.x,
             tileSize * human.position.y - camera.y,
             tileSize,
@@ -291,10 +294,10 @@ export class Renderer {
 
           context.drawImage(
             customAnimationSprite,
-            16 * currentFrameFlip,
-            16 * human.direction,
-            16,
-            16,
+            RPGEN_TILE_SIZE * currentFrameFlip,
+            RPGEN_TILE_SIZE * human.direction,
+            RPGEN_TILE_SIZE,
+            RPGEN_TILE_SIZE,
             tileSize * human.position.x - camera.x,
             tileSize * human.position.y - camera.y,
             tileSize,
@@ -322,8 +325,8 @@ export class Renderer {
             customStillSprite,
             0,
             0,
-            16,
-            16,
+            RPGEN_TILE_SIZE,
+            RPGEN_TILE_SIZE,
             tileSize * human.position.x - camera.x,
             tileSize * human.position.y - camera.y,
             tileSize,
@@ -351,10 +354,10 @@ export class Renderer {
     for (const point of points) {
       context.drawImage(
         dqStillSprites,
-        surface.x * 16,
-        surface.y * 16,
-        16,
-        16,
+        surface.x * RPGEN_TILE_SIZE,
+        surface.y * RPGEN_TILE_SIZE,
+        RPGEN_TILE_SIZE,
+        RPGEN_TILE_SIZE,
         tileSize * point.position.x - camera.x,
         tileSize * point.position.y - camera.y,
         tileSize,
@@ -418,8 +421,8 @@ export class Renderer {
     context.strokeRect(
       0 - camera.x,
       0 - camera.y,
-      tileSize * 300,
-      tileSize * 300,
+      tileSize * TileMap.MAX_WIDTH,
+      tileSize * TileMap.MAX_HEIGHT,
     );
   }
 
