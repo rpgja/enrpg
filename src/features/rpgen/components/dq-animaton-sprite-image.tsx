@@ -1,9 +1,12 @@
 import type { DQAnimationSpriteSurface } from "@/features/rpgen/types/sprite";
 import type { Direction } from "@/features/rpgen/types/types";
-import { getDQAnimationSpritePosition } from "@/features/rpgen/utils/sprite";
-import { type ReactNode, useEffect, useState } from "react";
+import {
+  RPGEN_CHIP_SIZE,
+  getDQAnimationSpritePosition,
+} from "@/features/rpgen/utils/sprite";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import { type ReactNode, useEffect, useState } from "react";
 import { useTimer } from "../../../components/timer-provider";
 
 export type DQAnimationSpriteImageProps = {
@@ -45,9 +48,9 @@ export default function DQAnimationSpriteImage({
         src="https://rpgen.site/dq/img/dq/char.png"
         sx={{
           imageRendering: "pixelated",
-          width: 16,
-          height: 16,
-          scale: `${width / 16}`,
+          width: RPGEN_CHIP_SIZE,
+          height: RPGEN_CHIP_SIZE,
+          scale: `${width / RPGEN_CHIP_SIZE}`,
           objectFit: "none",
           objectPosition: `-${position?.[0] ?? 0}px -${position?.[1] ?? 0}px`,
         }}

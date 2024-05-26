@@ -19,6 +19,7 @@ import {
 import type { TeleportPoint } from "../types/teleport-point";
 import type { TreasureBoxPoint } from "../types/treasure-box-point";
 import type { Direction, Position } from "../types/types";
+import { escapeMetaChars, unescapeMetaChars } from "./escape";
 import { TileMap } from "./tile";
 
 export type RPGMapInit = {
@@ -237,7 +238,7 @@ export class RPGMap {
 
           humans.push({
             sprite,
-            message,
+            message: unescapeMetaChars(message),
             position: {
               x: Number(x),
               y: Number(y),
@@ -258,7 +259,7 @@ export class RPGMap {
               x: Number(x),
               y: Number(y),
             },
-            message: message ?? "",
+            message: unescapeMetaChars(message ?? ""),
           });
 
           break;
@@ -273,7 +274,7 @@ export class RPGMap {
               y: Number(y),
             },
             once: once === "1",
-            message: message ?? "",
+            message: unescapeMetaChars(message ?? ""),
           });
 
           break;
@@ -404,5 +405,80 @@ export class RPGMap {
       objects,
       floor,
     });
+  }
+
+  toString(): string {
+    let str = "";
+    if (this.initialHeroPosition) {
+      str += "#HERO\n";
+      str += `${this.initialHeroPosition.x},${this.initialHeroPosition.y}#END\n`;
+      str += "\n";
+    }
+    if (this.bgmUrl) {
+      str += "#BGM\n";
+      str += `${this.bgmUrl}#END\n`;
+      str += "\n";
+    }
+    if (this.backgroundImageUrl) {
+      str += "#BGIMG\n";
+      str += `${this.backgroundImageUrl}#END\n`;
+      str += "\n";
+    }
+    if (this.floor) {
+      // ToDo: 実装
+    }
+    if (this.objects) {
+      // ToDo: 実装
+    }
+    if (this.humans) {
+      for (const human of this.humans) {
+        str += "#HUMAN\n";
+        const id = (() => {
+          switch (human.sprite.type) {
+            case SpriteType.DQAnimationSprite:
+              return human.sprite.surface;
+            case SpriteType.CustomAnimationSprite:
+              return `A${human.sprite.id}`;
+            case SpriteType.CustomStillSprite:
+              return `-${human.sprite.id}`;
+          }
+        })();
+        str += `${id},${human.position.x},${human.position.y},${
+          human.direction
+        },${human.behavior},${human.speed},${escapeMetaChars(
+          human.message,
+        )}#END\n`;
+        str += "\n";
+      }
+    }
+    if (this.treasureBoxPoints) {
+      for (const p of this.treasureBoxPoints) {
+        str += "#TBOX\n";
+        str += `${p.position.x},${p.position.y},${escapeMetaChars(
+          p.message,
+        )}#END\n`;
+        str += "\n";
+      }
+    }
+    if (this.teleportPoints) {
+      for (const p of this.teleportPoints) {
+        str += "#MPOINT\n";
+        str += `${p.position.x},${p.position.y},${p.destination.mapId},${p.position.x},${p.position.y}#END\n`;
+        str += "\n";
+      }
+    }
+    if (this.lookPoints) {
+      for (const p of this.lookPoints) {
+        str += "#SPOINT\n";
+        str += `${p.position.x},${p.position.y},${
+          p.once ? 1 : 0
+        },${escapeMetaChars(p.message)}#END\n`;
+        str += "\n";
+      }
+    }
+    if (this.eventPoints) {
+      // ToDo: 実装
+    }
+    return str;
   }
 }

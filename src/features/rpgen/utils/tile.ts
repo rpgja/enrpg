@@ -2,20 +2,20 @@ import { SpriteType, type StillSprite } from "../types/sprite";
 import type { RawTile, Tile } from "../types/tile";
 
 export class TileMap {
-  static readonly #MAX_WIDTH = 300;
-  static readonly #MAX_HEIGHT = 300;
-  static readonly #MAX_SIZE = TileMap.#MAX_WIDTH * TileMap.#MAX_HEIGHT;
+  static readonly MAX_WIDTH = 300;
+  static readonly MAX_HEIGHT = 300;
+  static readonly MAX_SIZE = TileMap.MAX_WIDTH * TileMap.MAX_HEIGHT;
 
   readonly #tiles: RawTile[] = [];
 
   constructor() {
-    while (this.#tiles.length < TileMap.#MAX_SIZE) {
+    while (this.#tiles.length < TileMap.MAX_SIZE) {
       this.#tiles.push("");
     }
   }
 
   static #positionToIndex(x: number, y: number): number {
-    return y * TileMap.#MAX_HEIGHT + x;
+    return y * TileMap.MAX_HEIGHT + x;
   }
 
   set(x: number, y: number, rawTile: RawTile): void {
