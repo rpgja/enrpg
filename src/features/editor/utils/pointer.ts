@@ -86,24 +86,30 @@ export class Pointer {
       },
     );
 
-    target.addEventListener("mouseup", (event) => {
-      if (
-        isMouseDown(event, MouseButton.Primary) &&
-        event.getModifierState("Shift")
-      ) {
-        return;
-      }
+    target.addEventListener(
+      "mouseup",
+      (event) => {
+        if (
+          isMouseDown(event, MouseButton.Primary) &&
+          event.getModifierState("Shift")
+        ) {
+          return;
+        }
 
-      if (
-        this.selection &&
-        this.selection.start.x === this.selection.end.x &&
-        this.selection.start.y === this.selection.end.y
-      ) {
-        this.selection = undefined;
-      }
+        if (
+          this.selection &&
+          this.selection.start.x === this.selection.end.x &&
+          this.selection.start.y === this.selection.end.y
+        ) {
+          this.selection = undefined;
+        }
 
-      this.selecting = false;
-    });
+        this.selecting = false;
+      },
+      {
+        signal: eventController.signal,
+      },
+    );
 
     target.addEventListener(
       "pointerleave",
