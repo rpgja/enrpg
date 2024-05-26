@@ -1,3 +1,5 @@
+import { MouseButton, isMouseDown } from "@/utils/mouse";
+
 export class Camera {
   x = 0;
   y = 0;
@@ -42,7 +44,7 @@ export class Camera {
     target.addEventListener(
       "pointerdown",
       (event) => {
-        if (event.button !== 2) {
+        if (!isMouseDown(event, MouseButton.Secondary)) {
           return;
         }
 
@@ -69,9 +71,9 @@ export class Camera {
     );
 
     target.addEventListener(
-      "pointerup",
-      () => {
-        if (!movingCamera) {
+      "mouseup",
+      (event) => {
+        if (isMouseDown(event, MouseButton.Secondary)) {
           return;
         }
 
