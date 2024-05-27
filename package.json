@@ -24,6 +24,7 @@
     "@biomejs/biome": "^1.7.3",
     "@types/node": "^20.12.12",
     "@types/react": "^18.3.2",
+    "babel-plugin-react-compiler": "^0.0.0-experimental-592953e-20240517",
     "typescript": "^5.4.5"
   },
   "homepage": "https://github.com/rpgja/enrpg#readme",

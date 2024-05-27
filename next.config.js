@@ -5,4 +5,7 @@
  */
 export default {
   output: "export",
+  experimental: {
+    reactCompiler: true,
+  },
 };
