@@ -14,9 +14,9 @@
     "iter-tools": "^7.5.3",
     "lz-string": "^1.5.0",
     "mui-nested-menu": "^3.4.0",
-    "next": "^14.2.3",
+    "next": "^14.3.0-canary.84",
     "p-queue": "^8.0.1",
-    "react": "^18.3.1",
+    "react": "^19.0.0-beta-26f2496093-20240514",
     "zustand": "^4.5.2"
   },
   "description": "This is a web application of the map editor dedicated to RPGEN.",
@@ -27,11 +27,7 @@
     "typescript": "^5.4.5"
   },
   "homepage": "https://github.com/rpgja/enrpg#readme",
-  "keywords": [
-    "rpgen",
-    "rpgja",
-    "enrpg"
-  ],
+  "keywords": ["rpgen", "rpgja", "enrpg"],
   "license": "MIT",
   "name": "enrpg",
   "private": true,
@@ -40,11 +36,9 @@
     "url": "git+https://github.com/rpgja/enrpg.git"
   },
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev --turbo"
   },
+  "trustedDependencies": ["@biomejs/biome"],
   "type": "module",
-  "version": "1.0.0",
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ]
+  "version": "1.0.0"
 }
