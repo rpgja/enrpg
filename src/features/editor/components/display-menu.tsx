@@ -9,8 +9,8 @@ import { useColorScheme } from "@mui/material/styles";
 import { NestedDropdown } from "mui-nested-menu";
 import { type ReactNode, useMemo, useState } from "react";
 import {
-  RPGENGridColor,
-  RPGENGridSize,
+  OverlayContentColor,
+  RPGENGrid,
   type RendererLayers,
 } from "../utils/renderer";
 import { useEditorStore } from "./editor-view";
@@ -113,52 +113,28 @@ export default function DisplayMenu(): ReactNode {
             {
               disabled: !editor,
               label: "RPGENグリッド",
-              items: [
-                {
-                  label: "サイズ",
-                  items: (
-                    [
-                      ["なし", undefined],
-                      ["通常", RPGENGridSize.Medium],
-                      ["大きい", RPGENGridSize.Large],
-                      ["最大", RPGENGridSize.Largest],
-                    ] as const
-                  ).map(([label, value]) => ({
-                    label,
-                    rightIcon:
-                      editor?.renderer.rpgenGridSize === value ? (
-                        <CheckIcon />
-                      ) : undefined,
-                    callback: () => {
-                      editor?.renderer.setRPGENGridSize(value);
-                      setUpdater((prev) => !prev);
-                    },
-                  })),
+              rightIcon:
+                editor?.renderer.rpgenGrid !== undefined ? (
+                  <CheckIcon />
+                ) : undefined,
+              items: (
+                [
+                  ["なし", undefined],
+                  ["通常", RPGENGrid.Medium],
+                  ["大きい", RPGENGrid.Large],
+                  ["最大", RPGENGrid.Largest],
+                ] as const
+              ).map(([label, value]) => ({
+                label,
+                rightIcon:
+                  editor?.renderer.rpgenGrid === value ? (
+                    <CheckIcon />
+                  ) : undefined,
+                callback: () => {
+                  editor?.renderer.setRPGENGrid(value);
+                  setUpdater((prev) => !prev);
                 },
-                {
-                  label: "色",
-                  items: (
-                    [
-                      ["ゲーミング", RPGENGridColor.Gaming],
-                      ["反転", RPGENGridColor.Invert],
-                    ] as const
-                  ).map(([label, value]) => ({
-                    label,
-                    rightIcon:
-                      editor?.renderer.rpgenGridColor === value ? (
-                        value === RPGENGridColor.Gaming ? (
-                          <StarIcon />
-                        ) : (
-                          <CheckIcon />
-                        )
-                      ) : undefined,
-                    callback: () => {
-                      editor?.renderer.setRPGENGridColor(value);
-                      setUpdater((prev) => !prev);
-                    },
-                  })),
-                },
-              ],
+              })),
             },
             {
               disabled: !mounted,
@@ -176,6 +152,29 @@ export default function DisplayMenu(): ReactNode {
               })),
             },
             {
+              label: "オーバーレイ表示の色",
+              items: (
+                [
+                  ["ゲーミング", OverlayContentColor.Gaming],
+                  ["反転", OverlayContentColor.Invert],
+                ] as const
+              ).map(([label, value]) => ({
+                label,
+                rightIcon:
+                  editor?.renderer.overlayContentColor === value ? (
+                    value === OverlayContentColor.Gaming ? (
+                      <StarIcon />
+                    ) : (
+                      <CheckIcon />
+                    )
+                  ) : undefined,
+                callback: () => {
+                  editor?.renderer.setOverlayContentColor(value);
+                  setUpdater((prev) => !prev);
+                },
+              })),
+            },
+            {
               disabled: !editor,
               rightIcon: editor?.renderer.renderingCollisionDetection ? (
                 <CheckIcon />
@@ -185,13 +184,14 @@ export default function DisplayMenu(): ReactNode {
                 if (editor) {
                   editor.renderer.renderingCollisionDetection =
                     !editor.renderer.renderingCollisionDetection;
+                  setUpdater((prev) => !prev);
                 }
               },
             },
             {
               disabled: !editor,
               rightIcon: layerControlOpen ? <CheckIcon /> : undefined,
-              label: "レイヤーコントロールの表示",
+              label: "レイヤーコントロール",
               callback: () => setLayerControlOpen((prev) => !prev),
             },
           ],
