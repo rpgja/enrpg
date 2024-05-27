@@ -19,33 +19,33 @@ import {
 import type { TeleportPoint } from "../types/teleport-point";
 import type { TreasureBoxPoint } from "../types/treasure-box-point";
 import type { Direction, Position } from "../types/types";
+import { InfinityChipMap, TileChipMap } from "./chip";
 import { escapeMetaChars, unescapeMetaChars } from "./escape";
-import { TileMap } from "./tile";
 
 export type RPGMapInit = {
   initialHeroPosition?: Position;
   backgroundImageUrl?: string;
   bgmUrl?: string;
-  lookPoints?: LookPoint[];
-  eventPoints?: EventPoint[];
-  teleportPoints?: TeleportPoint[];
-  humans?: Human[];
-  treasureBoxPoints?: TreasureBoxPoint[];
-  floor: TileMap;
-  objects: TileMap;
+  lookPoints?: InfinityChipMap<LookPoint>;
+  eventPoints?: InfinityChipMap<EventPoint>;
+  teleportPoints?: InfinityChipMap<TeleportPoint>;
+  humans?: InfinityChipMap<Human>;
+  treasureBoxPoints?: InfinityChipMap<TreasureBoxPoint>;
+  floor: TileChipMap;
+  objects: TileChipMap;
 };
 
 export class RPGMap {
   readonly initialHeroPosition: Position;
   readonly backgroundImageUrl: string;
   readonly bgmUrl?: string;
-  readonly teleportPoints: TeleportPoint[];
-  readonly lookPoints: LookPoint[];
-  readonly humans: Human[];
-  readonly eventPoints: EventPoint[];
-  readonly treasureBoxPoints: TreasureBoxPoint[];
-  readonly objects: TileMap;
-  readonly floor: TileMap;
+  readonly lookPoints: InfinityChipMap<LookPoint>;
+  readonly eventPoints: InfinityChipMap<EventPoint>;
+  readonly teleportPoints: InfinityChipMap<TeleportPoint>;
+  readonly humans: InfinityChipMap<Human>;
+  readonly treasureBoxPoints: InfinityChipMap<TreasureBoxPoint>;
+  readonly objects: TileChipMap;
+  readonly floor: TileChipMap;
 
   static readonly #DEFAULT_BACKGROUND_IMAGE_URL =
     "http://i.imgur.com/qiN1und.jpg";
@@ -55,11 +55,11 @@ export class RPGMap {
     this.backgroundImageUrl =
       init.backgroundImageUrl ?? RPGMap.#DEFAULT_BACKGROUND_IMAGE_URL;
     this.bgmUrl = init.bgmUrl;
-    this.lookPoints = init.lookPoints ?? [];
-    this.eventPoints = init.eventPoints ?? [];
-    this.teleportPoints = init.teleportPoints ?? [];
-    this.humans = init.humans ?? [];
-    this.treasureBoxPoints = init.treasureBoxPoints ?? [];
+    this.lookPoints = init.lookPoints ?? new InfinityChipMap();
+    this.eventPoints = init.eventPoints ?? new InfinityChipMap();
+    this.teleportPoints = init.teleportPoints ?? new InfinityChipMap();
+    this.humans = init.humans ?? new InfinityChipMap();
+    this.treasureBoxPoints = init.treasureBoxPoints ?? new InfinityChipMap();
     this.objects = init.objects;
     this.floor = init.floor;
   }
@@ -166,13 +166,13 @@ export class RPGMap {
   }
 
   static parse(input: string): RPGMap {
-    const lookPoints: LookPoint[] = [];
-    const treasureBoxPoints: TreasureBoxPoint[] = [];
-    const teleportPoints: TeleportPoint[] = [];
-    const eventPoints: EventPoint[] = [];
-    const floor = new TileMap();
-    const objects = new TileMap();
-    const humans: Human[] = [];
+    const lookPoints = new InfinityChipMap<LookPoint>();
+    const treasureBoxPoints = new InfinityChipMap<TreasureBoxPoint>();
+    const teleportPoints = new InfinityChipMap<TeleportPoint>();
+    const eventPoints = new InfinityChipMap<EventPoint>();
+    const floor = new TileChipMap();
+    const objects = new TileChipMap();
+    const humans = new InfinityChipMap<Human>();
     let bgmUrl: string | undefined;
     let backgroundImageUrl: string | undefined;
     let initialHeroPosition: Position | undefined;
@@ -236,13 +236,15 @@ export class RPGMap {
             }
           }
 
-          humans.push({
+          const position: Position = {
+            x: Number(x),
+            y: Number(y),
+          };
+
+          humans.set(position.x, position.y, {
             sprite,
             message: unescapeMetaChars(message),
-            position: {
-              x: Number(x),
-              y: Number(y),
-            },
+            position,
             direction: Number(direction) as Direction,
             behavior: Number(behavior) as HumanBehavior,
             speed: Number(speed),
@@ -252,29 +254,31 @@ export class RPGMap {
         }
 
         case "TBOX": {
-          const [x, y, message] = value.trimStart().split(",");
+          const [x, y, message = ""] = value.trimStart().split(",");
+          const position: Position = {
+            x: Number(x),
+            y: Number(y),
+          };
 
-          treasureBoxPoints.push({
-            position: {
-              x: Number(x),
-              y: Number(y),
-            },
-            message: unescapeMetaChars(message ?? ""),
+          treasureBoxPoints.set(position.x, position.y, {
+            position,
+            message: unescapeMetaChars(message),
           });
 
           break;
         }
 
         case "SPOINT": {
-          const [x, y, once, message] = value.trimStart().split(",");
+          const [x, y, once, message = ""] = value.trimStart().split(",");
+          const position: Position = {
+            x: Number(x),
+            y: Number(y),
+          };
 
-          lookPoints.push({
-            position: {
-              x: Number(x),
-              y: Number(y),
-            },
+          lookPoints.set(position.x, position.y, {
+            position,
             once: once === "1",
-            message: unescapeMetaChars(message ?? ""),
+            message: unescapeMetaChars(message),
           });
 
           break;
@@ -282,12 +286,13 @@ export class RPGMap {
 
         case "MPOINT": {
           const [x, y, destMapId, destX, destY] = value.trim().split(",");
+          const position: Position = {
+            x: Number(x),
+            y: Number(y),
+          };
 
-          teleportPoints.push({
-            position: {
-              x: Number(x),
-              y: Number(y),
-            },
+          teleportPoints.set(position.x, position.y, {
+            position,
             destination: {
               mapId: Number(destMapId),
               position: {
@@ -365,7 +370,11 @@ export class RPGMap {
             phase.sequence = RPGMap.#parseCommands(body);
           }
 
-          eventPoints.push(eventPoint);
+          eventPoints.set(
+            eventPoint.position.x,
+            eventPoint.position.y,
+            eventPoint,
+          );
 
           break;
         }
