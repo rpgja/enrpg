@@ -37,7 +37,7 @@
     "url": "git+https://github.com/rpgja/enrpg.git"
   },
   "scripts": {
-    "dev": "next dev --turbo"
+    "dev": "next dev"
   },
   "trustedDependencies": ["@biomejs/biome"],
   "type": "module",

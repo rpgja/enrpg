@@ -14,12 +14,12 @@ import { requestImage } from "@/utils/image";
 import { Camera } from "./camera";
 import { Pointer, type PointerSelection } from "./pointer";
 
-export enum RPGENGridColor {
+export enum OverlayContentColor {
   Gaming = 0,
   Invert = 1,
 }
 
-export enum RPGENGridSize {
+export enum RPGENGrid {
   Medium = 0,
   Large = 1,
   Largest = 2,
@@ -30,17 +30,15 @@ export enum RPGENGridSize {
  * [dq.CANVAS_WIDTH / (dq.CHIP_SIZE_X * (clip_s / dq.scaleMultiplier)), dq.CANVAS_HEIGHT / (dq.CHIP_SIZE_Y * (clip_s / dq.scaleMultiplier))]
  * ```
  */
-export type RPGENGridSizeTuple = [cols: number, rows: number];
+export type RPGENGridSize = [cols: number, rows: number];
 
-export const rpgenGridSizeToSizeTuple = (
-  rpgenGridSize: RPGENGridSize,
-): RPGENGridSizeTuple => {
-  switch (rpgenGridSize) {
-    case RPGENGridSize.Medium:
+export const rpgenGridToSize = (rpgenGrid: RPGENGrid): RPGENGridSize => {
+  switch (rpgenGrid) {
+    case RPGENGrid.Medium:
       return [15, 11.25];
-    case RPGENGridSize.Large:
+    case RPGENGrid.Large:
       return [30, 22.5];
-    case RPGENGridSize.Largest:
+    case RPGENGrid.Largest:
       return [60, 45];
   }
 };
@@ -387,7 +385,6 @@ export class Renderer {
       return;
     }
     const { canvas, context, camera } = this;
-    context.fillStyle = "rgba(255,0,0,0.2)";
 
     const chipSize = this.#chipSize;
     const cols = canvas.width / chipSize;
@@ -395,6 +392,9 @@ export class Renderer {
 
     const tileOffsetX = camera.x / chipSize;
     const tileOffsetY = camera.y / chipSize;
+
+    context.save();
+    this.#setOverlayContentStyle(0.2);
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
       if (y < 0 || y >= TileChipMap.MAX_WIDTH) {
@@ -429,39 +429,60 @@ export class Renderer {
         }
       }
     }
+
+    context.restore();
   }
 
-  rpgenGridColor = RPGENGridColor.Gaming;
+  overlayContentColor = OverlayContentColor.Gaming;
 
   #currentFrameHue = 0;
 
-  setRPGENGridColor(rpgenGridColor: RPGENGridColor): void {
-    this.rpgenGridColor = rpgenGridColor;
+  setOverlayContentColor(overlayContentColor: OverlayContentColor): void {
+    this.overlayContentColor = overlayContentColor;
   }
 
-  rpgenGridSize?: RPGENGridSize;
+  #setOverlayContentStyle(alpha = 1): void {
+    const { context } = this;
 
-  setRPGENGridSize(rpgenGridSize: RPGENGridSize | undefined): void {
-    this.rpgenGridSize = rpgenGridSize;
+    context.globalAlpha = alpha;
+
+    switch (this.overlayContentColor) {
+      case OverlayContentColor.Gaming: {
+        context.strokeStyle =
+          context.fillStyle = `hsla(${this.#currentFrameHue} 100% 50% / ${alpha})`;
+
+        break;
+      }
+
+      case OverlayContentColor.Invert: {
+        context.strokeStyle =
+          context.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        context.globalCompositeOperation = "difference";
+
+        break;
+      }
+    }
+  }
+
+  rpgenGrid?: RPGENGrid;
+
+  setRPGENGrid(rpgenGrid: RPGENGrid | undefined): void {
+    this.rpgenGrid = rpgenGrid;
   }
 
   renderRPGENGrid(): void {
-    const { context, camera, rpgenGridSize } = this;
+    const { context, camera, rpgenGrid } = this;
 
-    if (rpgenGridSize === undefined) {
+    if (rpgenGrid === undefined) {
       return;
     }
+
     const chipSize = this.#chipSize;
-    const [cols, rows] = rpgenGridSizeToSizeTuple(rpgenGridSize);
+    const [cols, rows] = rpgenGridToSize(rpgenGrid);
 
     context.save();
 
-    if (this.rpgenGridColor === RPGENGridColor.Gaming) {
-      context.strokeStyle = `hsl(${this.#currentFrameHue} 100% 50%)`;
-    } else {
-      context.strokeStyle = "#fff";
-      context.globalCompositeOperation = "difference";
-    }
+    this.#setOverlayContentStyle();
 
     context.lineWidth = 2 * camera.scale;
     context.strokeRect(
@@ -482,13 +503,15 @@ export class Renderer {
     const { context, camera } = this;
     const chipSize = this.#chipSize;
 
-    context.strokeStyle = "#f00";
+    context.save();
+    this.#setOverlayContentStyle();
     context.strokeRect(
       0 - camera.x,
       0 - camera.y,
       chipSize * TileChipMap.MAX_WIDTH,
       chipSize * TileChipMap.MAX_WIDTH,
     );
+    context.restore();
   }
 
   #previousCameraX?: number;
@@ -586,8 +609,8 @@ export class Renderer {
 
     context.save();
 
-    context.globalAlpha = 0.5;
     context.fillStyle = "#fff";
+    context.globalAlpha = 0.5;
 
     if (pointer.position) {
       const focusTileX = Math.floor(
