@@ -378,6 +378,58 @@ export class Renderer {
     }
   }
 
+  renderingCollisionDetection = false;
+  renderCollisionDetection(): void {
+    if (!this.renderingCollisionDetection) {
+      return;
+    }
+    const { canvas, context, camera } = this;
+    context.fillStyle = "rgba(255,0,0,0.2)";
+
+    const chipSize = this.#chipSize;
+    const cols = canvas.width / chipSize;
+    const rows = canvas.height / chipSize;
+
+    const tileOffsetX = camera.x / chipSize;
+    const tileOffsetY = camera.y / chipSize;
+
+    for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
+      if (y < 0 || y >= TileMap.MAX_HEIGHT) {
+        continue;
+      }
+
+      const halfChipSize = chipSize >> 1;
+      for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
+        if (x < 0 || x >= TileMap.MAX_WIDTH) {
+          continue;
+        }
+
+        const human = this.rpgMap.humans.find(
+          (human) => human.position.x === x && human.position.y === y,
+        );
+        const object = this.rpgMap.objects.get(x, y);
+        const floor = this.rpgMap.floor.get(x, y);
+
+        if (
+          human ||
+          object?.collision ||
+          (!object?.collision && floor?.collision)
+        ) {
+          context.beginPath();
+          context.arc(
+            chipSize * x - camera.x + halfChipSize,
+            chipSize * y - camera.y + halfChipSize,
+            halfChipSize,
+            0,
+            2 * Math.PI,
+          );
+          context.closePath();
+          context.fill();
+        }
+      }
+    }
+  }
+
   rpgenGridColor = RPGENGridColor.Gaming;
 
   #currentFrameHue = 0;
@@ -613,10 +665,9 @@ export class Renderer {
       this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
     }
 
+    this.renderCollisionDetection();
     this.renderRPGENGrid();
-
     this.renderOutline();
-
     this.renderPointer();
   }
 

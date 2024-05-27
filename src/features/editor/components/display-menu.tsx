@@ -177,6 +177,19 @@ export default function DisplayMenu(): ReactNode {
             },
             {
               disabled: !editor,
+              rightIcon: editor?.renderer.renderingCollisionDetection ? (
+                <CheckIcon />
+              ) : undefined,
+              label: "当たり判定",
+              callback: () => {
+                if (editor) {
+                  editor.renderer.renderingCollisionDetection =
+                    !editor.renderer.renderingCollisionDetection;
+                }
+              },
+            },
+            {
+              disabled: !editor,
               rightIcon: layerControlOpen ? <CheckIcon /> : undefined,
               label: "レイヤーコントロールの表示",
               callback: () => setLayerControlOpen((prev) => !prev),
