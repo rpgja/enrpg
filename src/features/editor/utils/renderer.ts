@@ -3,13 +3,13 @@ import type { LookPoint } from "@/features/rpgen/types/look-point";
 import { type DQStillSprite, SpriteType } from "@/features/rpgen/types/sprite";
 import type { TeleportPoint } from "@/features/rpgen/types/teleport-point";
 import type { Position } from "@/features/rpgen/types/types";
+import { type InfinityChipMap, TileChipMap } from "@/features/rpgen/utils/chip";
 import type { RPGMap } from "@/features/rpgen/utils/map";
 import {
   ANIMATION_SPRITE_FLIP_INTERVAL,
   RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
 } from "@/features/rpgen/utils/sprite";
-import { TileMap } from "@/features/rpgen/utils/tile";
 import { requestImage } from "@/utils/image";
 import { Camera } from "./camera";
 import { Pointer, type PointerSelection } from "./pointer";
@@ -154,7 +154,7 @@ export class Renderer {
 
   static readonly #BASE_TILE_SIZE = 64;
 
-  renderTileMap(tileMap: TileMap): void {
+  renderTileMap(tileMap: TileChipMap): void {
     const { canvas, context, camera } = this;
 
     const chipSize = this.#chipSize;
@@ -165,12 +165,12 @@ export class Renderer {
     const tileOffsetY = camera.y / chipSize;
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
-      if (y < 0 || y >= TileMap.MAX_HEIGHT) {
+      if (y < 0 || y >= TileChipMap.MAX_WIDTH) {
         continue;
       }
 
       for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
-        if (x < 0 || x >= TileMap.MAX_WIDTH) {
+        if (x < 0 || x >= TileChipMap.MAX_WIDTH) {
           continue;
         }
 
@@ -351,7 +351,10 @@ export class Renderer {
   }
 
   renderPoints(
-    points: TeleportPoint[] | LookPoint[] | EventPoint[],
+    points:
+      | InfinityChipMap<TeleportPoint>
+      | InfinityChipMap<LookPoint>
+      | InfinityChipMap<EventPoint>,
     surface: DQStillSprite["surface"],
   ): void {
     const dqStillSprites = requestImage("https://rpgen.site/dq/img/dq/map.png");
@@ -394,19 +397,17 @@ export class Renderer {
     const tileOffsetY = camera.y / chipSize;
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
-      if (y < 0 || y >= TileMap.MAX_HEIGHT) {
+      if (y < 0 || y >= TileChipMap.MAX_WIDTH) {
         continue;
       }
 
       const halfChipSize = chipSize >> 1;
       for (let x = tileOffsetX | 0; x < cols + tileOffsetX; x++) {
-        if (x < 0 || x >= TileMap.MAX_WIDTH) {
+        if (x < 0 || x >= TileChipMap.MAX_WIDTH) {
           continue;
         }
 
-        const human = this.rpgMap.humans.find(
-          (human) => human.position.x === x && human.position.y === y,
-        );
+        const human = this.rpgMap.humans.get(x, y);
         const object = this.rpgMap.objects.get(x, y);
         const floor = this.rpgMap.floor.get(x, y);
 
@@ -485,8 +486,8 @@ export class Renderer {
     context.strokeRect(
       0 - camera.x,
       0 - camera.y,
-      chipSize * TileMap.MAX_WIDTH,
-      chipSize * TileMap.MAX_HEIGHT,
+      chipSize * TileChipMap.MAX_WIDTH,
+      chipSize * TileChipMap.MAX_WIDTH,
     );
   }
 
