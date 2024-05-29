@@ -1,0 +1,30 @@
+name: 新機能提案
+description: 新機能に関する提案を行います。
+labels:
+  - enhancement
+body:
+  - type: input
+    attributes:
+      label: やりたいこと
+      description: やりたいことを簡潔に記述してください。
+      placeholder: 例：enrpgに編集中のデータのテスト実行機能を追加したい
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: なぜ？
+      description: それをしたい理由を記述してください。
+      placeholder: 例：本家に書き込まずに気軽に動作確認したいから
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 詳細設計
+      description: その機能に関する詳細な動作を記述してください。
+      placeholder: |
+        例：
+        - 上部のツールバーに「デバッグ実行」メニューを追加する
+        - デバッグ実行をすると別ウィンドウが開いてマップデータを反映した動作確認ができる
+        - エディタと別々のコンテキストであること
+    validations:
+      required: true
