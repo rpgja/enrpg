@@ -1,5 +1,6 @@
 name: 新機能提案
 description: 新機能に関する提案を行います。
+title: 新機能の提案：<title>
 labels:
   - enhancement
 body:
@@ -14,7 +15,9 @@ body:
     attributes:
       label: なぜ？
       description: それをしたい理由を記述してください。
-      placeholder: 例：本家に書き込まずに気軽に動作確認したいから
+      placeholder: |
+        例：
+        本家に書き込まずに気軽に動作確認したいから
     validations:
       required: true
   - type: textarea
