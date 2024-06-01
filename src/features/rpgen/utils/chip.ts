@@ -1,6 +1,7 @@
 import { LargeMap } from "@/utils/collections";
 import { SpriteType, type StillSprite } from "../types/sprite";
 import type { RawTile, Tile } from "../types/tile";
+import { checkWalkableTile } from "./sprite";
 
 export type InfinityChipMapKey = `${number},${number}`;
 
@@ -53,17 +54,11 @@ export class TileChipMap {
       return;
     }
 
-    // TODO: DQSprite
-    const collision = rawTile.includes("C");
-
-    if (collision) {
-      rawTile = rawTile.replaceAll("C", "");
-    }
-
-    const surface = rawTile.split("_");
+    let collision: boolean;
     let sprite: StillSprite;
-
-    if (surface.length === 2) {
+    if (rawTile.includes("_")) {
+      collision = !checkWalkableTile(rawTile);
+      const surface = rawTile.split("_");
       sprite = {
         type: SpriteType.DQStillSprite,
         surface: {
@@ -72,6 +67,8 @@ export class TileChipMap {
         },
       };
     } else {
+      collision = rawTile.includes("C");
+      rawTile = rawTile.replaceAll("C", "");
       sprite = {
         type: SpriteType.CustomStillSprite,
         id: Number(rawTile.match(/\d+/)?.[0]),
