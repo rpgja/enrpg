@@ -106,7 +106,15 @@ export default function DisplayMenu(): ReactNode {
                 },
                 {
                   label: "拡大率をリセット",
-                  callback: () => editor?.renderer.camera.setScale(1),
+                  callback: () => {
+                    if (editor) {
+                      const rect =
+                        editor.renderer.canvas.getBoundingClientRect();
+                      const mouseX = rect.width >> 1;
+                      const mouseY = rect.height >> 1;
+                      editor?.renderer.camera.setScale(1, mouseX, mouseY);
+                    }
+                  },
                 },
               ],
             },
