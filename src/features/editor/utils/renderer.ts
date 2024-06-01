@@ -487,8 +487,8 @@ export class Renderer {
     const canvasCols = canvas.width / chipSize;
     const canvasRows = canvas.height / chipSize;
 
-    const offsetX = (canvasCols - cols) >> 1;
-    const offsetY = (canvasRows - rows) >> 1;
+    const offsetX = Math.round((canvasCols - cols) / 2);
+    const offsetY = Math.round((canvasRows - rows) / 2);
 
     context.lineWidth = 2 * camera.scale;
     context.strokeRect(

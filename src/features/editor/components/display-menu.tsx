@@ -110,8 +110,8 @@ export default function DisplayMenu(): ReactNode {
                     if (editor) {
                       const rect =
                         editor.renderer.canvas.getBoundingClientRect();
-                      const mouseX = rect.width >> 1;
-                      const mouseY = rect.height >> 1;
+                      const mouseX = Math.round(rect.width / 2);
+                      const mouseY = Math.round(rect.height / 2);
                       editor?.renderer.camera.setScale(1, mouseX, mouseY);
                     }
                   },
