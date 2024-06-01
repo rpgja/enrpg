@@ -150,9 +150,20 @@ export class Camera {
             ? Math.max(scaleUnit, this.scale - scaleUnit)
             : this.scale + scaleUnit;
 
+        const prevScale = this.scale;
         if (newScale > this.scaleUnit) {
           this.scale = newScale;
         }
+        const nextScale = this.scale;
+
+        const rect = target.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        const gameX = (mouseX + this.x) / prevScale;
+        const gameY = (mouseY + this.y) / prevScale;
+        const x = gameX * nextScale - mouseX;
+        const y = gameY * nextScale - mouseY;
+        this.setPosition(x | 0, y | 0);
       },
       {
         signal: eventController.signal,
