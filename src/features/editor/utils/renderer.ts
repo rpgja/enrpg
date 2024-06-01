@@ -471,7 +471,7 @@ export class Renderer {
   }
 
   renderRPGENGrid(): void {
-    const { context, camera, rpgenGrid } = this;
+    const { canvas, context, camera, rpgenGrid } = this;
 
     if (rpgenGrid === undefined) {
       return;
@@ -484,14 +484,20 @@ export class Renderer {
 
     this.#setOverlayContentStyle();
 
+    const canvasCols = canvas.width / chipSize;
+    const canvasRows = canvas.height / chipSize;
+
+    const offsetX = (canvasCols - cols) >> 1;
+    const offsetY = (canvasRows - rows) >> 1;
+
     context.lineWidth = 2 * camera.scale;
     context.strokeRect(
       camera.x > 0
-        ? chipSize - (camera.x % chipSize)
-        : Math.abs(camera.x % chipSize),
+        ? chipSize - (camera.x % chipSize) + offsetX * chipSize
+        : Math.abs(camera.x % chipSize) + offsetX * chipSize,
       camera.y > 0
-        ? chipSize - (camera.y % chipSize)
-        : Math.abs(camera.y % chipSize),
+        ? chipSize - (camera.y % chipSize) + offsetY * chipSize
+        : Math.abs(camera.y % chipSize) + offsetY * chipSize,
       cols * chipSize,
       rows * chipSize,
     );
