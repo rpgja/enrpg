@@ -394,7 +394,7 @@ export class Renderer {
     const tileOffsetY = camera.y / chipSize;
 
     context.save();
-    this.#setOverlayContentStyle(0.2);
+    this.#setOverlayContentStyle(0.5);
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
       if (y < 0 || y >= TileChipMap.MAX_WIDTH) {
