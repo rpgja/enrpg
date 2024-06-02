@@ -467,7 +467,7 @@ export class Renderer {
     }
   }
 
-  rpgenGrid?: RPGENGrid;
+  rpgenGrid?: RPGENGrid = RPGENGrid.Medium;
 
   setRPGENGrid(rpgenGrid: RPGENGrid | undefined): void {
     this.rpgenGrid = rpgenGrid;
