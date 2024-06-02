@@ -22,8 +22,17 @@ export class Camera {
     this.setY(y);
   }
 
-  setScale(scale: number): void {
-    this.scale = scale;
+  setScale(scale: number, mouseX: number, mouseY: number): void {
+    const oldScale = this.scale;
+    const newScale = scale;
+
+    const gameX = (this.x + mouseX) / oldScale;
+    const gameY = (this.y + mouseY) / oldScale;
+    const x = Math.round(gameX * newScale - mouseX);
+    const y = Math.round(gameY * newScale - mouseY);
+    this.setPosition(x, y);
+
+    this.scale = newScale;
   }
 
   attachElement(
@@ -151,7 +160,10 @@ export class Camera {
             : this.scale + scaleUnit;
 
         if (newScale > this.scaleUnit) {
-          this.scale = newScale;
+          const rect = target.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          const mouseY = event.clientY - rect.top;
+          this.setScale(newScale, mouseX, mouseY);
         }
       },
       {
