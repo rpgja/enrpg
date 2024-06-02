@@ -9,6 +9,9 @@ import {
   ANIMATION_SPRITE_FLIP_INTERVAL,
   RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
+  tileOfEvent,
+  tileOfLook,
+  tileOfTeleport,
 } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 import { Camera } from "./camera";
@@ -684,15 +687,15 @@ export class Renderer {
     const { rpgMap } = this;
 
     if (layers.teleportPoints) {
-      this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 });
+      this.renderPoints(rpgMap.teleportPoints, tileOfTeleport);
     }
 
     if (layers.lookPoints) {
-      this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 });
+      this.renderPoints(rpgMap.lookPoints, tileOfLook);
     }
 
     if (layers.eventPoints) {
-      this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
+      this.renderPoints(rpgMap.eventPoints, tileOfEvent);
     }
 
     this.renderCollisionDetection();
