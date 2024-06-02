@@ -19,7 +19,7 @@ export const getDQAnimationSpritePosition = (
   return {
     x,
     y,
-  };
+  } as const;
 };
 
 const walkableTiles = new Set([
@@ -217,20 +217,20 @@ const doorTiles = new Set([
 ]);
 export const checkDoorTile = (rawTile: string) => doorTiles.has(rawTile);
 
-export const TILE_OF_BBS = "11_13";
-export const TILE_OF_BOOK = "6_9";
-export const TILE_OF_INTERNET = "7_9";
-
 const castRawTileToSurface = (rawTile: string): Position => {
   const surface = rawTile.split("_");
   if (surface.length === 2) {
     return {
       x: Number(surface[0]),
       y: Number(surface[1]),
-    };
+    } as const;
   }
-  return { x: 0, y: 0 }; // ToDo: 適切な異常値か検討の余地あり
+  return { x: 0, y: 0 } as const; // ToDo: 適切な異常値か検討の余地あり
 };
+
+export const TILE_OF_BBS = "11_13";
+export const TILE_OF_BOOK = "6_9";
+export const TILE_OF_INTERNET = "7_9";
 
 export const TILE_OF_TELEPORT = "23_7";
 export const TILE_OF_LOOK = "22_8";
@@ -758,4 +758,4 @@ export const tilesLogicalName = {
   "29_13": "町（右）",
   "29_14": "宿屋の看板3",
   "29_15": "木の机",
-};
+} as const;
