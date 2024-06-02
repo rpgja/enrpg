@@ -248,7 +248,7 @@ const movingFloorTiles = new Set(["16_13", "16_14", "17_13", "17_14"]);
 export const checkMovingFloorTile = (rawTile: string) =>
   movingFloorTiles.has(rawTile);
 
-export const logicalName = {
+export const tilesLogicalName = {
   "0_0": "海（四方囲まれ）",
   "0_1": "海（左右囲まれ）",
   "0_2": "海（上下囲まれ）",
