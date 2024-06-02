@@ -4,10 +4,9 @@ export class Camera {
   x = 0;
   y = 0;
   scale = 1;
+  zoomRate = 1.07;
 
   #eventController: AbortController | undefined;
-
-  constructor(readonly scaleUnit: number) {}
 
   setX(x: number): void {
     this.x = x;
@@ -20,6 +19,10 @@ export class Camera {
   setPosition(x: number, y: number): void {
     this.setX(x);
     this.setY(y);
+  }
+
+  setZoomRate(zoomRate: number): void {
+    this.zoomRate = zoomRate;
   }
 
   setScale(scale: number, mouseX: number, mouseY: number): void {
@@ -152,19 +155,15 @@ export class Camera {
     target.addEventListener(
       "wheel",
       (event) => {
-        const scaleUnit = this.scaleUnit;
-
         const newScale =
           event.deltaY > 0
-            ? Math.max(scaleUnit, this.scale - scaleUnit)
-            : this.scale + scaleUnit;
+            ? this.scale / this.zoomRate // 縮小
+            : this.scale * this.zoomRate; // 拡大
 
-        if (newScale > this.scaleUnit) {
-          const rect = target.getBoundingClientRect();
-          const mouseX = event.clientX - rect.left;
-          const mouseY = event.clientY - rect.top;
-          this.setScale(newScale, mouseX, mouseY);
-        }
+        const rect = target.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        this.setScale(newScale, mouseX, mouseY);
       },
       {
         signal: eventController.signal,
