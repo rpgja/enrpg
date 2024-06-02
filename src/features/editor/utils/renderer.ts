@@ -9,6 +9,9 @@ import {
   ANIMATION_SPRITE_FLIP_INTERVAL,
   RPGEN_CHIP_SIZE,
   getDQAnimationSpritePosition,
+  tileOfEvent,
+  tileOfLook,
+  tileOfTeleport,
 } from "@/features/rpgen/utils/sprite";
 import { requestImage } from "@/utils/image";
 import { Camera } from "./camera";
@@ -394,7 +397,7 @@ export class Renderer {
     const tileOffsetY = camera.y / chipSize;
 
     context.save();
-    this.#setOverlayContentStyle(0.2);
+    this.#setOverlayContentStyle(0.5);
 
     for (let y = tileOffsetY | 0; y < rows + tileOffsetY; y++) {
       if (y < 0 || y >= TileChipMap.MAX_WIDTH) {
@@ -464,14 +467,14 @@ export class Renderer {
     }
   }
 
-  rpgenGrid?: RPGENGrid;
+  rpgenGrid?: RPGENGrid = RPGENGrid.Medium;
 
   setRPGENGrid(rpgenGrid: RPGENGrid | undefined): void {
     this.rpgenGrid = rpgenGrid;
   }
 
   renderRPGENGrid(): void {
-    const { context, camera, rpgenGrid } = this;
+    const { canvas, context, camera, rpgenGrid } = this;
 
     if (rpgenGrid === undefined) {
       return;
@@ -484,14 +487,20 @@ export class Renderer {
 
     this.#setOverlayContentStyle();
 
+    const canvasCols = canvas.width / chipSize;
+    const canvasRows = canvas.height / chipSize;
+
+    const offsetX = Math.round((canvasCols - cols) / 2);
+    const offsetY = Math.round((canvasRows - rows) / 2);
+
     context.lineWidth = 2 * camera.scale;
     context.strokeRect(
       camera.x > 0
-        ? chipSize - (camera.x % chipSize)
-        : Math.abs(camera.x % chipSize),
+        ? chipSize - (camera.x % chipSize) + offsetX * chipSize
+        : Math.abs(camera.x % chipSize) + offsetX * chipSize,
       camera.y > 0
-        ? chipSize - (camera.y % chipSize)
-        : Math.abs(camera.y % chipSize),
+        ? chipSize - (camera.y % chipSize) + offsetY * chipSize
+        : Math.abs(camera.y % chipSize) + offsetY * chipSize,
       cols * chipSize,
       rows * chipSize,
     );
@@ -678,15 +687,15 @@ export class Renderer {
     const { rpgMap } = this;
 
     if (layers.teleportPoints) {
-      this.renderPoints(rpgMap.teleportPoints, { x: 23, y: 7 });
+      this.renderPoints(rpgMap.teleportPoints, tileOfTeleport);
     }
 
     if (layers.lookPoints) {
-      this.renderPoints(rpgMap.lookPoints, { x: 22, y: 8 });
+      this.renderPoints(rpgMap.lookPoints, tileOfLook);
     }
 
     if (layers.eventPoints) {
-      this.renderPoints(rpgMap.eventPoints, { x: 7, y: 8 });
+      this.renderPoints(rpgMap.eventPoints, tileOfEvent);
     }
 
     this.renderCollisionDetection();
