@@ -9,3 +9,8 @@ export enum Direction {
   South = 2,
   West = 3,
 }
+
+export type Size = {
+  width: number;
+  height: number;
+};
