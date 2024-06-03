@@ -108,15 +108,19 @@ export class Preset {
   ): IterableIterator<[layerName: string, tileChipMapStr: string]> {
     let currentIndex = input.indexOf(termination);
     while (currentIndex !== -1) {
-      const index = input.slice(currentIndex).indexOf(termination);
+      const index = input
+        .slice(currentIndex + termination.length)
+        .indexOf(termination);
       let chunk: string;
       if (index === -1) {
-        chunk = input.slice(currentIndex);
+        chunk = input.slice(currentIndex + termination.length);
       } else {
-        chunk = input.slice(currentIndex, index);
+        chunk = input.slice(currentIndex + termination.length, index);
       }
       const index2 = chunk.indexOf("\n");
-      yield [chunk.slice(0, index2), chunk.slice(index2)];
+      if (index2 !== -1) {
+        yield [chunk.slice(0, index2), chunk.slice(index2 + 1)];
+      }
       currentIndex = index;
     }
   }
