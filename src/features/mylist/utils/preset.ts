@@ -1,5 +1,5 @@
 import type { RawTile } from "@/features/rpgen/types/tile";
-import type { TileChipMap } from "@/features/rpgen/utils/chip";
+import { TileChipMap } from "@/features/rpgen/utils/chip";
 
 export type PresetInit = {
   name: string;
@@ -79,5 +79,55 @@ export class Preset {
     return serialized;
   }
 
-  static deserialize(): Preset {}
+  static deserialize(input: string): Preset {
+    const index = input.indexOf("\n");
+    const name = input.slice("## ".length, index);
+    let floor: TileChipMap | undefined;
+    let objects: TileChipMap | undefined;
+    for (const [layerName, tileChipMapStr] of Preset.#parseChunks(
+      input.slice(index + 1),
+      "\n### ",
+    )) {
+      switch (layerName) {
+        case "floor":
+          floor = Preset.#parseTileChipMap(tileChipMapStr);
+          break;
+        case "objects":
+          objects = Preset.#parseTileChipMap(tileChipMapStr);
+          break;
+        default:
+          break;
+      }
+    }
+    return new Preset({ name, floor, objects });
+  }
+
+  static *#parseChunks(
+    input: string,
+    termination: string,
+  ): IterableIterator<[layerName: string, tileChipMapStr: string]> {
+    let currentIndex = input.indexOf(termination);
+    while (currentIndex !== -1) {
+      const index = input.slice(currentIndex).indexOf(termination);
+      let chunk: string;
+      if (index === -1) {
+        chunk = input.slice(currentIndex);
+      } else {
+        chunk = input.slice(currentIndex, index);
+      }
+      const index2 = chunk.indexOf("\n");
+      yield [chunk.slice(0, index2), chunk.slice(index2)];
+      currentIndex = index;
+    }
+  }
+
+  static #parseTileChipMap(input: string) {
+    const tileChipMap = new TileChipMap();
+    for (const [y, row] of input.split("\n").entries()) {
+      for (const [x, field] of row.split(",").entries()) {
+        tileChipMap.set(x, y, field.trim());
+      }
+    }
+    return tileChipMap;
+  }
 }
