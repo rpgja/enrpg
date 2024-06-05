@@ -1,6 +1,7 @@
 import { LargeMap } from "@/utils/collections";
 import { SpriteType, type StillSprite } from "../types/sprite";
 import type { RawTile, Tile } from "../types/tile";
+import type { Size } from "../types/types";
 import { checkWalkableTile } from "./sprite";
 
 export type InfinityChipMapKey = `${number},${number}`;
@@ -29,6 +30,10 @@ export class TileChipMap {
   static readonly MAX_WIDTH = 300;
 
   static readonly #MAX_WIDTH_BITS = TileChipMap.MAX_WIDTH.toString(2).length;
+  static readonly #Y_MASK = Number.parseInt(
+    "1".repeat(TileChipMap.#MAX_WIDTH_BITS),
+    2,
+  );
 
   static #hashKey(x: number, y: number): number {
     if (x > TileChipMap.MAX_WIDTH || y > TileChipMap.MAX_WIDTH) {
@@ -40,10 +45,37 @@ export class TileChipMap {
 
   readonly #map = new Map<number, RawTile>();
 
+  getSize(): Size {
+    let width = 0;
+    let height = 0;
+
+    for (const key of this.#map.keys()) {
+      const x = (key >> TileChipMap.#MAX_WIDTH_BITS) + 1;
+      const y = (key & TileChipMap.#Y_MASK) + 1;
+
+      if (x > width) {
+        width = x;
+      }
+
+      if (y > height) {
+        height = y;
+      }
+    }
+
+    return {
+      width,
+      height,
+    };
+  }
+
   set(x: number, y: number, rawTile: RawTile): void {
     const key = TileChipMap.#hashKey(x, y);
 
     this.#map.set(key, rawTile);
+  }
+
+  getRaw(x: number, y: number): RawTile | undefined {
+    return this.#map.get(TileChipMap.#hashKey(x, y));
   }
 
   get(x: number, y: number): Tile | undefined {
