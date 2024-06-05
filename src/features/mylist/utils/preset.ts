@@ -2,11 +2,11 @@ import type { RawTile } from "@/features/rpgen/types/tile";
 import { TileChipMap } from "@/features/rpgen/utils/chip";
 
 export type PresetInit = {
-  name?: string;
+  name: string;
 };
 
 export class Preset {
-  name?: string;
+  name: string;
 
   constructor(init: PresetInit) {
     this.name = init.name;

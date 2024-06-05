@@ -3,11 +3,11 @@ import { Preset } from "./preset";
 import type { PresetInit } from "./preset";
 
 export type SoundPresetInit = PresetInit & {
-  sounds?: TileChipMap;
+  sounds: TileChipMap;
 };
 
 export class SoundPreset extends Preset {
-  sounds?: TileChipMap;
+  sounds: TileChipMap;
 
   constructor(init: SoundPresetInit) {
     super(init);
@@ -18,7 +18,9 @@ export class SoundPreset extends Preset {
     return input.includes("SOUND");
   }
 
-  static parse(input: string): SoundPreset {
+  static parseInit(input: string): {
+    sounds?: TileChipMap;
+  } {
     let sounds: TileChipMap | undefined;
     for (const [layerName, tileChipMapStr] of Preset.parseChunks(
       input,
@@ -30,7 +32,7 @@ export class SoundPreset extends Preset {
           break;
       }
     }
-    return new SoundPreset({ sounds });
+    return { sounds };
   }
 
   static stringify(preset: SoundPreset): string {

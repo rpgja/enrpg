@@ -30,11 +30,23 @@ export class Mylist {
       const body = chunk.slice(index + 1);
       let preset: Preset | undefined;
       if (TilePreset.lookLike(body)) {
-        preset = TilePreset.parse(body);
+        const init = TilePreset.parseInit(body);
+        if (init.floor || init.objects) {
+          const { floor, objects } = init;
+          preset = new TilePreset({ name, floor, objects });
+        }
       } else if (HumanPreset.lookLike(body)) {
-        preset = HumanPreset.parse(body);
+        const init = HumanPreset.parseInit(body);
+        if (init.humans) {
+          const { humans } = init;
+          preset = new HumanPreset({ name, humans });
+        }
       } else if (SoundPreset.lookLike(body)) {
-        preset = SoundPreset.parse(body);
+        const init = SoundPreset.parseInit(body);
+        if (init.sounds) {
+          const { sounds } = init;
+          preset = new SoundPreset({ name, sounds });
+        }
       }
       if (preset) {
         preset.name = name;

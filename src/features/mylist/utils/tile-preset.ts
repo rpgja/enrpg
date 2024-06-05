@@ -21,7 +21,10 @@ export class TilePreset extends Preset {
     return input.includes("FLOOR") || input.includes("MAP");
   }
 
-  static parse(input: string): TilePreset {
+  static parseInit(input: string): {
+    floor?: TileChipMap;
+    objects?: TileChipMap;
+  } {
     let floor: TileChipMap | undefined;
     let objects: TileChipMap | undefined;
     for (const [layerName, tileChipMapStr] of Preset.parseChunks(
@@ -37,7 +40,7 @@ export class TilePreset extends Preset {
           break;
       }
     }
-    return new TilePreset({ floor, objects });
+    return { floor, objects };
   }
 
   static stringify(preset: TilePreset): string {

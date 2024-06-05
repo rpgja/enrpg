@@ -3,11 +3,11 @@ import { Preset } from "./preset";
 import type { PresetInit } from "./preset";
 
 export type HumanPresetInit = PresetInit & {
-  humans?: TileChipMap;
+  humans: TileChipMap;
 };
 
 export class HumanPreset extends Preset {
-  humans?: TileChipMap;
+  humans: TileChipMap;
 
   constructor(init: HumanPresetInit) {
     super(init);
@@ -18,7 +18,9 @@ export class HumanPreset extends Preset {
     return input.includes("HUMAN");
   }
 
-  static parse(input: string): HumanPreset {
+  static parseInit(input: string): {
+    humans?: TileChipMap;
+  } {
     let humans: TileChipMap | undefined;
     for (const [layerName, tileChipMapStr] of Preset.parseChunks(
       input,
@@ -30,7 +32,7 @@ export class HumanPreset extends Preset {
           break;
       }
     }
-    return new HumanPreset({ humans });
+    return { humans };
   }
 
   static stringify(preset: HumanPreset): string {
