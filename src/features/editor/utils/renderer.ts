@@ -82,7 +82,7 @@ export class Renderer {
       throw new TypeError();
     }
 
-    const camera = new Camera(0.07);
+    const camera = new Camera();
     const pointer = new Pointer();
 
     camera.attachElement(canvas);
