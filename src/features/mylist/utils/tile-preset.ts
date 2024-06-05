@@ -18,7 +18,10 @@ export class TilePreset extends Preset {
   }
 
   static lookLike(input: string): boolean {
-    return input.includes("FLOOR") || input.includes("MAP");
+    return (
+      input.includes(Preset.makeHeader("FLOOR")) ||
+      input.includes(Preset.makeHeader("MAP"))
+    );
   }
 
   static parseInit(input: string): {
@@ -27,10 +30,7 @@ export class TilePreset extends Preset {
   } {
     let floor: TileChipMap | undefined;
     let objects: TileChipMap | undefined;
-    for (const [layerName, tileChipMapStr] of Preset.parseChunks(
-      input,
-      "\n### ",
-    )) {
+    for (const [layerName, tileChipMapStr] of Preset.parseChunks(input)) {
       switch (layerName) {
         case "FLOOR":
           floor = Preset.parseTileChipMap(tileChipMapStr);
@@ -45,12 +45,16 @@ export class TilePreset extends Preset {
 
   static stringify(preset: TilePreset): string {
     let str = "";
-    str += Preset.prefix + preset.name;
+    str += `${Preset.prefix}${preset.name}`;
     if (preset.floor) {
-      str += `\n\n### FLOOR\n${Preset.stringifyTileChipMap(preset.floor)}`;
+      str += `\n\n${Preset.makeHeader("FLOOR")}${Preset.stringifyTileChipMap(
+        preset.floor,
+      )}`;
     }
     if (preset.objects) {
-      str += `\n\n### MAP\n${Preset.stringifyTileChipMap(preset.objects)}`;
+      str += `\n\n${Preset.makeHeader("MAP")}${Preset.stringifyTileChipMap(
+        preset.objects,
+      )}`;
     }
     return str;
   }

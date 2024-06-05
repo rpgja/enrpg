@@ -15,17 +15,14 @@ export class SoundPreset extends Preset {
   }
 
   static lookLike(input: string): boolean {
-    return input.includes("SOUND");
+    return input.includes(Preset.makeHeader("SOUND"));
   }
 
   static parseInit(input: string): {
     sounds?: TileChipMap;
   } {
     let sounds: TileChipMap | undefined;
-    for (const [layerName, tileChipMapStr] of Preset.parseChunks(
-      input,
-      "\n### ",
-    )) {
+    for (const [layerName, tileChipMapStr] of Preset.parseChunks(input)) {
       switch (layerName) {
         case "SOUND":
           sounds = Preset.parseTileChipMap(tileChipMapStr);
@@ -37,9 +34,11 @@ export class SoundPreset extends Preset {
 
   static stringify(preset: SoundPreset): string {
     let str = "";
-    str += Preset.prefix + preset.name;
+    str += `${Preset.prefix}${preset.name}`;
     if (preset.sounds) {
-      str += `\n\n### SOUND\n${Preset.stringifyTileChipMap(preset.sounds)}`;
+      str += `\n\n${Preset.makeHeader("SOUND")}${Preset.stringifyTileChipMap(
+        preset.sounds,
+      )}`;
     }
     return str;
   }

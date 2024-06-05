@@ -13,21 +13,25 @@ export class Preset {
   }
 
   static prefix = "## ";
+  static prefix2 = "### ";
+
+  protected static makeHeader(str: string) {
+    return `${Preset.prefix2}${str}\n`;
+  }
 
   protected static *parseChunks(
     input: string,
-    termination: string,
   ): IterableIterator<[layerName: string, tileChipMapStr: string]> {
-    let currentIndex = input.indexOf(termination);
+    let currentIndex = input.indexOf(Preset.prefix2);
     while (currentIndex !== -1) {
       const index = input
-        .slice(currentIndex + termination.length)
-        .indexOf(termination);
+        .slice(currentIndex + Preset.prefix2.length)
+        .indexOf(Preset.prefix2);
       let chunk: string;
       if (index === -1) {
-        chunk = input.slice(currentIndex + termination.length);
+        chunk = input.slice(currentIndex + Preset.prefix2.length);
       } else {
-        chunk = input.slice(currentIndex + termination.length, index);
+        chunk = input.slice(currentIndex + Preset.prefix2.length, index);
       }
       const index2 = chunk.indexOf("\n");
       if (index2 !== -1) {

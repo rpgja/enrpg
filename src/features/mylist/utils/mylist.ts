@@ -24,9 +24,9 @@ export class Mylist {
     const name = input.slice(Mylist.prefix.length, index);
     const body = input.slice(index + 1);
     const presets = [];
-    for (const chunk of body.split(Preset.prefix)) {
+    for (const chunk of `\n${body}`.split(`\n${Preset.prefix}`)) {
       const index = chunk.indexOf("\n");
-      const name = chunk.slice(Preset.prefix.length, index);
+      const name = chunk.slice(0, index);
       const body = chunk.slice(index + 1);
       let preset: Preset | undefined;
       if (TilePreset.lookLike(body)) {
