@@ -1,4 +1,4 @@
-import type { Preset } from "./preset";
+import { Preset } from "./preset";
 
 export type MylistInit = {
   name: string;
@@ -14,15 +14,16 @@ export class Mylist {
     this.presets = init.presets;
   }
 
-  serialize(): string {
-    let serialized = "";
+  static parse(input: string): Mylist {
+    return new Mylist({ name: "test", presets: [] });
+  }
 
-    serialized += `# ${this.name}`;
-
-    for (const preset of this.presets) {
-      serialized += `\n\n${preset.serialize()}`;
+  static stringify(mylist: Mylist): string {
+    let str = "";
+    str += `# ${mylist.name}`;
+    for (const preset of mylist.presets) {
+      str += `\n\n${Preset.stringify(preset)}`;
     }
-
-    return serialized;
+    return str;
   }
 }

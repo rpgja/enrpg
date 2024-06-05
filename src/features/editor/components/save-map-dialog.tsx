@@ -1,3 +1,4 @@
+import { RPGMap } from "@/features/rpgen/utils/map";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
@@ -60,14 +61,13 @@ export default function SaveMapDialog(): ReactNode {
             setDisabled(true);
             setError("");
 
-            const str = editor?.renderer.rpgMap.toString();
-
-            if (!str) {
+            const rpgMap = editor?.renderer.rpgMap;
+            if (!rpgMap) {
               setError("虚無を保存しました");
               setDisabled(false);
-
               return;
             }
+            const str = RPGMap.stringify(rpgMap);
 
             try {
               const fileText = saveCompressed
