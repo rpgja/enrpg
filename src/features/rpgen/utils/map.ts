@@ -416,31 +416,31 @@ export class RPGMap {
     });
   }
 
-  toString(): string {
+  static stringify(rpgMap: RPGMap): string {
     let str = "";
-    if (this.initialHeroPosition) {
+    if (rpgMap.initialHeroPosition) {
       str += "#HERO\n";
-      str += `${this.initialHeroPosition.x},${this.initialHeroPosition.y}#END\n`;
+      str += `${rpgMap.initialHeroPosition.x},${rpgMap.initialHeroPosition.y}#END\n`;
       str += "\n";
     }
-    if (this.bgmUrl) {
+    if (rpgMap.bgmUrl) {
       str += "#BGM\n";
-      str += `${this.bgmUrl}#END\n`;
+      str += `${rpgMap.bgmUrl}#END\n`;
       str += "\n";
     }
-    if (this.backgroundImageUrl) {
+    if (rpgMap.backgroundImageUrl) {
       str += "#BGIMG\n";
-      str += `${this.backgroundImageUrl}#END\n`;
+      str += `${rpgMap.backgroundImageUrl}#END\n`;
       str += "\n";
     }
-    if (this.floor) {
+    if (rpgMap.floor) {
       // ToDo: 実装
     }
-    if (this.objects) {
+    if (rpgMap.objects) {
       // ToDo: 実装
     }
-    if (this.humans) {
-      for (const human of this.humans) {
+    if (rpgMap.humans) {
+      for (const human of rpgMap.humans) {
         str += "#HUMAN\n";
         const id = (() => {
           switch (human.sprite.type) {
@@ -460,8 +460,8 @@ export class RPGMap {
         str += "\n";
       }
     }
-    if (this.treasureBoxPoints) {
-      for (const p of this.treasureBoxPoints) {
+    if (rpgMap.treasureBoxPoints) {
+      for (const p of rpgMap.treasureBoxPoints) {
         str += "#TBOX\n";
         str += `${p.position.x},${p.position.y},${escapeMetaChars(
           p.message,
@@ -469,15 +469,15 @@ export class RPGMap {
         str += "\n";
       }
     }
-    if (this.teleportPoints) {
-      for (const p of this.teleportPoints) {
+    if (rpgMap.teleportPoints) {
+      for (const p of rpgMap.teleportPoints) {
         str += "#MPOINT\n";
         str += `${p.position.x},${p.position.y},${p.destination.mapId},${p.position.x},${p.position.y}#END\n`;
         str += "\n";
       }
     }
-    if (this.lookPoints) {
-      for (const p of this.lookPoints) {
+    if (rpgMap.lookPoints) {
+      for (const p of rpgMap.lookPoints) {
         str += "#SPOINT\n";
         str += `${p.position.x},${p.position.y},${
           p.once ? 1 : 0
@@ -485,7 +485,7 @@ export class RPGMap {
         str += "\n";
       }
     }
-    if (this.eventPoints) {
+    if (rpgMap.eventPoints) {
       // ToDo: 実装
     }
     return str;
