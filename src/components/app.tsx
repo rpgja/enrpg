@@ -18,7 +18,7 @@ export default function App(): ReactNode {
         return;
       }
 
-      const mapTextResponse = await fetch("/examples/sample.dev.txt");
+      const mapTextResponse = await fetch("/examples/sample-rpgmap.txt");
 
       if (!mapTextResponse.ok) {
         return;
