@@ -18,9 +18,11 @@ export class Preset {
     this.objects = init.objects;
   }
 
+  static prefix = "## ";
+
   static parse(input: string): Preset {
     const index = input.indexOf("\n");
-    const name = input.slice("## ".length, index);
+    const name = input.slice(Preset.prefix.length, index);
     let floor: TileChipMap | undefined;
     let objects: TileChipMap | undefined;
     for (const [layerName, tileChipMapStr] of Preset.#parseChunks(
@@ -28,13 +30,11 @@ export class Preset {
       "\n### ",
     )) {
       switch (layerName) {
-        case "floor":
+        case "FLOOR":
           floor = Preset.#parseTileChipMap(tileChipMapStr);
           break;
-        case "objects":
+        case "MAP":
           objects = Preset.#parseTileChipMap(tileChipMapStr);
-          break;
-        default:
           break;
       }
     }
@@ -76,7 +76,7 @@ export class Preset {
 
   static stringify(preset: Preset): string {
     let str = "";
-    str += `## ${preset.name}`;
+    str += Preset.prefix + preset.name;
     if (preset.floor) {
       str += `\n\n### floor\n${Preset.#stringifyTileChipMap(preset.floor)}`;
     }

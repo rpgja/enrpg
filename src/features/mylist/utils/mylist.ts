@@ -14,13 +14,20 @@ export class Mylist {
     this.presets = init.presets;
   }
 
+  static prefix = "# ";
+
   static parse(input: string): Mylist {
-    return new Mylist({ name: "test", presets: [] });
+    const index = input.indexOf("\n");
+    const name = input.slice(Mylist.prefix.length, index);
+    const presets = input
+      .split(Preset.prefix)
+      .map((v) => Preset.parse(Preset.prefix + v));
+    return new Mylist({ name, presets });
   }
 
   static stringify(mylist: Mylist): string {
     let str = "";
-    str += `# ${mylist.name}`;
+    str += Mylist.prefix + mylist.name;
     for (const preset of mylist.presets) {
       str += `\n\n${Preset.stringify(preset)}`;
     }
