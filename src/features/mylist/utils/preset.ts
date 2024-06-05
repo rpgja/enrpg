@@ -23,10 +23,11 @@ export class Preset {
   static parse(input: string): Preset {
     const index = input.indexOf("\n");
     const name = input.slice(Preset.prefix.length, index);
+    const body = input.slice(index + 1);
     let floor: TileChipMap | undefined;
     let objects: TileChipMap | undefined;
     for (const [layerName, tileChipMapStr] of Preset.#parseChunks(
-      input.slice(index + 1),
+      body,
       "\n### ",
     )) {
       switch (layerName) {

@@ -19,7 +19,8 @@ export class Mylist {
   static parse(input: string): Mylist {
     const index = input.indexOf("\n");
     const name = input.slice(Mylist.prefix.length, index);
-    const presets = input
+    const body = input.slice(index + 1);
+    const presets = body
       .split(Preset.prefix)
       .map((v) => Preset.parse(Preset.prefix + v));
     return new Mylist({ name, presets });
