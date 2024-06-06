@@ -3,6 +3,7 @@
 import EditorView, {
   useEditorStore,
 } from "@/features/editor/components/editor-view";
+import { Mylist } from "@/features/mylist/utils/mylist";
 import { useEffectOnce } from "@/hooks/once";
 import type { ReactNode } from "react";
 
@@ -13,21 +14,25 @@ export default function App(): ReactNode {
   }));
 
   useEffectOnce(() => {
+    if (editor) {
+      return;
+    }
     (async () => {
-      if (editor) {
-        return;
-      }
-
-      const mapTextResponse = await fetch("/examples/sample.dev.txt");
-
-      if (!mapTextResponse.ok) {
-        return;
-      }
-
-      const mapText = await mapTextResponse.text();
-
-      if (!editor) {
+      const res = await fetch("/examples/sample-rpgmap.txt");
+      if (res.ok && !editor) {
+        const mapText = await res.text();
         loadMapText(mapText);
+      }
+    })();
+  });
+
+  useEffectOnce(() => {
+    (async () => {
+      const res = await fetch("/examples/sample-mylist.txt");
+      if (res.ok) {
+        const mylistText = await res.text();
+        const mylistArray = Mylist.parseToArray(mylistText);
+        console.log(mylistArray);
       }
     })();
   });
