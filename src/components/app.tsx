@@ -18,7 +18,7 @@ export default function App(): ReactNode {
       return;
     }
     (async () => {
-      const res = await fetch("/examples/sample-rpgmap.txt");
+      const res = await fetch("/examples/rpgmap.dev.txt");
       if (res.ok && !editor) {
         const mapText = await res.text();
         loadMapText(mapText);
@@ -28,7 +28,7 @@ export default function App(): ReactNode {
 
   useEffectOnce(() => {
     (async () => {
-      const res = await fetch("/examples/sample-mylist.txt");
+      const res = await fetch("/examples/mylist.dev.txt");
       if (res.ok) {
         const mylistText = await res.text();
         const mylistArray = Mylist.parseToArray(mylistText);
