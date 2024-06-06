@@ -66,9 +66,7 @@ export class Preset {
       }
       rows.push(columns);
     }
-
     let str = "";
-
     for (const [y, row] of rows.entries()) {
       if (y > 0) {
         str += "\n";
@@ -77,7 +75,6 @@ export class Preset {
         if (x > 0) {
           str += ", ";
         }
-
         str += rawTile.padStart(longest, " ");
       }
     }

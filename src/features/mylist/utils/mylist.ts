@@ -5,12 +5,12 @@ import { TilePreset } from "./tile-preset";
 
 export type MylistInit = {
   name: string;
-  presets: TilePreset[] | HumanPreset[] | SoundPreset[];
+  presets: (TilePreset | HumanPreset | SoundPreset)[];
 };
 
 export class Mylist {
   name: string;
-  presets: TilePreset[] | HumanPreset[] | SoundPreset[];
+  presets: (TilePreset | HumanPreset | SoundPreset)[];
 
   constructor(init: MylistInit) {
     this.name = init.name;
@@ -24,7 +24,7 @@ export class Mylist {
     const name = input.slice(Mylist.prefix.length, index);
     const body = input.slice(index + 1);
     const presets = [];
-    for (const chunk of `\n${body}`.split(`\n${Preset.prefix}`)) {
+    for (const chunk of `\n${body}`.split(`\n${Preset.prefix}`).slice(1)) {
       const index = chunk.indexOf("\n");
       const name = chunk.slice(0, index);
       const body = chunk.slice(index + 1);
@@ -54,6 +54,17 @@ export class Mylist {
       }
     }
     return new Mylist({ name, presets });
+  }
+
+  static parseToArray(input: string): Mylist[] {
+    if (input.includes(Mylist.prefix)) {
+      return `\n${input.trim()}`
+        .split(`\n${Mylist.prefix}`)
+        .slice(1)
+        .map((v) => `${Mylist.prefix}${v}`)
+        .map(Mylist.parse);
+    }
+    return [];
   }
 
   static stringify(mylist: Mylist): string {

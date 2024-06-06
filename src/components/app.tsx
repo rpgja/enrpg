@@ -14,20 +14,13 @@ export default function App(): ReactNode {
   }));
 
   useEffectOnce(() => {
+    if (editor) {
+      return;
+    }
     (async () => {
-      if (editor) {
-        return;
-      }
-
       const res = await fetch("/examples/sample-rpgmap.txt");
-
-      if (!res.ok) {
-        return;
-      }
-
-      const mapText = await res.text();
-
-      if (!editor) {
+      if (res.ok && !editor) {
+        const mapText = await res.text();
         loadMapText(mapText);
       }
     })();
@@ -35,27 +28,11 @@ export default function App(): ReactNode {
 
   useEffectOnce(() => {
     (async () => {
-      if (editor) {
-        return;
-      }
-
       const res = await fetch("/examples/sample-mylist.txt");
-
-      if (!res.ok) {
-        return;
-      }
-
-      const mylistText = await res.text();
-
-      if (!editor) {
-        if (mylistText.includes(Mylist.prefix)) {
-          const mylistArray = `\n${mylistText}`
-            .split(`\n${Mylist.prefix}`)
-            .filter((v) => v)
-            .map((v) => `${Mylist.prefix}${v}`)
-            .map(Mylist.parse);
-          console.log(mylistArray);
-        }
+      if (res.ok) {
+        const mylistText = await res.text();
+        const mylistArray = Mylist.parseToArray(mylistText);
+        console.log(mylistArray);
       }
     })();
   });
