@@ -1,4 +1,4 @@
 /.next
 /node_modules
 /out
-/public/examples/*.dev.txt
+/public/examples/*.txt
