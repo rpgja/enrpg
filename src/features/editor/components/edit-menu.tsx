@@ -1,16 +1,18 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { NestedDropdown } from "mui-nested-menu";
 import type { ReactNode } from "react";
-import EditWindow, { useEditWindowStore } from "./edit-window";
 import { useEditorStore } from "./editor-view";
+import TilePaletteWindow, {
+  useTilePlatteWindowStore,
+} from "./tile-palette-window";
 
 export default function EditMenu(): ReactNode {
-  const { open, setOpen } = useEditWindowStore();
+  const { open, setOpen } = useTilePlatteWindowStore();
   const editor = useEditorStore((store) => store.editor);
 
   return (
     <>
-      {!!editor && open && <EditWindow onClose={() => setOpen(false)} />}
+      {!!editor && open && <TilePaletteWindow onClose={() => setOpen(false)} />}
       <NestedDropdown
         menuItemsData={{
           label: "編集",
@@ -18,7 +20,7 @@ export default function EditMenu(): ReactNode {
             {
               disabled: !editor,
               rightIcon: open ? <CheckIcon /> : undefined,
-              label: "編集ウィンドウ",
+              label: "タイルパレット",
               callback: () => setOpen(true),
             },
           ],
