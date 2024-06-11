@@ -31,8 +31,8 @@ export default function App(): ReactNode {
       const res = await fetch("/examples/mylist.dev.txt");
       if (res.ok) {
         const mylistText = await res.text();
-        const mylistArray = Mylist.parseToArray(mylistText);
-        console.log(mylistArray);
+        const mylist = Mylist.parse(mylistText);
+        console.log(mylist);
       }
     })();
   });
