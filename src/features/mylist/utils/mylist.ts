@@ -20,13 +20,9 @@ export class Mylist {
   static prefix = "# ";
 
   static parse(input: string): Mylist {
-    if (!input.includes(Mylist.prefix)) {
-      throw new Error("もぅﾏﾁﾞ無理。");
-    }
-    const trimmed = input.trim();
-    const index = trimmed.indexOf("\n");
-    const name = trimmed.slice(Mylist.prefix.length, index);
-    const body = trimmed.slice(index + 1);
+    const index = input.indexOf("\n");
+    const name = input.slice(Mylist.prefix.length, index);
+    const body = input.slice(index + 1);
     const presets = [];
     for (const chunk of `\n${body}`.split(`\n${Preset.prefix}`).slice(1)) {
       const index = chunk.indexOf("\n");
@@ -58,6 +54,17 @@ export class Mylist {
       }
     }
     return new Mylist({ name, presets });
+  }
+
+  static parseToArray(input: string): Mylist[] {
+    if (input.includes(Mylist.prefix)) {
+      return `\n${input.trim()}`
+        .split(`\n${Mylist.prefix}`)
+        .slice(1)
+        .map((v) => `${Mylist.prefix}${v}`)
+        .map(Mylist.parse);
+    }
+    return [];
   }
 
   static stringify(mylist: Mylist): string {

@@ -23,6 +23,7 @@ import Tab from "@mui/material/Tab";
 import { arrayFrom, execPipe, map } from "iter-tools";
 import { type ReactNode, useState } from "react";
 import { create } from "zustand";
+import MylistAutocomplete from "./mylist-autocomplete";
 
 export const TilePaletteTab = {
   Mylist: "mylist",
@@ -150,19 +151,7 @@ export default function TilePaletteWindow({
             <Stack spacing={2} height="100%">
               {tilePaletteModeSelectableUI}
               <FormControl fullWidth>
-                <InputLabel htmlFor="grouped-select">マイリスト</InputLabel>
-                <Select defaultValue="" id="grouped-select" label="Grouping">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <ListSubheader>お城</ListSubheader>
-                  <MenuItem value={1}>姫路城</MenuItem>
-                  <MenuItem value={2}>安土城</MenuItem>
-                  <MenuItem value={3}>ダークパレス</MenuItem>
-                  <ListSubheader>可愛いキャラ</ListSubheader>
-                  <MenuItem value={4}>動物セット</MenuItem>
-                  <MenuItem value={5}>人間セット</MenuItem>
-                </Select>
+                <MylistAutocomplete />
               </FormControl>
               <Paper sx={{ flex: 1 }} />
             </Stack>
