@@ -1,4 +1,8 @@
-export const logger = {
-  error: (message: string) => console.error(`[ERROR] ${message}`),
-  warn: (message: string) => console.warn(`[WARN] ${message}`),
-};
+import pino from "pino";
+
+export const logger = pino({
+  level: process.env.NODE_ENV === "development" ? "trace" : "info",
+  browser: {
+    asObject: true,
+  },
+});

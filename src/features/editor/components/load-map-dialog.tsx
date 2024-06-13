@@ -83,7 +83,7 @@ export default function LoadMapDialog(): ReactNode {
               setOpen(false);
             } catch (error) {
               setError("マップデータの読み込みに問題が発生しました");
-              logger.error(String(error));
+              logger.error({ error }, String(error));
             }
 
             setDisabled(false);
