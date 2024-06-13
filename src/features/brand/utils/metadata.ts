@@ -4,7 +4,22 @@ export const SITE_NAME = "ENRPG";
 
 export const SITE_DESCRIPTION = "Enhanced RPGEN editing.";
 
-export const generateDefaultMetadata = (): Metadata => {
+/**
+ * @see {@link https://github.com/vercel/next.js/discussions/50189#discussioncomment-9224262}
+ */
+// biome-ignore lint/suspicious/noExplicitAny: no reason
+export const getPathnameFromMetadata = (state: any): string => {
+  const res = Object.getOwnPropertySymbols(state || {})
+    .map((p) => state[p])
+    .find((state) =>
+      Object.prototype.hasOwnProperty.call(state, "urlPathname"),
+    );
+
+  return res?.urlPathname.replace(/\?.+/, "") ?? "";
+};
+
+// biome-ignore lint/suspicious/noExplicitAny: no reason
+export const generateDefaultMetadata = (_: any, state: any): Metadata => {
   return {
     title: {
       default: SITE_NAME,
@@ -54,6 +69,20 @@ export const generateDefaultMetadata = (): Metadata => {
       "msapplication-TileColor": "#2d89ef",
       "msapplication-TileImage": "/favicons/mstile-144x144.png",
       "msapplication-config": "/favicons/browserconfig.xml",
+    },
+  };
+};
+
+export const generateNotFoundMetadata = (): Metadata => {
+  const title = "ページが見つかりませんでした";
+  const description = "ページが見つかりませんでした";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
     },
   };
 };
