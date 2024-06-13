@@ -23,7 +23,8 @@ import Tab from "@mui/material/Tab";
 import { arrayFrom, execPipe, map } from "iter-tools";
 import { type ReactNode, useState } from "react";
 import { create } from "zustand";
-import MylistAutocomplete from "./mylist-autocomplete";
+import MylistPalette from "./mylist-palette";
+import TogglePaletteMode from "./toggle-palette-mode";
 
 export const TilePaletteTab = {
   Mylist: "mylist",
@@ -34,14 +35,6 @@ export const TilePaletteTab = {
 
 export type TilePaletteTab =
   (typeof TilePaletteTab)[keyof typeof TilePaletteTab];
-
-export const TilePaletteMode = {
-  Tile: "tile",
-  NPC: "npc",
-} as const;
-
-export type TilePaletteMode =
-  (typeof TilePaletteMode)[keyof typeof TilePaletteMode];
 
 export const iterateTilePaletteTabs = (): IterableIterator<TilePaletteTab> =>
   Object.values(TilePaletteTab).values();
@@ -64,8 +57,6 @@ export const tilePaletteTabToDisplayName = (
 export type TilePaletteWindowStore = {
   currentTilePaletteTab: TilePaletteTab;
   setCurrentTilePaletteTab: (currentTilePaletteTab: TilePaletteTab) => void;
-  currentTilePaletteMode: TilePaletteMode;
-  setCurrentTilePaletteMode: (currentTilePaletteMode: TilePaletteMode) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
 };
@@ -75,9 +66,6 @@ export const useTilePlatteWindowStore = create<TilePaletteWindowStore>(
     currentTilePaletteTab: TilePaletteTab.Mylist,
     setCurrentTilePaletteTab: (currentTilePaletteTab) =>
       set({ currentTilePaletteTab }),
-    currentTilePaletteMode: TilePaletteMode.Tile,
-    setCurrentTilePaletteMode: (currentTilePaletteMode) =>
-      set({ currentTilePaletteMode }),
     open: false,
     setOpen: (open) => set({ open }),
   }),
@@ -93,39 +81,6 @@ export default function TilePaletteWindow({
       currentTilePaletteTab: store.currentTilePaletteTab,
       setCurrentTilePaletteTab: store.setCurrentTilePaletteTab,
     }));
-
-  const { currentTilePaletteMode, setCurrentTilePaletteMode } =
-    useTilePlatteWindowStore((store) => ({
-      currentTilePaletteMode: store.currentTilePaletteMode,
-      setCurrentTilePaletteMode: store.setCurrentTilePaletteMode,
-    }));
-
-  const tilePaletteModeSelectableUI = (
-    <FormControl fullWidth>
-      <FormLabel id="demo-row-radio-buttons-group-label">種類</FormLabel>
-      <RadioGroup
-        row
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        value={currentTilePaletteMode}
-        onChange={(_event, value) => {
-          if (value === TilePaletteMode.Tile || value === TilePaletteMode.NPC) {
-            setCurrentTilePaletteMode(value);
-          }
-        }}
-      >
-        <FormControlLabel
-          value={TilePaletteMode.Tile}
-          control={<Radio />}
-          label="タイル"
-        />
-        <FormControlLabel
-          value={TilePaletteMode.NPC}
-          control={<Radio />}
-          label="NPC"
-        />
-      </RadioGroup>
-    </FormControl>
-  );
 
   return (
     <TabContext value={currentTilePaletteTab}>
@@ -148,17 +103,11 @@ export default function TilePaletteWindow({
             )}
           </TabList>
           <TabPanel value={TilePaletteTab.Mylist} sx={{ flex: 1 }}>
-            <Stack spacing={2} height="100%">
-              {tilePaletteModeSelectableUI}
-              <FormControl fullWidth>
-                <MylistAutocomplete />
-              </FormControl>
-              <Paper sx={{ flex: 1 }} />
-            </Stack>
+            <MylistPalette />
           </TabPanel>
           <TabPanel value={TilePaletteTab.Custom} sx={{ flex: 1 }}>
             <Stack spacing={2} height="100%">
-              {tilePaletteModeSelectableUI}
+              <TogglePaletteMode />
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField fullWidth size="small" label="スプライト番号" />
                 <IconButton>
@@ -170,7 +119,7 @@ export default function TilePaletteWindow({
           </TabPanel>
           <TabPanel value={TilePaletteTab.DQ} sx={{ flex: 1 }}>
             <Stack spacing={2} height="100%">
-              {tilePaletteModeSelectableUI}
+              <TogglePaletteMode />
               <FormControl fullWidth>
                 <InputLabel>初期素材</InputLabel>
                 <Select value="human" label="種類">
@@ -196,7 +145,7 @@ export default function TilePaletteWindow({
           </TabPanel>
           <TabPanel value={TilePaletteTab.History} sx={{ flex: 1 }}>
             <Stack spacing={2} height="100%">
-              {tilePaletteModeSelectableUI}
+              <TogglePaletteMode />
               <Paper sx={{ flex: 1 }} />
               <Box>ページネーション的なやつ</Box>
             </Stack>

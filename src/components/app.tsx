@@ -3,7 +3,7 @@
 import EditorView, {
   useEditorStore,
 } from "@/features/editor/components/editor-view";
-import { useMylistStore } from "@/features/editor/components/mylist-autocomplete";
+import { useMylistStore } from "@/features/editor/components/tile-palette/mylist-palette";
 import { Mylist } from "@/features/mylist/utils/mylist";
 import { useEffectOnce } from "@/hooks/once";
 import type { ReactNode } from "react";

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useEditorStore } from "./editor-view";
 import TilePaletteWindow, {
   useTilePlatteWindowStore,
-} from "./tile-palette-window";
+} from "./tile-palette/tile-palette-window";
 
 export default function EditMenu(): ReactNode {
   const { open, setOpen } = useTilePlatteWindowStore();
