@@ -154,8 +154,7 @@ export class RPGMap {
         }
 
         default: {
-          // TODO: error message
-          logger.warn(`No command parser\n---${name}---\n${value}`);
+          logger.warn({ name, value }, "No command parser");
 
           break;
         }
@@ -394,8 +393,7 @@ export class RPGMap {
         }
 
         default: {
-          // TODO: error message
-          logger.warn(`No parser\n---${name}---\n${value}`);
+          logger.warn({ name, value }, "No parser");
 
           break;
         }
