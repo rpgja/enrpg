@@ -39,7 +39,7 @@
   "scripts": {
     "dev": "next dev"
   },
-  "trustedDependencies": ["@biomejs/biome"],
+  "trustedDependencies": ["@biomejs/biome", "sharp"],
   "type": "module",
   "version": "1.0.0"
 }
