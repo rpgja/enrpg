@@ -3,6 +3,7 @@ import {
   type Command,
   CommandType,
   ManipulateGoldCommandOperation,
+  RawCommand,
 } from "../types/command";
 import {
   type EventPoint,
@@ -126,39 +127,13 @@ export class RPGMap {
     return params as Record<string, string>;
   }
 
-  static #parseCommands(input: string): Command[] {
-    const commands: Command[] = [];
+  static #parseCommands(input: string): RawCommand[] {
+    const commands: RawCommand[] = [];
 
     for (const [name, value] of RPGMap.#parseChunks(input, "#ED")) {
       const params = RPGMap.#parseCommaSeparatedParams(value.trimStart());
 
-      // TODO
-      switch (name) {
-        case "MSG": {
-          commands.push({
-            type: CommandType.DisplayMessage,
-            message: params.m ?? "",
-          });
-
-          break;
-        }
-
-        case "PL_GLD": {
-          commands.push({
-            type: CommandType.ManipulateGold,
-            operation: ManipulateGoldCommandOperation.Addition,
-            value: Number(params.v),
-          });
-
-          break;
-        }
-
-        default: {
-          logger.warn({ name, value }, "No command parser");
-
-          break;
-        }
-      }
+      commands.push(new RawCommand(name, params));
     }
 
     return commands;

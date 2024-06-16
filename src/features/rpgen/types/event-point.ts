@@ -1,4 +1,4 @@
-import type { Command } from "./command";
+import type { Command, RawCommand } from "./command";
 import type { Position } from "./types";
 
 export type EventPoint = {
@@ -29,5 +29,5 @@ export type SecondaryEventPhaseCondition = {
 export type SecondaryEventPhase = {
   timing: EventTiming;
   condition: SecondaryEventPhaseCondition;
-  sequence: Command[];
+  sequence: RawCommand[];
 };
