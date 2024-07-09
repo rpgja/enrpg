@@ -1,0 +1,42 @@
+{
+  "author": "rpgja",
+  "bugs": {
+    "url": "https://github.com/rpgja/enrpg/issues"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.16.0",
+    "@mui/material": "^5.16.0",
+    "@mui/material-nextjs": "^5.15.11",
+    "array-shuffle": "^3.0.0",
+    "iter-tools": "^7.5.3",
+    "lz-string": "^1.5.0",
+    "mui-nested-menu": "^3.4.0",
+    "next": "^14.2.4",
+    "p-queue": "^8.0.1",
+    "pino": "^9.2.0",
+    "rpgen-map": "workspace:*",
+    "zustand": "^4.5.4"
+  },
+  "description": "This is a web application of the map editor dedicated to RPGEN.",
+  "homepage": "https://github.com/rpgja/enrpg#readme",
+  "keywords": ["enrpg", "rpgja", "rpgen"],
+  "license": "MIT",
+  "name": "editor",
+  "private": "true",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpgja/enrpg.git"
+  },
+  "scripts": {
+    "dev": "next dev --turbo"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3"
+  }
+}

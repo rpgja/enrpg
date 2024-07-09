@@ -22,7 +22,7 @@ bun i
 次に以下のコマンドを実行すると`http://localhost:3000`に開発サーバーが立ち上がります。
 
 ```sh
-bun run dev
+bun run editor:dev
 ```
 
 ## 開発
