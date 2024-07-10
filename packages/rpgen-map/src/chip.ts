@@ -1,8 +1,8 @@
-import { LargeMap } from "@/collections.js";
 import { checkWalkableTile } from "@/sprite.js";
 import { SpriteType, type StillSprite } from "@/types/sprite.js";
 import type { RawTile, Tile } from "@/types/tile.js";
 import type { Size } from "@/types/types.js";
+import { LargeMap } from "@/utils/collections.js";
 
 export type InfinityChipMapKey = `${number},${number}`;
 

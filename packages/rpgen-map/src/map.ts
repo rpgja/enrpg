@@ -1,5 +1,4 @@
 import { InfinityChipMap, TileChipMap } from "@/chip.js";
-import { escapeMetaChars, unescapeMetaChars } from "@/escape.js";
 // TODO
 // import { logger } from "@/utils/logger";
 import {
@@ -22,6 +21,7 @@ import {
 import type { TeleportPoint } from "@/types/teleport-point.js";
 import type { TreasureBoxPoint } from "@/types/treasure-box-point.js";
 import type { Direction, Position } from "@/types/types.js";
+import { escapeMetaChars, unescapeMetaChars } from "@/utils/escape.js";
 
 export type RPGMapInit = {
   initialHeroPosition?: Position;

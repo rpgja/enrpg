@@ -1,4 +1,10 @@
 export class LargeMap<K, V> implements Map<K, V> {
+  readonly #maxSize: number;
+
+  constructor(maxSize = 2 << 23) {
+    this.#maxSize = maxSize;
+  }
+
   delete(key: K): boolean {
     const map = this.#findMapByKey(key);
 
@@ -54,8 +60,6 @@ export class LargeMap<K, V> implements Map<K, V> {
     return this.entries();
   }
 
-  static readonly #MAX_SIZE = 2 << 23;
-
   #maps: Map<K, V>[] = [];
 
   clear(): void {
@@ -82,11 +86,11 @@ export class LargeMap<K, V> implements Map<K, V> {
 
   #findMap(): Map<K, V> {
     const maps = this.#maps;
-    const MAX_SIZE = LargeMap.#MAX_SIZE;
+    const maxSize = this.#maxSize;
     let mapIndex = 0;
     let map = maps[mapIndex];
 
-    while (!map || map.size >= MAX_SIZE) {
+    while (!map || map.size >= maxSize) {
       if (mapIndex < maps.length) {
         map = maps[mapIndex++];
       } else {
