@@ -65,7 +65,7 @@ export class Renderer {
   readonly context: CanvasRenderingContext2D;
   readonly camera: Camera;
   readonly pointer: Pointer;
-  #chipSize: number;
+  chipSize: number;
 
   constructor(readonly rpgMap: RPGMap) {
     const canvas = document.createElement("canvas");
@@ -92,7 +92,7 @@ export class Renderer {
     this.context = context;
     this.camera = camera;
     this.pointer = pointer;
-    this.#chipSize = this.#calcChipSize();
+    this.chipSize = this.#calcChipSize();
   }
 
   layers: RendererLayers = {
@@ -142,7 +142,7 @@ export class Renderer {
     }
 
     const { context, camera } = this;
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     context.drawImage(
       notFound,
@@ -158,7 +158,7 @@ export class Renderer {
   renderTileMap(tileMap: TileChipMap): void {
     const { canvas, context, camera } = this;
 
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
     const cols = canvas.width / chipSize;
     const rows = canvas.height / chipSize;
 
@@ -251,7 +251,7 @@ export class Renderer {
   renderHumans(): void {
     const { context, camera } = this;
     const currentFrameFlip = this.#currentFrameFlip;
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     for (const human of this.rpgMap.humans) {
       switch (human.sprite.type) {
@@ -365,7 +365,7 @@ export class Renderer {
     }
 
     const { context, camera } = this;
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     for (const point of points) {
       context.drawImage(
@@ -389,7 +389,7 @@ export class Renderer {
     }
     const { canvas, context, camera } = this;
 
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
     const cols = canvas.width / chipSize;
     const rows = canvas.height / chipSize;
 
@@ -480,7 +480,7 @@ export class Renderer {
       return;
     }
 
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
     const [cols, rows] = rpgenGridToSize(rpgenGrid);
 
     context.save();
@@ -510,7 +510,7 @@ export class Renderer {
 
   renderOutline(): void {
     const { context, camera } = this;
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     context.save();
     this.#setOverlayContentStyle();
@@ -588,7 +588,7 @@ export class Renderer {
       ...pointer.selection,
     };
 
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     this.#tileSelection = {
       start:
@@ -614,7 +614,7 @@ export class Renderer {
 
   renderPointer(): void {
     const { pointer, context, camera } = this;
-    const chipSize = this.#chipSize;
+    const chipSize = this.chipSize;
 
     context.save();
 
@@ -726,7 +726,7 @@ export class Renderer {
 
       this.#currentFrameHue++;
 
-      this.#chipSize = this.#calcChipSize();
+      this.chipSize = this.#calcChipSize();
       this.#calcCameraMoved();
       this.#calcTileSelection();
       this.render();
