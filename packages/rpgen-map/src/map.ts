@@ -411,7 +411,36 @@ export class RPGMap {
       str += "\n";
     }
     if (rpgMap.floor) {
-      // ToDo: 実装
+      str += "#FLOOR\n";
+
+      const { width, height } = rpgMap.floor.getSize();
+      let end = false;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const rawTile = rpgMap.floor.getRaw(x, y);
+
+          if (!rawTile) {
+            end = true;
+
+            break;
+          }
+
+          if (x > 0) {
+            str += " ";
+          }
+
+          str += `${rawTile}`;
+        }
+
+        if (end) {
+          str += "#END";
+        }
+
+        str += "\n";
+      }
+
+      str += "\n";
     }
     if (rpgMap.objects) {
       // ToDo: 実装
