@@ -38,13 +38,14 @@ export default function EditWindow(): ReactNode {
     }
 
     let writing = false;
+    let prevX: number | undefined;
+    let prevY: number | undefined;
 
     const offMouseDown = editor.onMouseDown((tileX, tileY) => {
       writing = true;
+      prevX = tileX;
+      prevY = tileY;
     });
-
-    let prevX: number | undefined;
-    let prevY: number | undefined;
 
     const offMouseMove = editor.onMouseMove((tileX, tileY) => {
       if (!sprite || !writing) {
