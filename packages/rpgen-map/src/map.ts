@@ -438,8 +438,35 @@ export class RPGMap {
 
       str += "\n";
     }
+
+    // TODO: コード重複
     if (rpgMap.objects) {
-      // ToDo: 実装
+      str += "#MAP\n";
+
+      const { width, height } = rpgMap.objects.getSize();
+
+      for (let y = 0; y < height; y++) {
+        let line = "";
+
+        for (let x = 0; x < width; x++) {
+          if (x > 0) {
+            line += " ";
+          }
+
+          line += rpgMap.objects.getRaw(x, y) ?? "";
+        }
+
+        line = line.trimEnd();
+
+        if (y === height - 1) {
+          line += "#END";
+        }
+
+        line += "\n";
+        str += line;
+      }
+
+      str += "\n";
     }
     if (rpgMap.humans) {
       for (const human of rpgMap.humans) {
