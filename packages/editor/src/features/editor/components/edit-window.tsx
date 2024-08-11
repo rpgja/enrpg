@@ -8,6 +8,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import bresenham from "bresenham/generator";
 import { type ReactNode, useEffect, useState } from "react";
 import { type Sprite, SpriteType, type StillSprite } from "rpgen-map";
 import { create } from "zustand";
@@ -42,6 +43,9 @@ export default function EditWindow(): ReactNode {
       writing = true;
     });
 
+    let prevX: number | undefined;
+    let prevY: number | undefined;
+
     const offMouseMove = editor.onMouseMove((tileX, tileY) => {
       if (!sprite || !writing) {
         return;
@@ -54,10 +58,26 @@ export default function EditWindow(): ReactNode {
         collision,
         sprite,
       });
+
+      if (prevX !== undefined && prevY !== undefined) {
+        const line = bresenham(prevX, prevY, tileX, tileY);
+
+        for (const p of line) {
+          editor.putFloorTile({
+            position: { x: p.x, y: p.y },
+            collision,
+            sprite,
+          });
+        }
+      }
+
+      prevX = tileX;
+      prevY = tileY;
     });
 
     const offMouseUp = editor.onMouseUp(() => {
       writing = false;
+      prevX = prevY = undefined;
     });
 
     return () => {

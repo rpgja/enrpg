@@ -5,7 +5,8 @@
   },
   "description": "This is a web application of the map editor dedicated to RPGEN.",
   "devDependencies": {
-    "@biomejs/biome": "^1.7.3"
+    "@biomejs/biome": "^1.7.3",
+    "@types/bresenham": "^0.0.3"
   },
   "homepage": "https://github.com/rpgja/enrpg#readme",
   "keywords": [
@@ -31,5 +32,8 @@
   "version": "0.0.0",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "bresenham": "^0.0.4"
+  }
 }
