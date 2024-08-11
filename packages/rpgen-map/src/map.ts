@@ -400,11 +400,15 @@ export class RPGMap {
       str += `${rpgMap.initialHeroPosition.x},${rpgMap.initialHeroPosition.y}#END\n`;
       str += "\n";
     }
+
+    str += "#BGM\n";
+
     if (rpgMap.bgmUrl) {
-      str += "#BGM\n";
-      str += `${rpgMap.bgmUrl}#END\n`;
-      str += "\n";
+      str += `${rpgMap.bgmUrl}\n`;
     }
+
+    str += "#END\n\n";
+
     if (rpgMap.backgroundImageUrl) {
       str += "#BGIMG\n";
       str += `${rpgMap.backgroundImageUrl}#END\n`;
@@ -516,9 +520,13 @@ export class RPGMap {
     }
     if (rpgMap.eventPoints) {
       for (const { position, phases } of rpgMap.eventPoints) {
-        str += `#EPOINT tx:${position.x} ty:${position.y},\n`;
+        str += `#EPOINT tx:${position.x},ty:${position.y},\n`;
 
         for (const [i, p] of phases.entries()) {
+          if (p.sequence.length === 0) {
+            continue;
+          }
+
           let phaseHeader = `#PH${i} tm:${p.timing},`;
 
           if (
