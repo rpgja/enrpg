@@ -414,30 +414,26 @@ export class RPGMap {
       str += "#FLOOR\n";
 
       const { width, height } = rpgMap.floor.getSize();
-      let end = false;
 
       for (let y = 0; y < height; y++) {
+        let line = "";
+
         for (let x = 0; x < width; x++) {
-          const rawTile = rpgMap.floor.getRaw(x, y);
-
-          if (!rawTile) {
-            end = true;
-
-            break;
-          }
-
           if (x > 0) {
-            str += " ";
+            line += " ";
           }
 
-          str += `${rawTile}`;
+          line += rpgMap.floor.getRaw(x, y) ?? "";
         }
 
-        if (end) {
-          str += "#END";
+        line = line.trimEnd();
+
+        if (y === height - 1) {
+          line += "#END";
         }
 
-        str += "\n";
+        line += "\n";
+        str += line;
       }
 
       str += "\n";
