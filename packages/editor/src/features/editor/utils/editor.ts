@@ -16,6 +16,12 @@ export class Editor {
     (tileX: number, tileY: number) => void
   >();
 
+  readonly #mouseMoveListeners = new Set<
+    (tileX: number, tileY: number) => void
+  >();
+
+  readonly #mouseUpListeners = new Set<() => void>();
+
   putFloorTile(tile: Tile): void {
     let rawTile = "";
 
@@ -47,6 +53,22 @@ export class Editor {
     };
   }
 
+  onMouseMove(listener: (tileX: number, tileY: number) => void): () => void {
+    this.#mouseMoveListeners.add(listener);
+
+    return () => {
+      this.#mouseMoveListeners.delete(listener);
+    };
+  }
+
+  onMouseUp(listener: () => void): () => void {
+    this.#mouseUpListeners.add(listener);
+
+    return () => {
+      this.#mouseUpListeners.delete(listener);
+    };
+  }
+
   mount(parentElement: HTMLElement): void {
     if (this.mounted) {
       this.unmount();
@@ -73,6 +95,43 @@ export class Editor {
                 renderer.chipSize,
             ),
           );
+        }
+      },
+      {
+        signal: eventController.signal,
+      },
+    );
+
+    renderer.canvas.addEventListener(
+      "mousemove",
+      (event) => {
+        for (const listener of this.#mouseMoveListeners) {
+          listener(
+            Math.floor(
+              (event.pageX - renderer.canvas.offsetLeft + renderer.camera.x) /
+                renderer.chipSize,
+            ),
+            Math.floor(
+              (event.pageY - renderer.canvas.offsetTop + renderer.camera.y) /
+                renderer.chipSize,
+            ),
+          );
+        }
+      },
+      {
+        signal: eventController.signal,
+      },
+    );
+
+    renderer.canvas.addEventListener(
+      "mouseup",
+      (event) => {
+        if ((event.buttons & 1) !== 0) {
+          return;
+        }
+
+        for (const listener of this.#mouseUpListeners) {
+          listener();
         }
       },
       {

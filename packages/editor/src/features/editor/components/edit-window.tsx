@@ -36,8 +36,14 @@ export default function EditWindow(): ReactNode {
       return;
     }
 
-    const off = editor.onMouseDown((tileX, tileY) => {
-      if (!sprite) {
+    let writing = false;
+
+    const offMouseDown = editor.onMouseDown((tileX, tileY) => {
+      writing = true;
+    });
+
+    const offMouseMove = editor.onMouseMove((tileX, tileY) => {
+      if (!sprite || !writing) {
         return;
       }
 
@@ -50,8 +56,14 @@ export default function EditWindow(): ReactNode {
       });
     });
 
+    const offMouseUp = editor.onMouseUp(() => {
+      writing = false;
+    });
+
     return () => {
-      off();
+      offMouseDown();
+      offMouseMove();
+      offMouseUp();
     };
   }, [editor, collision, sprite]);
 
