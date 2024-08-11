@@ -1,6 +1,43 @@
 import type { HumanSprite, StillSprite } from "@/types/sprite.js";
 import type { Position } from "@/types/types.js";
 
+export class RawCommand {
+  readonly name: string;
+  readonly params: Record<string, string>;
+
+  constructor(name: string, params: Record<string, string>) {
+    this.name = name;
+    this.params = params;
+  }
+
+  translate(): Command | undefined {
+    const { name, params } = this;
+
+    // TODO
+    switch (this.name) {
+      case "MSG":
+        return {
+          type: CommandType.DisplayMessage,
+          message: params.m ?? "",
+        };
+
+      case "PL_GLD":
+        return {
+          type: CommandType.ManipulateGold,
+          operation: ManipulateGoldCommandOperation.Addition,
+          value: Number(params.v),
+        };
+
+      default: {
+        // TODO
+        // logger.warn({ name, params }, "No command parser");
+
+        break;
+      }
+    }
+  }
+}
+
 export enum CommandType {
   // Message
   DisplayMessage = 0,

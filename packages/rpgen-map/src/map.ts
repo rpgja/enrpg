@@ -5,6 +5,7 @@ import {
   type Command,
   CommandType,
   ManipulateGoldCommandOperation,
+  RawCommand,
 } from "@/types/command.js";
 import {
   type EventPoint,
@@ -115,7 +116,9 @@ export class RPGMap {
     const params: Partial<Record<string, string>> = {};
 
     for (const [name, value = ""] of input
+      .trim()
       .split(",")
+      .filter((p) => p.length > 0)
       .map((v) => v.split(":"))) {
       if (!name) {
         continue;
@@ -127,40 +130,13 @@ export class RPGMap {
     return params as Record<string, string>;
   }
 
-  static #parseCommands(input: string): Command[] {
-    const commands: Command[] = [];
+  static #parseCommands(input: string): RawCommand[] {
+    const commands: RawCommand[] = [];
 
     for (const [name, value] of RPGMap.#parseChunks(input, "#ED")) {
       const params = RPGMap.#parseCommaSeparatedParams(value.trimStart());
 
-      // TODO
-      switch (name) {
-        case "MSG": {
-          commands.push({
-            type: CommandType.DisplayMessage,
-            message: params.m ?? "",
-          });
-
-          break;
-        }
-
-        case "PL_GLD": {
-          commands.push({
-            type: CommandType.ManipulateGold,
-            operation: ManipulateGoldCommandOperation.Addition,
-            value: Number(params.v),
-          });
-
-          break;
-        }
-
-        default: {
-          // TODO
-          // logger.warn({ name, value }, "No command parser");
-
-          break;
-        }
-      }
+      commands.push(new RawCommand(name, params));
     }
 
     return commands;
@@ -487,7 +463,46 @@ export class RPGMap {
       }
     }
     if (rpgMap.eventPoints) {
-      // ToDo: 実装
+      for (const { position, phases } of rpgMap.eventPoints) {
+        str += `#EPOINT tx:${position.x} ty:${position.y},\n`;
+
+        for (const [i, p] of phases.entries()) {
+          let phaseHeader = `#PH${i} tm:${p.timing},`;
+
+          if (
+            "condition" in p &&
+            (p.condition.gold !== undefined || p.condition.switch !== undefined)
+          ) {
+            phaseHeader += `sw:${p.condition.switch ?? ""},g:${
+              p.condition.gold ?? ""
+            },`;
+          }
+
+          phaseHeader += "\n";
+          str += phaseHeader;
+
+          for (const c of p.sequence) {
+            str += `#${c.name}\n`;
+
+            let params = "";
+
+            for (const [k, v] of Object.entries(c.params)) {
+              params += `${k}:${escapeMetaChars(v)},`;
+            }
+
+            if (params.length > 0) {
+              params += "\n";
+            }
+
+            str += params;
+            str += "#ED\n";
+          }
+
+          str += `#PHEND${i}\n`;
+        }
+
+        str += "#END\n\n";
+      }
     }
     return str;
   }

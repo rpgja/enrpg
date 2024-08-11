@@ -1,4 +1,4 @@
-import type { Command } from "@/types/command.js";
+import type { Command, RawCommand } from "@/types/command.js";
 import type { Position } from "@/types/types.js";
 
 export type EventPoint = {
@@ -13,7 +13,7 @@ export type EventPoint = {
 
 export type PrimaryEventPhase = {
   timing: EventTiming;
-  sequence: Command[];
+  sequence: RawCommand[];
 };
 
 export enum EventTiming {
@@ -29,5 +29,5 @@ export type SecondaryEventPhaseCondition = {
 export type SecondaryEventPhase = {
   timing: EventTiming;
   condition: SecondaryEventPhaseCondition;
-  sequence: Command[];
+  sequence: RawCommand[];
 };
