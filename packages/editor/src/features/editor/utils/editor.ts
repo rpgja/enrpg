@@ -27,7 +27,6 @@ export class Editor {
 
     switch (tile.sprite.type) {
       case SpriteType.CustomStillSprite: {
-        rawTile += "-";
         rawTile += tile.sprite.id;
 
         if (tile.collision) {
