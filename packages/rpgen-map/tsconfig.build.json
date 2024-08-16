@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "dist"
+  },
+  "exclude": ["tsup.config.ts"],
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts"]
+}
