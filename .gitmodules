@@ -1,0 +1,3 @@
+[submodule "packages/rpgen-map"]
+	path = packages/rpgen-map
+	url = https://github.com/rpgja/rpgen-map
