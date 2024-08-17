@@ -16,6 +16,14 @@
 以下のコマンドを実行して全ての依存関係をインストールします。（初回のみ）
 
 ```sh
+git submodule init
+```
+
+```sh
+git submodule update
+```
+
+```sh
 bun i
 ```
 
