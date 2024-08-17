@@ -21,6 +21,10 @@
     "zustand": "^4.5.4"
   },
   "description": "This is a web application of the map editor dedicated to RPGEN.",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3"
+  },
   "homepage": "https://github.com/rpgja/enrpg#readme",
   "keywords": ["enrpg", "rpgja", "rpgen"],
   "license": "MIT",
@@ -31,12 +35,8 @@
     "url": "git+https://github.com/rpgja/enrpg.git"
   },
   "scripts": {
-    "dev": "next dev --turbo"
+    "dev": "next dev"
   },
   "type": "module",
-  "version": "1.0.0",
-  "devDependencies": {
-    "@types/node": "^20.14.10",
-    "typescript": "^5.5.3"
-  }
+  "version": "1.0.0"
 }

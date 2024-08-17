@@ -2,7 +2,7 @@ import UninitializedScreen from "@/components/uninitialized-screen";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { type ReactNode, useEffect, useState } from "react";
-import { RPGMap } from "rpgen-map";
+import { RPGMap, type Sprite } from "rpgen-map";
 import { create } from "zustand";
 import { Editor } from "../utils/editor";
 import CreateMapDialog from "./create-map-dialog";
@@ -11,6 +11,8 @@ import MenuBar from "./menu-bar";
 import SaveMapDialog from "./save-map-dialog";
 
 export type EditorStore = {
+  sprites: Sprite[];
+  setSprites: (sprites: Sprite[]) => void;
   editor?: Editor;
   setEditor: (editor: Editor | undefined) => void;
   loadMapText: (mapText: string) => void;
@@ -18,6 +20,8 @@ export type EditorStore = {
 
 export const useEditorStore = create<EditorStore>((set) => ({
   setEditor: (editor) => set({ editor }),
+  sprites: [],
+  setSprites: (sprites) => set({ sprites }),
   loadMapText: (mapText) =>
     set({
       editor: new Editor(RPGMap.parse(mapText)),
