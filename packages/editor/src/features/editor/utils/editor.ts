@@ -24,20 +24,20 @@ export class Editor {
 
   putFloorTile(tile: Tile): void {
     const rawTile = castTile2RawTile(tile);
-    if (rawTile !== null) {
+    try {
       this.renderer.rpgMap.floor.set(tile.position.x, tile.position.y, rawTile);
-    }
+    } catch {} // タイルが描けないのは致命的じゃないため握りつぶす
   }
 
   putObjectTile(tile: Tile): void {
     const rawTile = castTile2RawTile(tile);
-    if (rawTile !== null) {
+    try {
       this.renderer.rpgMap.objects.set(
         tile.position.x,
         tile.position.y,
         rawTile,
       );
-    }
+    } catch {} // タイルが描けないのは致命的じゃないため握りつぶす
   }
 
   onMouseDown(listener: (tileX: number, tileY: number) => void): () => void {
