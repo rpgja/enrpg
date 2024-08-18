@@ -9,16 +9,18 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Tab from "@mui/material/Tab";
 import TextField from "@mui/material/TextField";
 import bresenham from "bresenham/generator";
-import { arrayFrom, execPipe, map } from "iter-tools";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { SpriteType, type StillSprite } from "rpgen-map";
 import { create } from "zustand";
@@ -36,23 +38,15 @@ export const TilePaletteTab = {
 export type TilePaletteTab =
   (typeof TilePaletteTab)[keyof typeof TilePaletteTab];
 
-export const iterate = (): IterableIterator<TilePaletteTab> =>
-  Object.values(TilePaletteTab).values();
+/* レイヤ定義 */
 
-export const toDisplayName = (tilePaletteTab: TilePaletteTab): string => {
-  switch (tilePaletteTab) {
-    case TilePaletteTab.Mylist:
-      return "マイリスト";
-    case TilePaletteTab.Custom:
-      return "カスタム素材";
-    case TilePaletteTab.DQ:
-      return "標準素材";
-    case TilePaletteTab.History:
-      return "履歴";
-  }
-};
+export const TilePaletteLayer = {
+  Floor: "floor",
+  Objects: "objects",
+} as const;
 
-/* 当たり判定 */
+export type TilePaletteLayer =
+  (typeof TilePaletteLayer)[keyof typeof TilePaletteLayer];
 
 /* ウィンドウ定義 */
 
@@ -61,6 +55,8 @@ export type EditWindowStore = {
   setOpen: (open: boolean) => void;
   activeTab: TilePaletteTab;
   setActiveTab: (activeTab: TilePaletteTab) => void;
+  activeLayer: TilePaletteLayer;
+  setActiveLayer: (activeLayer: TilePaletteLayer) => void;
 };
 
 export const useEditWindowStore = create<EditWindowStore>((set) => ({
@@ -68,14 +64,19 @@ export const useEditWindowStore = create<EditWindowStore>((set) => ({
   setOpen: (open) => set({ open }),
   activeTab: TilePaletteTab.Mylist,
   setActiveTab: (activeTab) => set({ activeTab }),
+  activeLayer: TilePaletteLayer.Floor,
+  setActiveLayer: (activeLayer) => set({ activeLayer }),
 }));
 
 export default function EditWindow(): ReactNode {
   const { open, setOpen } = useEditWindowStore();
-  const { activeTab, setActiveTab } = useEditWindowStore((store) => ({
-    activeTab: store.activeTab,
-    setActiveTab: store.setActiveTab,
-  }));
+  const { activeTab, setActiveTab, activeLayer, setActiveLayer } =
+    useEditWindowStore((store) => ({
+      activeTab: store.activeTab,
+      setActiveTab: store.setActiveTab,
+      activeLayer: store.activeLayer,
+      setActiveLayer: store.setActiveLayer,
+    }));
   const [id, setId] = useState("");
   const [collision, setCollision] = useState(false);
   const [helperText, setHelperText] = useState("");
@@ -104,21 +105,41 @@ export default function EditWindow(): ReactNode {
 
       console.log(sprite);
 
-      editor.putFloorTile({
-        position: { x: tileX, y: tileY },
-        collision,
-        sprite,
-      });
+      if (activeLayer === TilePaletteLayer.Floor) {
+        editor.putFloorTile({
+          position: { x: tileX, y: tileY },
+          collision,
+          sprite,
+        });
 
-      if (prevX !== undefined && prevY !== undefined) {
-        const line = bresenham(prevX, prevY, tileX, tileY);
+        if (prevX !== undefined && prevY !== undefined) {
+          const line = bresenham(prevX, prevY, tileX, tileY);
 
-        for (const p of line) {
-          editor.putFloorTile({
-            position: { x: p.x, y: p.y },
-            collision,
-            sprite,
-          });
+          for (const p of line) {
+            editor.putFloorTile({
+              position: { x: p.x, y: p.y },
+              collision,
+              sprite,
+            });
+          }
+        }
+      } else if (activeLayer === TilePaletteLayer.Objects) {
+        editor.putObjectTile({
+          position: { x: tileX, y: tileY },
+          collision,
+          sprite,
+        });
+
+        if (prevX !== undefined && prevY !== undefined) {
+          const line = bresenham(prevX, prevY, tileX, tileY);
+
+          for (const p of line) {
+            editor.putObjectTile({
+              position: { x: p.x, y: p.y },
+              collision,
+              sprite,
+            });
+          }
         }
       }
 
@@ -136,9 +157,12 @@ export default function EditWindow(): ReactNode {
       offMouseMove();
       offMouseUp();
     };
-  }, [editor, collision, sprite]);
+  }, [editor, collision, activeLayer, sprite]);
 
   const MylistPalette = () => <Paper />; // TODO：別のブランチで実装
+
+  /* 当たり判定のチェックボックス */
+
   const ToggleCollision = () => (
     <FormControlLabel
       control={
@@ -150,6 +174,40 @@ export default function EditWindow(): ReactNode {
       label="当たり判定"
     />
   );
+
+  /* レイヤのラジオボタン */
+
+  const RadioActiveLayer = () => (
+    <FormControl fullWidth>
+      <FormLabel id="demo-row-radio-buttons-group-label">レイヤ</FormLabel>
+      <RadioGroup
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        value={activeLayer}
+        onChange={(_, value) => {
+          if (
+            value === TilePaletteLayer.Floor ||
+            value === TilePaletteLayer.Objects
+          ) {
+            setActiveLayer(value);
+          }
+        }}
+      >
+        <FormControlLabel
+          value={TilePaletteLayer.Floor}
+          control={<Radio />}
+          label="地面"
+        />
+        <FormControlLabel
+          value={TilePaletteLayer.Objects}
+          control={<Radio />}
+          label="物"
+        />
+      </RadioGroup>
+    </FormControl>
+  );
+
+  /* スプライトのプレビュー */
   const tilePreviewRef = useRef<HTMLImageElement>(null);
 
   return (
@@ -166,21 +224,15 @@ export default function EditWindow(): ReactNode {
               orientation="vertical"
               onChange={(_event, value) => setActiveTab(value)}
             >
-              {execPipe(
-                iterate(),
-                map((tilePaletteTab) => (
-                  <Tab
-                    value={tilePaletteTab}
-                    key={tilePaletteTab}
-                    label={toDisplayName(tilePaletteTab)}
-                  />
-                )),
-                arrayFrom,
-              )}
+              <Tab value={TilePaletteTab.Mylist} label="マイリスト" />
+              <Tab value={TilePaletteTab.Custom} label="カスタム素材" />
+              <Tab value={TilePaletteTab.DQ} label="標準素材" />
+              <Tab value={TilePaletteTab.History} label="履歴" />
             </TabList>
             <TabPanel value={TilePaletteTab.Mylist} sx={{ flex: 1 }}>
               <Stack spacing={2} height="100%">
                 <ToggleCollision />
+                <RadioActiveLayer />
                 <MylistPalette />
                 <Paper sx={{ flex: 1 }} />
               </Stack>
@@ -188,6 +240,7 @@ export default function EditWindow(): ReactNode {
             <TabPanel value={TilePaletteTab.Custom} sx={{ flex: 1 }}>
               <Stack spacing={2} height="100%">
                 <ToggleCollision />
+                <RadioActiveLayer />
                 <Stack direction="row" spacing={1} alignItems="center">
                   <TextField
                     fullWidth
@@ -259,6 +312,7 @@ export default function EditWindow(): ReactNode {
             <TabPanel value={TilePaletteTab.DQ} sx={{ flex: 1 }}>
               <Stack spacing={2} height="100%">
                 <ToggleCollision />
+                <RadioActiveLayer />
                 <FormControl fullWidth>
                   <InputLabel>初期素材</InputLabel>
                   <Select value="human" label="種類">
@@ -285,6 +339,7 @@ export default function EditWindow(): ReactNode {
             <TabPanel value={TilePaletteTab.History} sx={{ flex: 1 }}>
               <Stack spacing={2} height="100%">
                 <ToggleCollision />
+                <RadioActiveLayer />
                 <Paper sx={{ flex: 1 }} />
                 <Box>ページネーション的なやつ</Box>
               </Stack>
