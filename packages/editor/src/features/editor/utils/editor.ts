@@ -1,5 +1,5 @@
 import { Renderer } from "@/features/editor/utils/renderer";
-import { type RPGMap, SpriteType, type Tile } from "rpgen-map";
+import { type RPGMap, type Tile, castTile2RawTile } from "rpgen-map";
 
 export class Editor {
   readonly renderer: Renderer;
@@ -23,25 +23,21 @@ export class Editor {
   readonly #mouseUpListeners = new Set<() => void>();
 
   putFloorTile(tile: Tile): void {
-    let rawTile = "";
-
-    switch (tile.sprite.type) {
-      case SpriteType.CustomStillSprite: {
-        rawTile += tile.sprite.id;
-
-        if (tile.collision) {
-          rawTile += "C";
-        }
-
-        break;
-      }
-      // case SpriteType.DQStillSprite:
-      default: {
-        throw "unimpl";
-      }
+    const rawTile = castTile2RawTile(tile);
+    if (rawTile !== null) {
+      this.renderer.rpgMap.floor.set(tile.position.x, tile.position.y, rawTile);
     }
+  }
 
-    this.renderer.rpgMap.floor.set(tile.position.x, tile.position.y, rawTile);
+  putObjectTile(tile: Tile): void {
+    const rawTile = castTile2RawTile(tile);
+    if (rawTile !== null) {
+      this.renderer.rpgMap.objects.set(
+        tile.position.x,
+        tile.position.y,
+        rawTile,
+      );
+    }
   }
 
   onMouseDown(listener: (tileX: number, tileY: number) => void): () => void {
