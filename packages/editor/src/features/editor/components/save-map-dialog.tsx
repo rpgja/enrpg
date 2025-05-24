@@ -9,7 +9,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { compressToEncodedURIComponent } from "lz-string";
 import { type ReactNode, useState } from "react";
-import { RPGMap } from "rpgen-map";
+import { RPGMap } from "@rpgja/rpgen-map";
 import { create } from "zustand";
 import { useEditorStore } from "./editor-view";
 

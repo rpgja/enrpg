@@ -1,4 +1,4 @@
-import type { TileChipMap } from "rpgen-map";
+import type { TileChipMap } from "@rpgja/rpgen-map";
 import { Preset } from "./preset";
 import type { PresetInit } from "./preset";
 

@@ -1,5 +1,5 @@
 import { MouseButton, isMouseDown } from "@/utils/mouse";
-import type { Position } from "rpgen-map";
+import type { Position } from "@rpgja/rpgen-map";
 
 export class PointerSelection {
   static currentId = 0;

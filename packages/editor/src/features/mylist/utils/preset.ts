@@ -1,5 +1,5 @@
-import { TileChipMap } from "rpgen-map";
-import type { RawTile } from "rpgen-map";
+import { TileChipMap } from "@rpgja/rpgen-map";
+import type { RawTile } from "@rpgja/rpgen-map";
 
 export type PresetInit = {
   name: string;

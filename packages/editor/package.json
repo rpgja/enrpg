@@ -17,7 +17,6 @@
     "next": "^14.2.4",
     "p-queue": "^8.0.1",
     "pino": "^9.2.0",
-    "rpgen-map": "workspace:*",
     "zustand": "^4.5.4"
   },
   "description": "This is a web application of the map editor dedicated to RPGEN.",

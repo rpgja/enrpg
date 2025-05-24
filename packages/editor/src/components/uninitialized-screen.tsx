@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import arrayShuffle from "array-shuffle";
 import { arrayFrom, execPipe, map, take } from "iter-tools";
 import { type ReactNode, useMemo } from "react";
-import { DQAnimationSpriteSurface, Direction } from "rpgen-map";
+import { DQAnimationSpriteSurface, Direction } from "@rpgja/rpgen-map";
 import { useCreateMapDialogStore } from "../features/editor/components/create-map-dialog";
 import { useLoadMapDialogStore } from "../features/editor/components/load-map-dialog";
 import TimerProvider from "./timer-provider";

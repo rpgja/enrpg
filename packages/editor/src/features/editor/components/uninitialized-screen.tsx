@@ -8,9 +8,9 @@ import Typography from "@mui/material/Typography";
 import arrayShuffle from "array-shuffle";
 import { arrayFrom, execPipe, map, take } from "iter-tools";
 import { type ReactNode, useMemo } from "react";
-import { DQAnimationSpriteSurface } from "rpgen-map";
-import { Direction } from "rpgen-map";
-import { ANIMATION_SPRITE_FLIP_INTERVAL } from "rpgen-map";
+import { DQAnimationSpriteSurface } from "@rpgja/rpgen-map";
+import { Direction } from "@rpgja/rpgen-map";
+import { ANIMATION_SPRITE_FLIP_INTERVAL } from "@rpgja/rpgen-map";
 import { useCreateMapDialogStore } from "./create-map-dialog";
 import { useLoadMapDialogStore } from "./load-map-dialog";
 

@@ -2,7 +2,7 @@ import UninitializedScreen from "@/components/uninitialized-screen";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { type ReactNode, useEffect, useState } from "react";
-import { RPGMap, type Sprite } from "rpgen-map";
+import { RPGMap, type Sprite } from "@rpgja/rpgen-map";
 import { create } from "zustand";
 import { Editor } from "../utils/editor";
 import CreateMapDialog from "./create-map-dialog";
