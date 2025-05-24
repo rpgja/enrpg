@@ -1,11 +1,11 @@
 import { requestImage } from "@/utils/image";
-import type { EventPoint } from "rpgen-map";
-import type { LookPoint } from "rpgen-map";
-import { type DQStillSprite, SpriteType } from "rpgen-map";
-import type { TeleportPoint } from "rpgen-map";
-import type { Position } from "rpgen-map";
-import { type InfinityChipMap, TileChipMap } from "rpgen-map";
-import type { RPGMap } from "rpgen-map";
+import type { EventPoint } from "@rpgja/rpgen-map";
+import type { LookPoint } from "@rpgja/rpgen-map";
+import { type DQStillSprite, SpriteType } from "@rpgja/rpgen-map";
+import type { TeleportPoint } from "@rpgja/rpgen-map";
+import type { Position } from "@rpgja/rpgen-map";
+import { type InfinityChipMap, TileChipMap } from "@rpgja/rpgen-map";
+import type { RPGMap } from "@rpgja/rpgen-map";
 import {
   ANIMATION_SPRITE_FLIP_INTERVAL,
   RPGEN_CHIP_SIZE,
@@ -13,7 +13,7 @@ import {
   tileOfEvent,
   tileOfLook,
   tileOfTeleport,
-} from "rpgen-map";
+} from "@rpgja/rpgen-map";
 import { Camera } from "./camera";
 import { Pointer, type PointerSelection } from "./pointer";
 
@@ -134,7 +134,7 @@ export class Renderer {
 
   renderNotFound(x: number, y: number): void {
     const notFound = requestImage(
-      "https://rpgen.site/dq/sprites/img/404Chip.png",
+      "https://rpgen.org/dq/sprites/img/404Chip.png",
     );
 
     if (!notFound) {
@@ -184,7 +184,7 @@ export class Renderer {
         switch (tile.sprite.type) {
           case SpriteType.DQStillSprite: {
             const dqStillSprites = requestImage(
-              "https://rpgen.site/dq/img/dq/map.png",
+              "https://rpgen.org/dq/img/dq/map.png",
             );
 
             if (dqStillSprites === null) {
@@ -214,7 +214,7 @@ export class Renderer {
 
           case SpriteType.CustomStillSprite: {
             const customStillSprite = requestImage(
-              `https://rpgen.site/dq/sprites/${tile.sprite.id}/sprite.png`,
+              `https://rpgen.org/dq/sprites/${tile.sprite.id}/sprite.png`,
             );
 
             if (customStillSprite === null) {
@@ -257,7 +257,7 @@ export class Renderer {
       switch (human.sprite.type) {
         case SpriteType.DQAnimationSprite: {
           const dqAnimationSprites = requestImage(
-            "https://rpgen.site/dq/img/dq/char.png",
+            "https://rpgen.org/dq/img/dq/char.png",
           );
 
           if (dqAnimationSprites === null) {
@@ -292,7 +292,7 @@ export class Renderer {
         }
         case SpriteType.CustomAnimationSprite: {
           const customAnimationSprite = requestImage(
-            `https://rpgen.pw/dq/sAnims/res/${human.sprite.id}.png`,
+            `https://rpgen.cc/dq/sAnims/res/${human.sprite.id}.png`,
           );
 
           if (customAnimationSprite === null) {
@@ -321,7 +321,7 @@ export class Renderer {
 
         case SpriteType.CustomStillSprite: {
           const customStillSprite = requestImage(
-            `https://rpgen.site/dq/sprites/${human.sprite.id}/sprite.png`,
+            `https://rpgen.org/dq/sprites/${human.sprite.id}/sprite.png`,
           );
 
           if (customStillSprite === null) {
@@ -358,7 +358,7 @@ export class Renderer {
       | InfinityChipMap<EventPoint>,
     surface: DQStillSprite["surface"],
   ): void {
-    const dqStillSprites = requestImage("https://rpgen.site/dq/img/dq/map.png");
+    const dqStillSprites = requestImage("https://rpgen.org/dq/img/dq/map.png");
 
     if (!dqStillSprites) {
       return;

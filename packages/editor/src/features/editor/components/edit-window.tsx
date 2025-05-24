@@ -22,7 +22,7 @@ import Tab from "@mui/material/Tab";
 import TextField from "@mui/material/TextField";
 import bresenham from "bresenham/generator";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { SpriteType, type StillSprite } from "rpgen-map";
+import { SpriteType, type StillSprite } from "@rpgja/rpgen-map";
 import { create } from "zustand";
 import { useEditorStore } from "./editor-view";
 
@@ -269,7 +269,7 @@ export default function EditWindow(): ReactNode {
 
                       try {
                         image = await loadImage(
-                          `https://rpgen.site/dq/sprites/${encodeURIComponent(
+                          `https://rpgen.org/dq/sprites/${encodeURIComponent(
                             actualId.toString(),
                           )}/sprite.png`,
                         );

@@ -35,6 +35,7 @@
   ],
   "dependencies": {
     "@mui/lab": "^5.0.0-alpha.173",
+    "@rpgja/rpgen-map": "^1.0.0",
     "bresenham": "^0.0.4"
   }
 }

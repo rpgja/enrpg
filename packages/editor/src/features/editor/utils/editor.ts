@@ -1,5 +1,5 @@
 import { Renderer } from "@/features/editor/utils/renderer";
-import { type RPGMap, type Tile, castTile2RawTile } from "rpgen-map";
+import { type RPGMap, type Tile, castTile2RawTile } from "@rpgja/rpgen-map";
 
 export class Editor {
   readonly renderer: Renderer;
