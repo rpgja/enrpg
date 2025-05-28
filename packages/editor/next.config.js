@@ -5,4 +5,6 @@
  */
 export default {
   output: "export",
+  basePath: '/enrpg',
+  assetPrefix: '/enrpg',
 };
