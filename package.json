@@ -24,7 +24,7 @@
   },
   "scripts": {
     "editor:dev": "bun run --cwd packages/editor dev",
-    "build": "cd packages/editor && next build",
+    "build": "cd packages/editor && next build && next export -o ../../out",
     "prod": "cross-env NEXT_PUBLIC_BASE_URL=\"https://rpgja.github.io/enrpg/\" bun run build",
     "patch": "npm version patch"
   },
