@@ -6,7 +6,8 @@
   "description": "This is a web application of the map editor dedicated to RPGEN.",
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
-    "@types/bresenham": "^0.0.3"
+    "@types/bresenham": "^0.0.3",
+    "cross-env": "^7.0.3"
   },
   "homepage": "https://github.com/rpgja/enrpg#readme",
   "keywords": [
@@ -22,7 +23,9 @@
     "url": "git+https://github.com/rpgja/enrpg.git"
   },
   "scripts": {
-    "editor:dev": "bun run --cwd packages/editor dev"
+    "editor:dev": "bun run --cwd packages/editor dev",
+    "build": "cd packages/editor && next build",
+    "prod": "cross-env NEXT_PUBLIC_BASE_URL=\"https://rpgja.github.io/enrpg/\" bun run build"
   },
   "trustedDependencies": [
     "@biomejs/biome",
