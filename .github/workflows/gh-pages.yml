@@ -34,7 +34,7 @@ jobs:
         run: bun run build
 
       - name: add nojekyll
-        run: touch ./packages/editor/out/.nojekyll
+        run: touch ./out/.nojekyll
 
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
