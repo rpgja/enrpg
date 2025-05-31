@@ -16,21 +16,13 @@
 以下のコマンドを実行して全ての依存関係をインストールします。（初回のみ）
 
 ```sh
-git submodule init
-```
-
-```sh
-git submodule update
-```
-
-```sh
 bun i
 ```
 
-次に以下のコマンドを実行すると`http://localhost:3000`に開発サーバーが立ち上がります。
+次に以下のコマンドを実行すると`http://localhost:3000/enrpg`に開発サーバーが立ち上がります。
 
 ```sh
-bun run editor:dev
+bun run dev
 ```
 
 ## 開発
