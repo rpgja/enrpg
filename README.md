@@ -31,7 +31,7 @@ A web-based map editor for [RPGEN](https://rpgen.org/dq/maps), designed for intu
 4. 拡張機能タブから推奨拡張をインストール
 5. `bun i` を実行して依存パッケージをインストール
 6. よく使うコマンド:
-   - `bun run editor:dev` — 開発ビルド（ホットリロード有効）
+   - `bun run dev` — 開発ビルド（ホットリロード有効）
 
 ## スクリーンショット / Screenshots
 
@@ -42,8 +42,8 @@ A web-based map editor for [RPGEN](https://rpgen.org/dq/maps), designed for intu
 
 ## 使い方 / Usage
 
-1. `bun run editor:dev` で開発サーバーを起動
-2. ブラウザで `http://localhost:3000` にアクセス
+1. `bun run dev` で開発サーバーを起動
+2. ブラウザで `http://localhost:3000/enrpg` にアクセス
 3. マップをマウスで編集
 4. 保存・エクスポート機能は今後追加予定
 
