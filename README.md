@@ -12,11 +12,6 @@ A web-based map editor for [RPGEN](https://rpgen.org/dq/maps), designed for intu
 マップ全体の一覧性や高速な編集に不向きでした。  
 本エディタは、そうした課題を解決するために開発されました。
 
-## ライセンス / License
-
-- **MIT**  
-  本プロジェクト全体には MIT ライセンスが適用されます。詳細は [`LICENSE`](./LICENSE) をご覧ください。
-
 ## 採用技術 / Tech Stack
 
 - **開発言語**: TypeScript  
@@ -32,13 +27,6 @@ A web-based map editor for [RPGEN](https://rpgen.org/dq/maps), designed for intu
 5. `bun i` を実行して依存パッケージをインストール
 6. よく使うコマンド:
    - `bun run dev` — 開発ビルド（ホットリロード有効）
-
-## スクリーンショット / Screenshots
-
-(ここにスクリーンショット画像を挿入)
-
-例:
-
 
 ## 使い方 / Usage
 
@@ -58,14 +46,6 @@ A. 現在は PC のブラウザを想定しています。スマホ対応は未�
 ### Q. マップのインポート／エクスポートはできますか？
 A. できます。
 
-## コントリビュート / Contributing
-
-バグ報告や機能追加の提案、大歓迎です！
-
-1. Issue を立てる
-2. Fork して PR を作る
-3. レビュー後、マージします
-
 ## 今後の予定 / Roadmap
 
 - 🚧 タイルセット対応
@@ -73,6 +53,19 @@ A. できます。
 - 🚧 Undo / Redo 機能
 - 🚧 スマホ UI 対応
 - 🧪 オートセーブ機能
+
+## ライセンス / License
+
+- **MIT**  
+  本プロジェクト全体には MIT ライセンスが適用されます。詳細は [`LICENSE`](./LICENSE) をご覧ください。
+
+## コントリビュート / Contributing
+
+バグ報告や機能追加の提案、大歓迎です！
+
+1. Issue を立てる
+2. Fork して PR を作る
+3. レビュー後、マージします
 
 ---
 
